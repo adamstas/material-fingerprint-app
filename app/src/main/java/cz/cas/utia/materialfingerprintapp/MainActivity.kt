@@ -5,14 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,14 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.ui.theme.MaterialFingerprintAppTheme
 
 data class BottomNavigationItem(
     val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val selectedIcon: Painter,
+    val unselectedIcon: Painter
 )
 
 class MainActivity : ComponentActivity() {
@@ -42,21 +35,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge() //todo nechat? je to tu automaticky
         setContent {
             MaterialFingerprintAppTheme {
-                val items = listOf( //todo move these variables to somewhere else?
+                val items = listOf( //todo move these variables to somewhere else? Screens.kt or something in package called navigation
                     BottomNavigationItem(
                         title = "Camera",
-                        selectedIcon = Icons.Filled.Home, //todo later change for camera
-                        unselectedIcon = Icons.Outlined.Home
+                        selectedIcon = painterResource(id = R.drawable.photo_camera_filled),
+                        unselectedIcon = painterResource(id = R.drawable.photo_camera)
                     ),
                     BottomNavigationItem(
                         title = "Analytics",
-                        selectedIcon = Icons.Filled.ShoppingCart, //todo later change for analytics
-                        unselectedIcon = Icons.Outlined.ShoppingCart
+                        selectedIcon = painterResource(id = R.drawable.analytics_filled), //todo later change for analytics
+                        unselectedIcon = painterResource(id = R.drawable.analytics)
                     ),
                     BottomNavigationItem(
                         title = "Settings",
-                        selectedIcon = Icons.Filled.Settings,
-                        unselectedIcon = Icons.Outlined.Settings
+                        selectedIcon = painterResource(id = R.drawable.settings_filled),
+                        unselectedIcon = painterResource(id = R.drawable.settings)
                     ),
                 )
                 var selectedItemIndex by rememberSaveable {
@@ -68,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         bottomBar = {
-                            NavigationBar {
+                            NavigationBar { //todo this whole bar can be moved to some navigation package
                                 items.forEachIndexed { index, item ->
                                     NavigationBarItem(
                                         selected = selectedItemIndex == index,
@@ -81,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         icon = {
                                             Icon(
-                                                imageVector = if (selectedItemIndex == index) item.selectedIcon else item.unselectedIcon,
+                                                painter = if (selectedItemIndex == index) item.selectedIcon else item.unselectedIcon,
                                                 contentDescription = item.title
                                             )
 
