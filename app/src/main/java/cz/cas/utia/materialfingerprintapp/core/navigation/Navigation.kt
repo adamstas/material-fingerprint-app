@@ -15,9 +15,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MainNavigation() {
+fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
+
+    val navController = rememberNavController()
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination //todo je to potreba?
 
     var selectedScreenIndex by rememberSaveable { //todo toto tu zustane?
         mutableStateOf(0)
@@ -32,20 +39,20 @@ fun MainNavigation() {
     Scaffold(
         bottomBar = {
             NavigationBar {
-                mainNavigationScreens.forEachIndexed { index, screen ->
+                mainScreens.forEachIndexed { index, screen ->
                     NavigationBarItem(
                         selected = selectedScreenIndex == index,
                         onClick = {
                             selectedScreenIndex = index
-                            //navController.navigate(item.title)
+                            navController.navigate(screen.route)
                         },
                         label = {
-                            Text(text = capitalizeFirstLetter(screen.route))
+                            Text(text = screen.label)
                         },
                         icon = {
                             Icon(
                                 painter = if (selectedScreenIndex == index) painterResource(screen.iconSelectedId) else painterResource(id = screen.iconUnselectedId),
-                                contentDescription = capitalizeFirstLetter(screen.route) //todo zmenit na nejaky sofistikovanejsi popis?
+                                contentDescription = screen.label //todo zmenit na nejaky sofistikovanejsi popis?
                             )
 
                         }
@@ -54,5 +61,6 @@ fun MainNavigation() {
             }
         }
     )
-    {} //todo scaffold content?
+    { innerPadding -> MainGraph(navController = navController)
+    } //todo scaffold content?
 }
