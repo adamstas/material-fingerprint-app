@@ -23,6 +23,10 @@ fun MainGraph(
     ) {
 
         composable<SettingsScreens> {
+            val bulyn = false
+            fun bulyn2(boolean: Boolean): Unit {
+
+            }
             SettingsScreen()
         }
 

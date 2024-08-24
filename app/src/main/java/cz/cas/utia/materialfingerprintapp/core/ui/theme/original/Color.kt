@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.ui.theme
+package cz.cas.utia.materialfingerprintapp.core.ui.theme.original
 
 import androidx.compose.ui.graphics.Color
 

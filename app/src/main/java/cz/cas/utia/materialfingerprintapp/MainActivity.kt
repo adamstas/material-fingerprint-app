@@ -9,14 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
-import cz.cas.utia.materialfingerprintapp.ui.theme.MaterialFingerprintAppTheme
+import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.AppCustomTheme
+import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //todo nechat? je to tu automaticky
         setContent {
-            MaterialFingerprintAppTheme {
+            AppCustomTheme {
                 MainNavigation()
 
             }

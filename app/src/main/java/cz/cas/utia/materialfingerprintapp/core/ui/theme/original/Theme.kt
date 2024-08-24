@@ -1,6 +1,5 @@
-package cz.cas.utia.materialfingerprintapp.ui.theme
+package cz.cas.utia.materialfingerprintapp.core.ui.theme.original
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
