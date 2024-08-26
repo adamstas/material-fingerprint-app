@@ -1,29 +1,28 @@
 package cz.cas.utia.materialfingerprintapp.features.setting.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
@@ -52,6 +51,8 @@ fun SettingsScreen() {
             DefaultWindowSection()
 
             CustomHorizontalDivider()
+
+            Text(text = "Some other settings ...")
         }
     }
 }
@@ -85,61 +86,49 @@ fun CustomHorizontalDivider() {
 
 @Composable
 fun DefaultWindowSection() {
-    var expanded by remember { mutableStateOf(true) } //todo zkusit kdyby bez remember
-    val items = listOf("A", "B", "C", "D", "E", "F")
-    val disabledValue = "B"
-    var selectedIndex by remember { mutableStateOf(0) } //todo bez remember by si to nepamatoval pri odchodu z obrazovky?
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = "Default window")
-
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false}) {
-
-            items.forEach {
-                DropdownMenuItem(text = {Text(text = "item $it")}, onClick = { /* todo */})
-
-            }
-        }
+        DefaultWindowExposedDropdownMenu()
     }
 }
 
-//@Composable
-//fun DropdownDemo() {
-//    var expanded by remember { mutableStateOf(false) }
-//    val items = listOf("A", "B", "C", "D", "E", "F")
-//    val disabledValue = "B"
-//    var selectedIndex by remember { mutableStateOf(0) }
-//    Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.TopStart)) {
-//        Text(items[selectedIndex],modifier = Modifier.fillMaxWidth().clickable(onClick = { expanded = true }).background(
-//            Color.Gray))
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            modifier = Modifier.fillMaxWidth().background(
-//                Color.Red)
-//        ) {
-//            items.forEachIndexed { index, s ->
-//                DropdownMenuItem(onClick = {
-//                    selectedIndex = index
-//                    expanded = false
-//                },
-//                    text = {stringos()}) {
-//                    val disabledText = if (s == disabledValue) {
-//                        " (Disabled)"
-//                    } else {
-//                        ""
-//                    }
-//                    Text(text = s + disabledText)
-//                }
-//            }
-//        }
-//    }
-//}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DefaultWindowExposedDropdownMenu() {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) } //todo zkusit kdyby bez remember
+    val items = listOf("Camera", "Analytics", "Settings", "Last opened window")
+    var selectedItem by remember { mutableStateOf(items[0]) } //todo bez remember by si to nepamatoval pri odchodu z obrazovky?
 
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier.width(225.dp) //todo keep hardcoded? mozna na uzsich obrazovkach to bude delat problem => zkusit a kdyz tak to lze dát na samostatny radek
+    ) {
+        TextField(
+            value = selectedItem,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.menuAnchor()
+        )
 
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+
+            items.forEach { item ->
+                DropdownMenuItem(text = { Text(text = item) }, onClick = {
+                    selectedItem = item
+                    expanded = false
+                    Toast.makeText(context, item, Toast.LENGTH_SHORT).show() //todo dat Toast nebo bez nej?
+                })
+            }
+        }
+
+    }
+}
 
 @Preview
 @Composable
