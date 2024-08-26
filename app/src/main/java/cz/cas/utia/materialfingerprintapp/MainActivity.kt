@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
+import cz.cas.utia.materialfingerprintapp.features.setting.presentation.PermissionsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge() //todo nechat? je to tu automaticky
         setContent {
             CustomAppTheme {
-                MainNavigation()
+                //MainNavigation()
+                PermissionsScreen()
 
             }
         }

@@ -4,8 +4,10 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 
@@ -74,14 +77,6 @@ fun SendDataSection() {
             checked = it
         })
     }
-}
-
-@Composable
-fun CustomHorizontalDivider() {
-    HorizontalDivider(
-        thickness = 1.5.dp, //todo thickness upravit? 1.5 asi OK
-        modifier = Modifier.padding(vertical = 20.dp)
-        )
 }
 
 @Composable
