@@ -4,13 +4,12 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.AppCustomTheme
+import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 
 class TopBarParameterProvider: PreviewParameterProvider<String> {
     override val values = sequenceOf(
@@ -43,7 +42,7 @@ fun TopBarTitle(title: String) {
 @Preview
 @Composable
 fun TopBarTitlePreview(@PreviewParameter(TopBarParameterProvider::class) title: String) {
-    AppCustomTheme {
+    CustomAppTheme {
         TopBarTitle(title)
     }
 }

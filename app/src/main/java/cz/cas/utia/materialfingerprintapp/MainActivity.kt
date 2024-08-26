@@ -4,12 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
-import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.AppCustomTheme
+import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //todo nechat? je to tu automaticky
         setContent {
-            AppCustomTheme {
+            CustomAppTheme {
                 MainNavigation()
 
             }
@@ -30,7 +31,8 @@ class MainActivity : ComponentActivity() {
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
-        modifier = modifier
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
     )
 }
 

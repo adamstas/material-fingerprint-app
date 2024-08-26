@@ -1,6 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.core.ui.theme.original
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -36,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
 fun MaterialFingerprintAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, //TODO this should be set to true but when true it makes different colors
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
