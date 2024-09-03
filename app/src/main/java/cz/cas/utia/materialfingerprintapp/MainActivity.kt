@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,10 +19,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //todo nechat? je to tu automaticky
+
+        //val intent = Intent(this, Camera::class.java)
+        //startActivity(intent)
         setContent {
             CustomAppTheme {
-                //MainNavigation()
-                PermissionsScreen()
+                MainNavigation()
+                //PermissionsScreen()
 
             }
         }

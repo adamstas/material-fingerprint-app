@@ -102,6 +102,7 @@ fun DefaultWindowExposedDropdownMenu() {
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
         modifier = Modifier.width(225.dp) //todo keep hardcoded? mozna na uzsich obrazovkach to bude delat problem => zkusit a kdyz tak to lze dát na samostatny radek
+        //anebo nastavit size namisto width, to by asi melo zmensit cele => treba to bude vypadat lepe
     ) {
         TextField(
             value = selectedItem,

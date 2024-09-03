@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MaterialFingerprintApp"
 include(":app")
- 
+include(":opencv")
