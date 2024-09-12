@@ -24,8 +24,6 @@ fun MainGraph(
 
         composable<CameraScreens> {
             Text(text = "navigacka_camera")
-
-
         }
 
         composable<AnalyticsScreens> {
@@ -33,5 +31,3 @@ fun MainGraph(
         }
     }
 }
-
-

@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageAnalyzer {
-
-
-
-
     public static List<MatOfPoint> findRects(Mat segmentedImg, double minContourArea, double maxRelativeAreaDiff) {
         List<MatOfPoint> contours = new ArrayList<>();
         List<MatOfPoint> filteredContours = new ArrayList<>();
