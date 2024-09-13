@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.BrowseMaterialsScreen
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
 
 @Composable
@@ -27,7 +28,7 @@ fun MainGraph(
         }
 
         composable<AnalyticsScreens> {
-            Text(text = "analytics screen")
+            BrowseMaterialsScreen()
         }
     }
 }
