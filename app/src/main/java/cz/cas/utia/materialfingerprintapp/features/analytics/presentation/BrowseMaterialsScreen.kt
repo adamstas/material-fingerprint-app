@@ -1,31 +1,23 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation
 
-import android.widget.Toast
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,18 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
+import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
-import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
-import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialCategory
-import cz.cas.utia.materialfingerprintapp.features.setting.presentation.Permission
-import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
-import cz.cas.utia.materialfingerprintapp.features.setting.presentation.permissions
 
 @Composable
 fun BrowseMaterialsScreen() {
@@ -60,6 +49,9 @@ fun BrowseMaterialsScreen() {
             ) {
                 SearchAndFilterSection()
 
+                MaterialsListSection()
+
+
             }
     }
 }
@@ -71,7 +63,7 @@ fun SearchAndFilterSection() {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         MaterialsSearchBar()
-        CategoriesTopDownMenu()
+        CategoriesDropdownMenu()
     }
 }
 
@@ -82,49 +74,196 @@ fun MaterialsSearchBar() {
     //maybe put the search bar up the categories top down menu in case the top down menu is too wide
 }
 
-data class CategoryWithCheckbox(
-    val category: MaterialCategory,
-    val isChecked: Boolean
+@Composable
+fun CategoriesDropdownMenu() {
+    DropdownMenuWithCheckboxes(
+        label = "Categories",
+        options = listOf( //todo from state all categories (create automatically)
+            DropDownMenuWithCheckboxesItem("FABRIC", 0),
+            DropDownMenuWithCheckboxesItem("WOOD", 1),
+            DropDownMenuWithCheckboxesItem("LEATHER", 2)
+        ),
+    )
+}
+
+@Composable
+fun MaterialsListSection() {
+    var materials = remember { mutableStateListOf<MaterialUIElement>() }
+
+    //init for now
+    materials.add(MaterialUIElement(
+        Material(
+            id = 1,
+            serverId = 1,
+            name = "Leather1",
+            photoPath = R.drawable.latka,
+            fingerprintPath = R.drawable.latkapolarplot,
+            category = MaterialCategory.LEATHER,
+            statBrightness = 0.85,
+            statColorVibrancy = 0.75,
+            statHardness = 0.10,
+            statCheckeredPattern = 0.0,
+            statMovementEffect = 0.3,
+            statMulticolored = 0.1,
+            statNaturalness = 0.95,
+            statPatternComplexity = 0.1,
+            statScaleOfPattern = 0.2,
+            statShininess = 0.9,
+            statSparkle = 0.5,
+            statStripedPattern = 0.0,
+            statSurfaceRoughness = 0.1,
+            statThickness = 0.15,
+            statValue = 90.0,
+            statWarmth = 0.7
+        ),
+        checked = false
+    ))
+    materials.add(
+        MaterialUIElement(
+        Material(
+            id = 2,
+            serverId = 2,
+            name = "Leather2",
+            photoPath = R.drawable.latka2,
+            fingerprintPath = R.drawable.latka2polarplot,
+            category = MaterialCategory.LEATHER,
+            statBrightness = 0.5,
+            statColorVibrancy = 0.4,
+            statHardness = 0.9,
+            statCheckeredPattern = 0.0,
+            statMovementEffect = 0.0,
+            statMulticolored = 0.1,
+            statNaturalness = 0.95,
+            statPatternComplexity = 0.2,
+            statScaleOfPattern = 0.6,
+            statShininess = 0.3,
+            statSparkle = 0.0,
+            statStripedPattern = 0.0,
+            statSurfaceRoughness = 0.8,
+            statThickness = 0.9,
+            statValue = 60.0,
+            statWarmth = 0.8
+        ), checked = true)
+    )
+
+    for (material in materials) {
+        MaterialListRow(material = material)
+    }
+
+
+
+
+}
+
+@Composable
+fun MaterialListRow(material: MaterialUIElement) {
+    //todo one row in material list
+
+    Image(
+        painter = painterResource(id = R.drawable.latka),
+        contentDescription = "Latka Image", // Accessible description for the image
+        contentScale = ContentScale.Crop, // Scales the image to fill its bounds while preserving aspect ratio
+        modifier = Modifier.size(64.dp) // Adjust size as needed
+    )
+
+}
+
+//todo finish this screen just with dummy data and then finish the database
+
+//todo move to core UI elements package
+data class DropDownMenuWithCheckboxesItem(
+    val text: String,
+    val id: Int
 )
 
-//todo use https://stackoverflow.com/questions/75397960/jetpack-compose-combo-box-with-dropdown and create it like in the tutorial
-//then finish this screen just with dummy data and then finish the database
+//todo move to core UI elements package
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriesTopDownMenu() {
-        var expanded by remember { mutableStateOf(false) } //todo zkusit kdyby bez remember
-        val categories = MaterialCategory.entries
+fun DropdownMenuWithCheckboxes(
+    label: String,
+    options: List<DropDownMenuWithCheckboxesItem>,
+    //onOptionsChosen: (List<ComboOption>) -> Unit,
+    modifier: Modifier = Modifier, //todo nechat?
+    selectedIds: List<Int> = emptyList(), //todo load from state
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOptionsList = remember { mutableStateListOf<Int>()}
 
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.width(225.dp) //todo keep hardcoded? mozna na uzsich obrazovkach to bude delat problem => zkusit a kdyz tak to lze dát na samostatny radek
-            //anebo nastavit size namisto width, to by asi melo zmensit cele => treba to bude vypadat lepe
-        ) {
-            TextField(
-                value = "Categories",
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
+    //load selected categories
+    selectedIds.forEach{
+        selectedOptionsList.add(it)
+    }
 
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-
-                categories.forEach { item ->
-                    Row {
-                        DropdownMenuItem(text = { Text(text = item.toString()) }, onClick = {
-                            //selectedItem = item
-                            //expanded = false
-                        })
-                        Checkbox(checked = true, onCheckedChange = {})
-                    }
-
-
-                }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {
+            expanded = !expanded
+            if (!expanded) {
+               // onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
+                //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
+                //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
             }
 
+        },
+        modifier = Modifier.width(190.dp), //todo keep hardcoded?
+    ) {
+        val selectedSummary: String = when (selectedOptionsList.size) {
+            0 -> "None selected"
+            1 -> options.first { it.id == selectedOptionsList.first() }.text
+            else -> "Selected ${selectedOptionsList.size}"
         }
+        TextField(
+            modifier = Modifier.menuAnchor(),
+            readOnly = true,
+            value = selectedSummary,
+            onValueChange = {},
+            label = { Text(text = label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+                //onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
+                //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
+                //ale mozna tahle logika staci jen výš, otestovat
+                //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
+            },
+        ) {
+            for (option in options) {
+                var checked = remember {
+                    derivedStateOf{option.id in selectedOptionsList}
+                }.value
+
+                DropdownMenuItem(
+                    text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = checked,
+                                onCheckedChange = { newCheckedState ->
+                                    if (newCheckedState) {
+                                        selectedOptionsList.add(option.id)
+                                    } else {
+                                        selectedOptionsList.remove(option.id)
+                                    }
+                                },
+                            )
+                            Text(text = option.text)
+                        }
+                    },
+                    onClick = {
+                        if (!checked) {
+                            selectedOptionsList.add(option.id)
+                        } else {
+                            selectedOptionsList.remove(option.id)
+                        }
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+        }
+    }
 }
 
 

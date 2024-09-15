@@ -9,8 +9,8 @@ data class Material(
     val id: Int? = null,
     val serverId: Int,
     val name: String,
-    val photoPath: String,
-    val fingerprintPath: String,
+    val photoPath: Int,//made int so i can load test images from resources
+    val fingerprintPath: Int,//made int so i can load test images from resources
     val category: MaterialCategory,
 
     val statBrightness: Double,
