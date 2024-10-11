@@ -1,36 +1,48 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
+import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
+import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialCategory
@@ -46,12 +58,20 @@ fun BrowseMaterialsScreen() {
                 Modifier
                     .padding(paddingValues)
                     .padding(25.dp)
+                    .padding(bottom = 16.dp)
+                    .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
+                    .fillMaxSize()
             ) {
                 SearchAndFilterSection()
 
-                MaterialsListSection()
+                CustomSpacer()
 
+                MaterialsListSection(modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                )
 
+                BottomButtonsSection(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
     }
 }
@@ -87,7 +107,7 @@ fun CategoriesDropdownMenu() {
 }
 
 @Composable
-fun MaterialsListSection() {
+fun MaterialsListSection(modifier: Modifier) {
     var materials = remember { mutableStateListOf<MaterialUIElement>() }
 
     //init for now
@@ -145,26 +165,118 @@ fun MaterialsListSection() {
             statWarmth = 0.8
         ), checked = true)
     )
+    materials.add(
+        MaterialUIElement(
+            Material(
+                id = 3,
+                serverId = 3,
+                name = "Leather3",
+                photoPath = R.drawable.latka3,
+                fingerprintPath = R.drawable.latka3polarplot,
+                category = MaterialCategory.LEATHER,
+                statBrightness = 0.5,
+                statColorVibrancy = 0.4,
+                statHardness = 0.9,
+                statCheckeredPattern = 0.0,
+                statMovementEffect = 0.08,
+                statMulticolored = 0.51,
+                statNaturalness = 0.95,
+                statPatternComplexity = 0.2,
+                statScaleOfPattern = 0.6,
+                statShininess = 0.3,
+                statSparkle = 0.0,
+                statStripedPattern = 0.0,
+                statSurfaceRoughness = 0.41,
+                statThickness = 0.9,
+                statValue = 60.0,
+                statWarmth = 0.8
+            ), checked = false)
+    )
+    materials.add(
+        MaterialUIElement(
+            Material(
+                id = 4,
+                serverId = 4,
+                name = "Leather4",
+                photoPath = R.drawable.latka4,
+                fingerprintPath = R.drawable.latka4polarplot,
+                category = MaterialCategory.LEATHER,
+                statBrightness = 0.99,
+                statColorVibrancy = 0.4,
+                statHardness = 0.9,
+                statCheckeredPattern = 0.0,
+                statMovementEffect = 0.08,
+                statMulticolored = 0.51,
+                statNaturalness = 0.95,
+                statPatternComplexity = 0.2,
+                statScaleOfPattern = 0.6,
+                statShininess = 0.3,
+                statSparkle = 0.0,
+                statStripedPattern = 0.0,
+                statSurfaceRoughness = 0.41,
+                statThickness = 0.9,
+                statValue = 60.0,
+                statWarmth = 0.8
+            ), checked = false)
+    )
 
-    for (material in materials) {
-        MaterialListRow(material = material)
+    LazyColumn(modifier = modifier)
+     {
+        items(materials) { material ->
+            MaterialListRow(materialUIElement = material)
+            CustomHorizontalDivider()
+        }
     }
-
-
-
-
 }
 
 @Composable
-fun MaterialListRow(material: MaterialUIElement) {
-    //todo one row in material list
+fun MaterialListRow(materialUIElement: MaterialUIElement) {
+        Text(text = materialUIElement.material.name) //todo styling
 
-    Image(
-        painter = painterResource(id = R.drawable.latka),
-        contentDescription = "Latka Image", // Accessible description for the image
-        contentScale = ContentScale.Crop, // Scales the image to fill its bounds while preserving aspect ratio
-        modifier = Modifier.size(64.dp) // Adjust size as needed
-    )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = materialUIElement.material.photoPath),
+                contentDescription = "Latka Image", //todo zmenit
+                contentScale = ContentScale.Crop, //todo nechat?
+                modifier = Modifier.size(96.dp) // todo adjust size so the polar plot is somehow readable
+            )
+
+            Spacer(modifier = Modifier.width(24.dp))
+
+            Image( //polar plots wont have axes names so this should be enough size..or make bigger?
+                painter = painterResource(id = materialUIElement.material.fingerprintPath),
+                contentDescription = "Latka fingerprint image",
+                contentScale = ContentScale.Crop, //todo nechat?
+                modifier = Modifier.size(96.dp)  // todo adjust size so the polar plot is somehow readable
+            )
+
+            Checkbox(
+                checked = materialUIElement.checked,
+                onCheckedChange = {
+                    materialUIElement.checked = !materialUIElement.checked
+            },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.End))
+        }
+}
+
+@Composable
+fun BottomButtonsSection(modifier: Modifier) {
+        Button(
+            modifier = modifier,
+            onClick = { /*TODO*/ }) {
+                Text(text = "Find similar material")
+        }
+
+        Button(
+            modifier = modifier,
+            onClick = { /*TODO*/ }) {
+                Text(text = "Create polar plot")
+        }
 
 }
 
@@ -177,6 +289,7 @@ data class DropDownMenuWithCheckboxesItem(
 )
 
 //todo move to core UI elements package
+//inspired by https://stackoverflow.com/questions/75397960/jetpack-compose-combo-box-with-dropdown //todo nechat? zminit?
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuWithCheckboxes(

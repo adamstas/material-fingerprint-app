@@ -18,7 +18,7 @@ import cz.cas.utia.materialfingerprintapp.features.setting.presentation.Permissi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() //todo nechat? je to tu automaticky
+        enableEdgeToEdge() //todo nechat? je to tu automaticky - asi nechat, je to kvuli roztahovani UI spravne
 
         //val intent = Intent(this, Camera::class.java)
         //startActivity(intent)
