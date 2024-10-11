@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-opencv/build
-opencv/.cxx
+/opencv/build
+/opencv/.cxx
