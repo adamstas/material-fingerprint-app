@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 
@@ -30,25 +29,24 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
-import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialCategory
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialEvent
 
 @Composable
-fun BrowseMaterialsScreen() {
+fun BrowseMaterialsScreen(
+    state: MaterialsScreenState,
+    onEvent: (MaterialEvent) -> Unit
+) {
     Scaffold(
         topBar = {
             BackTopBarTitle(title = "Browse materials") //todo rozlisit jestli jsou to lokal/online data?
@@ -62,7 +60,7 @@ fun BrowseMaterialsScreen() {
                     .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
                     .fillMaxSize()
             ) {
-                SearchAndFilterSection()
+                SearchAndFilterSection(state, onEvent)
 
                 CustomSpacer()
 
@@ -77,13 +75,16 @@ fun BrowseMaterialsScreen() {
 }
 
 @Composable
-fun SearchAndFilterSection() {
+fun SearchAndFilterSection(
+    state: MaterialsScreenState,
+    onEvent: (MaterialEvent) -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         MaterialsSearchBar()
-        CategoriesDropdownMenu()
+        CategoriesDropdownMenu(state, onEvent)
     }
 }
 
@@ -95,15 +96,25 @@ fun MaterialsSearchBar() {
 }
 
 @Composable
-fun CategoriesDropdownMenu() {
+fun CategoriesDropdownMenu(
+    state: MaterialsScreenState,
+    onEvent: (MaterialEvent) -> Unit
+) {
     DropdownMenuWithCheckboxes(
         label = "Categories",
-        options = listOf( //todo from state all categories (create automatically)
-            DropDownMenuWithCheckboxesItem("FABRIC", 0),
-            DropDownMenuWithCheckboxesItem("WOOD", 1),
-            DropDownMenuWithCheckboxesItem("LEATHER", 2)
-        ),
-    )
+        options = MaterialCategory.entries.mapIndexed { index, category ->
+                DropDownMenuWithCheckboxesItem(category.toString(), index)//todo zmenit toString?
+            },
+        selectedIDs = state.selectedCategoryIDs,
+        checkOrUncheckItem = { id: Int ->
+            onEvent(MaterialEvent.CheckOrUncheckCategory(id))
+            },
+        expanded = state.isDropdownMenuExpanded,
+        onDropdownMenuClick = { newState: Boolean ->
+            onEvent(MaterialEvent.ShowOrHideDropdownMenu(newState))
+            },
+        onDropdownMenuClosed = { onEvent(MaterialEvent.CloseDropdownMenu) }
+        )
 }
 
 @Composable
@@ -297,33 +308,31 @@ fun DropdownMenuWithCheckboxes(
     options: List<DropDownMenuWithCheckboxesItem>,
     //onOptionsChosen: (List<ComboOption>) -> Unit,
     modifier: Modifier = Modifier, //todo nechat?
-    selectedIds: List<Int> = emptyList(), //todo load from state
+    selectedIDs: List<Int> = emptyList(),
+    checkOrUncheckItem: (Int) -> Unit,
+    expanded: Boolean,
+    onDropdownMenuClick: (Boolean) -> Unit,
+    onDropdownMenuClosed: () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOptionsList = remember { mutableStateListOf<Int>()}
-
-    //load selected categories
-    selectedIds.forEach{
-        selectedOptionsList.add(it)
-    }
-
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-            if (!expanded) {
+        onExpandedChange = onDropdownMenuClick
+
+          //  if (!expanded) {
                // onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
                 //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
+        //todo sem dat logiku ze se do noveho listu ulozi selectovana idcka a teprv na zaklade nej se updatuje _materials list atd.
                 //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
-            }
+           // }
 
-        },
-        modifier = Modifier.width(190.dp), //todo keep hardcoded?
+        ,
+        modifier = Modifier.width(200.dp), //todo keep hardcoded?
     ) {
-        val selectedSummary: String = when (selectedOptionsList.size) {
+        val selectedSummary: String = when (selectedIDs.size) {
+            //todo tohle mít ve statu a predavat jako parametr a pri zmene selected optiosn toto menit taky
             0 -> "None selected"
-            1 -> options.first { it.id == selectedOptionsList.first() }.text
-            else -> "Selected ${selectedOptionsList.size}"
+            1 -> options.first { it.id == selectedIDs.first() }.text
+            else -> "Selected ${selectedIDs.size}"
         }
         TextField(
             modifier = Modifier.menuAnchor(),
@@ -336,54 +345,36 @@ fun DropdownMenuWithCheckboxes(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = {
-                expanded = false
+            onDismissRequest = onDropdownMenuClosed
+            //{
+                //expanded = false
                 //onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
                 //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
                 //ale mozna tahle logika staci jen výš, otestovat
                 //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
-            },
+            //},
+        ,
         ) {
             for (option in options) {
-                var checked = remember {
-                    derivedStateOf{option.id in selectedOptionsList}
-                }.value
-
+                val checked = option.id in selectedIDs
                 DropdownMenuItem(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
                                 checked = checked,
-                                onCheckedChange = { newCheckedState ->
-                                    if (newCheckedState) {
-                                        selectedOptionsList.add(option.id)
-                                    } else {
-                                        selectedOptionsList.remove(option.id)
-                                    }
+                                onCheckedChange = {
+                                    checkOrUncheckItem(option.id)
                                 },
                             )
                             Text(text = option.text)
                         }
                     },
                     onClick = {
-                        if (!checked) {
-                            selectedOptionsList.add(option.id)
-                        } else {
-                            selectedOptionsList.remove(option.id)
-                        }
+                        checkOrUncheckItem(option.id)
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }
-    }
-}
-
-
-@Preview
-@Composable
-fun BrowseMaterialsScreenPreview() {
-    CustomAppTheme {
-        BrowseMaterialsScreen()
     }
 }

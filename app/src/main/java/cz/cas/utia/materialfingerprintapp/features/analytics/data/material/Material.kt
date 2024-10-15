@@ -39,5 +39,14 @@ enum class MaterialCategory {
     PLASTIC,
     PAPER,
     COATING,
-    UNCATEGORIZED
+    UNCATEGORIZED;
+
+    companion object { //so the enum can have "static" method
+        //todo osetrit velky index nebo neresit?
+        fun fromIDs(ids: List<Int>): List<MaterialCategory> {
+            return ids.map { index ->
+                MaterialCategory.entries[index]
+            }
+        }
+    }
 }

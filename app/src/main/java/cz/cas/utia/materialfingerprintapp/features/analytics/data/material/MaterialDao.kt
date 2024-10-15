@@ -18,6 +18,6 @@ interface MaterialDao {
     @Delete
     suspend fun deleteMaterial(material: Material) //todo will be used?
 
-    @Query("SELECT * FROM material ORDER BY name ASC")
-    fun getMaterialsOrderedByName(): Flow<List<Material>>
+    @Query("SELECT * FROM material WHERE category in (:categories) ORDER BY name ASC")
+    fun getMaterialsOrderedByName(categories: List<MaterialCategory>): Flow<List<Material>>
 }

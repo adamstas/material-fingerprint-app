@@ -11,9 +11,14 @@ sealed interface MaterialEvent {
 
     //todo pokud budou tyhle funkce pouzity i v Camera feature, tak to mozna hodit do Core nebo promyslet, co s tim (treba to bude OK)
 
-    data class FilterMaterialsByCategory(val categories: List<MaterialCategory>): MaterialEvent
+    data class FilterMaterialsByCategory(val categoryIDs: List<Int>): MaterialEvent
 
     data class CheckOrUncheckMaterial(val materialUIElement: MaterialUIElement): MaterialEvent
+
+    data class CheckOrUncheckCategory(val categoryID: Int): MaterialEvent
+
+    data class ShowOrHideDropdownMenu(val newState: Boolean): MaterialEvent
+    data object CloseDropdownMenu: MaterialEvent
 
     //todo search
 }

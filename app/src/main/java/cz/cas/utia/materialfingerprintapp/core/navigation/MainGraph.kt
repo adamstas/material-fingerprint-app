@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.BrowseMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.MaterialsScreenState
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
 
 @Composable
@@ -28,7 +29,7 @@ fun MainGraph(
         }
 
         composable<AnalyticsScreens> {
-            BrowseMaterialsScreen()
+           // BrowseMaterialsScreen(state = MaterialsScreenState(), onEvent = M)
         }
     }
 }
