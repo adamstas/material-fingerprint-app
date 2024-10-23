@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Material(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val id: Int = 0, //ID will be overriden by the generated ID by Room Database
     val serverId: Int,
     val name: String,
     val photoPath: Int,//made int so i can load test images from resources

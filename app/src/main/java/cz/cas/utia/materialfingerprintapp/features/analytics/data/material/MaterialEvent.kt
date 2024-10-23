@@ -1,7 +1,5 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.MaterialUIElement
-
 sealed interface MaterialEvent {
     //data object SaveMaterial: MaterialEvent
     data class SetName(val name: String): MaterialEvent //todo set name a set server id asi dat do camera feature
@@ -13,7 +11,8 @@ sealed interface MaterialEvent {
 
     data class FilterMaterialsByCategory(val categoryIDs: List<Int>): MaterialEvent
 
-    data class CheckOrUncheckMaterial(val materialUIElement: MaterialUIElement): MaterialEvent
+    data class CheckMaterial(val materialID: Int): MaterialEvent
+    data class UncheckMaterial(val materialID: Int): MaterialEvent
 
     data class CheckOrUncheckCategory(val categoryID: Int): MaterialEvent
 

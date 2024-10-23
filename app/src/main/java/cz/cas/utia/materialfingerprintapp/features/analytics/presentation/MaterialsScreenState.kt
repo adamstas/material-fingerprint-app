@@ -5,10 +5,20 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.Mater
 
 data class MaterialsScreenState(
     val materials: List<Material> = emptyList(),
-    val materialUIElements: List<MaterialUIElement> = emptyList(), //todo keep these initial values? or introduce Loaded state etc.?
+ //todo keep these initial values? or introduce Loaded state etc.?
+    val checkedMaterials: Set<Int> = emptySet(),
 
     val selectedCategoryIDs: List<Int> = (0..<MaterialCategory.entries.size).toList(), //default all categories selected
-    val isDropdownMenuExpanded: Boolean = false
+    val selectedCategoriesText: String = "Selected " + MaterialCategory.entries.size,
+    val isDropdownMenuExpanded: Boolean = false,
 
     //todo search bar text
+
+    val isFindSimilarMaterialButtonEnabled: Boolean = false,
+    val isCreatePolarPlotButtonEnabled: Boolean = false
     )
+{
+    fun isMaterialChecked(materialID: Int): Boolean {
+        return checkedMaterials.contains(materialID)
+    }
+}

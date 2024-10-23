@@ -15,9 +15,19 @@ interface MaterialDao {
     @Insert
     suspend fun insertMaterial(material: Material)
 
+    @Insert
+    suspend fun insertMaterials(materials: List<Material>) //now just for DB seeding
+
     @Delete
     suspend fun deleteMaterial(material: Material) //todo will be used?
 
     @Query("SELECT * FROM material WHERE category in (:categories) ORDER BY name ASC")
     fun getMaterialsOrderedByName(categories: List<MaterialCategory>): Flow<List<Material>>
+
+    @Query("SELECT COUNT(*) FROM material")
+    suspend fun getMaterialsCount(): Int //delete later, now used just for DB init
+
+    @Query("DELETE FROM material") //just for testing, delete later
+    suspend fun deleteAllMaterials()
+
 }

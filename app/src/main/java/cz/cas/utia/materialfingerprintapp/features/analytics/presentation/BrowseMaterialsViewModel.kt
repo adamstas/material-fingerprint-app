@@ -10,35 +10,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 //todo pridat nejaky Repository jeste mezi k ViewvModelu a Dao?
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BrowseMaterialsViewModel(
     private val dao: MaterialDao //todo later add dependency injection
 ): ViewModel() {
-
-    //private val _isDropDownMenuExpanded = MutableStateFlow //todo rozmyslet, ktere promenne budou jen ve statu a ktere i tady s podtrzitkem
-
+    //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v voleani combine, kde vznika state pro UI
     private val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
+    private val _checkedMaterials = MutableStateFlow<Set<Int>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
 
-
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val _materials = _selectedCategoryIDs.flatMapLatest { selectedCategories ->
         dao.getMaterialsOrderedByName(MaterialCategory.fromIDs(selectedCategories))
-    }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
-    private val _materialUIElements = _materials.map { materials ->
-        materials.map { material ->
-            MaterialUIElement(
-                material = material,
-                checked = false
-            )
-        }
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -49,69 +37,90 @@ class BrowseMaterialsViewModel(
    // val isSearching = _isSearching.asStateFlow()
 
     private val _state = MutableStateFlow(MaterialsScreenState())
-    val state = combine(_state, _selectedCategoryIDs, _materials, _materialUIElements)
-    { state, selectedCategoryIDs, materials, materialUIElements ->
+    val state = combine(_state, _selectedCategoryIDs, _materials, _checkedMaterials)
+    { state, selectedCategoryIDs, materials, checkedMaterials ->
         state.copy(
             selectedCategoryIDs = selectedCategoryIDs,
             materials = materials,
-            materialUIElements = materialUIElements
+            checkedMaterials = checkedMaterials
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaterialsScreenState())
 
+    private fun enableOrDisableFindSimilarMaterialButton() {
+        val enable = _checkedMaterials.value.size == 1
+        _state.update {
+            it.copy(
+                isFindSimilarMaterialButtonEnabled = enable
+            )
+        }
+    }
+
+    private fun enableOrDisableCreatePolarPlotButton() {
+        val enable = _checkedMaterials.value.size in 1..2
+        _state.update {
+            it.copy(
+                isCreatePolarPlotButtonEnabled = enable
+            )
+        }
+    }
+
+    private fun updateButtons() {
+        enableOrDisableFindSimilarMaterialButton()
+        enableOrDisableCreatePolarPlotButton()
+    }
+
+    private fun updateSelectedCategoriesText() {
+        _state.update {
+            it.copy(
+                selectedCategoriesText = when (_selectedCategoryIDs.value.size) {
+                    0 -> "None selected"
+                    1 -> MaterialCategory.fromIDs(_selectedCategoryIDs.value).first().toString()
+                    else -> "Selected ${_selectedCategoryIDs.value.size}"
+                }
+            )
+        }
+    }
+
+    init {
+        _materials.onEach { _ ->
+            _checkedMaterials.value = emptySet()
+            updateButtons()
+        }.launchIn(viewModelScope)
+
+        _checkedMaterials.onEach {
+            updateButtons()
+        }.launchIn(viewModelScope)
+    }
+
     fun onEvent(event: MaterialEvent) {
         when (event) {
-            is MaterialEvent.CheckOrUncheckMaterial -> {
-                _state.update { currentState ->
-                    val changedMaterialIndex = currentState.materialUIElements.indexOfFirst {
-                        it.material.id == event.materialUIElement.material.id
-                    }
-                    //there was check if material was found but i deleted it - was it needed? (if index is -1, return current state)
-                    val updatedMaterialUIElements = currentState.materialUIElements.toMutableList().apply { //todo udelat to lepe bez mutable listu? ale asi to neresit..
-                        val material = this[changedMaterialIndex]
-                        this[changedMaterialIndex] = material.copy(checked = !material.checked)
-                        //todo add list of checked materials so they are easy to get when user wants to create polar plot
-                    }
-                    currentState.copy(materialUIElements = updatedMaterialUIElements)
-                    //todo can keep list of materials and also keep idx of every material in the materials itself => finding checked/unchecked material would take O(1) but code less simple -> test if slow right now
-                }
+            is MaterialEvent.CheckMaterial -> {
+                _checkedMaterials.value += event.materialID
             }
-            is MaterialEvent.FilterMaterialsByCategory -> {
+
+            is MaterialEvent.UncheckMaterial -> {
+                _checkedMaterials.value -= event.materialID
+            }
+
+            is MaterialEvent.FilterMaterialsByCategory -> { //todo unused? mozna pouzit kdyz vyjede z Categories dropdownMenu
                 _selectedCategoryIDs.value = event.categoryIDs
-
-//                val updatedMaterialsFlow = dao.getMaterialsOrderedByName(event.categories)
-//                val updatedMaterialsUIElements = updatedMaterialsFlow.mapLatest { updatedMaterials ->
-//                    updatedMaterials.map { updatedMaterial ->
-//                        MaterialUIElement(
-//                            material = updatedMaterial,
-//                            checked = false
-//                        )
-//                    }
-//                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()) })
-//
-//                 _materials.value = updatedMaterialsUIElements
-//
-//                _state.update { currentState ->
-//                    currentState.copy(materials = updatedMaterialsUIElements)
-//                }
-
             }
+
             is MaterialEvent.SetName -> TODO()
             is MaterialEvent.SetServerId -> TODO()
 
             is MaterialEvent.CheckOrUncheckCategory -> {
-               // _selectedCategoryIDs.value = event.categoryID
-
-                var updatedList = _selectedCategoryIDs.value
-                if (event.categoryID in _selectedCategoryIDs.value) {
+                val updatedList = if (event.categoryID in _selectedCategoryIDs.value) {
                     //unchecked the category
-                    updatedList = updatedList - event.categoryID
+                    _selectedCategoryIDs.value - event.categoryID
                 } else {
                     //checked the category
-                    updatedList = updatedList + event.categoryID
+                    _selectedCategoryIDs.value + event.categoryID
                 }
                 _selectedCategoryIDs.value = updatedList.sortedBy { id ->
-                    MaterialCategory.entries[id].ordinal //todo je to ok? vyzkouset az bude funkcni DB
+                    MaterialCategory.entries[id].ordinal
                 }
+                updateSelectedCategoriesText()
             }
 
            is MaterialEvent.ShowOrHideDropdownMenu -> {
