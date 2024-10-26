@@ -21,8 +21,14 @@ interface MaterialDao {
     @Delete
     suspend fun deleteMaterial(material: Material) //todo will be used?
 
-    @Query("SELECT * FROM material WHERE category in (:categories) ORDER BY name ASC")
-    fun getMaterialsOrderedByName(categories: List<MaterialCategory>): Flow<List<Material>>
+    @Query("SELECT * FROM material " +
+            "WHERE category in (:categories) " +
+            "AND name LIKE '%' || :searchText || '%'" +
+            "ORDER BY name ASC")
+    suspend fun getMaterialsOrderedByName(categories: List<MaterialCategory>, searchText: String): List<Material>
+
+    @Query("SELECT * FROM material ORDER BY name ASC")
+    suspend fun getAllMaterialsOrderedByName(): List<Material>
 
     @Query("SELECT COUNT(*) FROM material")
     suspend fun getMaterialsCount(): Int //delete later, now used just for DB init

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -20,7 +21,9 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,39 +84,62 @@ fun SearchAndFilterSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        MaterialsSearchBar()
-        CategoriesDropdownMenu(state, onEvent)
+        MaterialsSearchBar(
+            state,
+            onEvent,
+            Modifier.weight(0.8f)
+        )
+        Spacer(modifier = Modifier.size(10.dp))
+
+        CategoriesDropdownMenu(
+            state,
+            onEvent,
+            Modifier.weight(0.7f)
+        )
     }
 }
 
 @Composable
-fun MaterialsSearchBar() {
-    //todo finish this
-    Text("I will be a search bar")
+fun MaterialsSearchBar(
+    state: MaterialsScreenState,
+    onEvent: (MaterialEvent) -> Unit,
+    modifier: Modifier
+) {
+    TextField(
+        value = state.searchBarText,
+        onValueChange = { searchText: String ->
+            onEvent(MaterialEvent.SearchMaterials(searchText))
+            },
+        placeholder = { Text(text = "Search...") },
+        modifier = modifier
+    )
     //maybe put the search bar up the categories top down menu in case the top down menu is too wide
 }
 
 @Composable
 fun CategoriesDropdownMenu(
     state: MaterialsScreenState,
-    onEvent: (MaterialEvent) -> Unit
+    onEvent: (MaterialEvent) -> Unit,
+    modifier: Modifier
 ) {
-    DropdownMenuWithCheckboxes(
-        label = "Categories",
-        options = MaterialCategory.entries.mapIndexed { index, category ->
+    Box(modifier = modifier) {
+        DropdownMenuWithCheckboxes(
+            label = "Categories",
+            options = MaterialCategory.entries.mapIndexed { index, category ->
                 DropDownMenuWithCheckboxesItem(category.toString(), index)
             },
-        selectedIDs = state.selectedCategoryIDs,
-        selectedText = state.selectedCategoriesText,
-        checkOrUncheckItem = { id: Int ->
-            onEvent(MaterialEvent.CheckOrUncheckCategory(id))
+            selectedIDs = state.selectedCategoryIDs,
+            selectedText = state.selectedCategoriesText,
+            checkOrUncheckItem = { id: Int ->
+                onEvent(MaterialEvent.CheckOrUncheckCategory(id))
             },
-        expanded = state.isDropdownMenuExpanded,
-        onDropdownMenuClick = { newState: Boolean ->
-            onEvent(MaterialEvent.ShowOrHideDropdownMenu(newState))
+            expanded = state.isDropdownMenuExpanded,
+            onDropdownMenuClick = { newState: Boolean ->
+                onEvent(MaterialEvent.ShowOrHideDropdownMenu(newState))
             },
-        onDropdownMenuClosed = { onEvent(MaterialEvent.CloseDropdownMenu) }
+            onDropdownMenuClosed = { onEvent(MaterialEvent.CloseDropdownMenu) }
         )
+    }
 }
 
 @Composable
@@ -122,15 +148,29 @@ fun MaterialsListSection(
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier
 ) {
-    LazyColumn(modifier = modifier)
-     {
-        items(state.materials) { material ->
-            MaterialListRow(
-                material = material,
-                state = state,
-                onEvent = onEvent
+    if (state.isMaterialsListEmpty()) {
+        Box(
+            //use the modifier in parameters (otherwise the buttons go away) and apply fillMaxSize() to it
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No material found",
+                style = MaterialTheme.typography.titleLarge
             )
-            CustomHorizontalDivider()
+        }
+
+    } else {
+        LazyColumn(modifier = modifier)
+        {
+            items(state.materials) { material ->
+                MaterialListRow(
+                    material = material,
+                    state = state,
+                    onEvent = onEvent
+                )
+                CustomHorizontalDivider()
+            }
         }
     }
 }

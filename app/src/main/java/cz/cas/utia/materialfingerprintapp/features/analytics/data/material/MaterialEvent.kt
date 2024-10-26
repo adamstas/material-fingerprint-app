@@ -19,5 +19,5 @@ sealed interface MaterialEvent {
     data class ShowOrHideDropdownMenu(val newState: Boolean): MaterialEvent
     data object CloseDropdownMenu: MaterialEvent
 
-    //todo search
+    data class SearchMaterials(val searchedText: String): MaterialEvent
 }

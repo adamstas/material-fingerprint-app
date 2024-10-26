@@ -1,7 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.core.ui.components
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,7 +11,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 data class DropDownMenuWithCheckboxesItem(
     val text: String,
@@ -44,7 +42,6 @@ fun DropdownMenuWithCheckboxes(
         //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
         // }
         ,
-        modifier = Modifier.width(200.dp), //todo keep hardcoded?
     ) {
         TextField(
             modifier = Modifier.menuAnchor(),

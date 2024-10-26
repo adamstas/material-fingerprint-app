@@ -12,7 +12,8 @@ data class MaterialsScreenState(
     val selectedCategoriesText: String = "Selected " + MaterialCategory.entries.size,
     val isDropdownMenuExpanded: Boolean = false,
 
-    //todo search bar text
+    val searchBarText: String = "",
+    val isSearching: Boolean = false,
 
     val isFindSimilarMaterialButtonEnabled: Boolean = false,
     val isCreatePolarPlotButtonEnabled: Boolean = false
@@ -20,5 +21,9 @@ data class MaterialsScreenState(
 {
     fun isMaterialChecked(materialID: Int): Boolean {
         return checkedMaterials.contains(materialID)
+    }
+
+    fun isMaterialsListEmpty(): Boolean {
+        return materials.isEmpty()
     }
 }
