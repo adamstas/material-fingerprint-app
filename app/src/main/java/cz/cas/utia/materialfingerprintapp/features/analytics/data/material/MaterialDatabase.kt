@@ -3,6 +3,8 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import cz.cas.utia.materialfingerprintapp.R
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 
 @Database(
     entities = [Material::class],

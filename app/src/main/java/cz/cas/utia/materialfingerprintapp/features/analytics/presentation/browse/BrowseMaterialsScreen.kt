@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.analytics.presentation
+package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
@@ -34,9 +35,8 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDiv
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithCheckboxesItem
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.Material
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialCategory
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialEvent
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 
 @Composable
 fun BrowseMaterialsScreen(
@@ -110,7 +110,7 @@ fun MaterialsSearchBar(
         onValueChange = { searchText: String ->
             onEvent(MaterialEvent.SearchMaterials(searchText))
             },
-        placeholder = { Text(text = "Search...") },
+        placeholder = { Text(text = "Search for name...") },
         modifier = modifier
     )
     //maybe put the search bar up the categories top down menu in case the top down menu is too wide
@@ -134,9 +134,7 @@ fun CategoriesDropdownMenu(
                 onEvent(MaterialEvent.CheckOrUncheckCategory(id))
             },
             expanded = state.isDropdownMenuExpanded,
-            onDropdownMenuClick = { newState: Boolean ->
-                onEvent(MaterialEvent.ShowOrHideDropdownMenu(newState))
-            },
+            onDropdownMenuClick = { onEvent(MaterialEvent.ShowDropdownMenu) },
             onDropdownMenuClosed = { onEvent(MaterialEvent.CloseDropdownMenu) }
         )
     }
@@ -148,18 +146,22 @@ fun MaterialsListSection(
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier
 ) {
-    if (state.isMaterialsListEmpty()) {
-        Box(
-            //use the modifier in parameters (otherwise the buttons go away) and apply fillMaxSize() to it
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "No material found",
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-
+    if (state.isSearching) {
+        CenterBox(
+            modifier = modifier,
+            content = { CircularProgressIndicator() }
+        )
+    }
+    else if (state.isMaterialsListEmpty()) {
+        CenterBox(
+            modifier = modifier,
+            content = {
+                Text(
+                    text = "No material found",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+        )
     } else {
         LazyColumn(modifier = modifier)
         {
@@ -235,4 +237,18 @@ fun BottomButtonsSection(
             onClick = { /*TODO*/ }) {
                 Text(text = "Create polar plot")
         }
+}
+
+@Composable
+fun CenterBox(
+    modifier: Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        //use the modifier in parameters (otherwise the buttons go away) and apply fillMaxSize() to it
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
 }

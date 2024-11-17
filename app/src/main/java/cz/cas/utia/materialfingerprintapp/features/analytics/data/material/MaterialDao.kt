@@ -4,7 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 
 @Dao
 interface MaterialDao {

@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
+package cz.cas.utia.materialfingerprintapp.features.analytics.domain
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

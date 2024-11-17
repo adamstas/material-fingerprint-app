@@ -1,8 +1,9 @@
 package cz.cas.utia.materialfingerprintapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import cz.cas.utia.materialfingerprintapp.ImageAnalyzer;
-
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCamera2View;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
@@ -31,8 +27,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class CustomCameraView extends JavaCameraView implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -43,6 +39,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
     private boolean targetImageLocked = false;
     private final TargetImage targetImage = new TargetImage();
 
+    private int yOffset;
+    private int cameraHeightRealPixels;
 
     public CustomCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,8 +52,13 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
     }
 
     @Override
-    public void onCameraViewStarted(int width, int height) {
+    public void onCameraViewStarted(int cameraFrameWidth, int cameraFrameHeight) {
         // Initialize any resources needed for processing
+        double scale = getWidth() / (double) cameraFrameWidth;
+
+        cameraHeightRealPixels = (int) (cameraFrameHeight * scale);
+
+        yOffset = (getHeight() - cameraHeightRealPixels) / 2;
     }
 
     @Override
@@ -66,27 +69,33 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        Log.d("dimens", "frame width: " + mFrameWidth + ", frame height: " + mFrameHeight);
+
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-            Log.d("nesmysly", "Clicked");
 
-            float touchX = event.getX();
-            float touchY = event.getY();
+            Log.d(TAG, "ACTION_DOWN is being handled.");
+
+            double touchX = (event.getX() / (double) getWidth()) * mFrameWidth;
+            double touchY = ((event.getY() - yOffset) / cameraHeightRealPixels) * mFrameHeight;
 
             Point clickPoint = new Point(touchX, touchY);
 
             if (targetImageLocked) {
-                Log.d("nesmysly", "In target image locked");
-                Log.d("nesmysly", "clickPoint: " + clickPoint);
+
+                Log.d(TAG, "Clicked when target image is locked");
+
 
                 MatOfPoint2f contour2f = new MatOfPoint2f(targetImage.cont.toArray());
-                for(Point point : contour2f.toList()){
-                    Log.d("nesmysly", "contour: " + point.x +" " + point.y);
+
+                for (Point array : contour2f.toArray()) {
+                    Log.d(TAG, array.toString());
                 }
 
                 if (Imgproc.pointPolygonTest(contour2f, clickPoint, false) >= 0) {
-                    Log.d("nesmysly", "Clicked inside the polygon");
+
                     selectLastTargetPhoto();
+
                 }
 
             }
@@ -113,14 +122,6 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         // Set the Bitmap to the ImageView
         imageView.setImageBitmap(materialBitmap);
 
-        // Set up buttons
-        btn1.setOnClickListener(v -> {
-            // Handle button 1 click
-        });
-
-        btn2.setOnClickListener(v -> {
-            // Handle button 2 click
-        });
 
         // Create and show the PopupWindow
         PopupWindow popupWindow = new PopupWindow(popupView,
@@ -133,6 +134,28 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
                 android.view.Gravity.CENTER,
                 0,
                 0);
+
+
+        // Set up buttons
+        btn1.setOnClickListener((ignored) -> popupWindow.dismiss());
+
+        btn2.setOnClickListener(v -> {
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            materialBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("material_photo", byteArray);
+
+
+            Context context = getContext();
+            if (context instanceof Activity) {
+                Activity activity = (Activity) context;
+                activity.setResult(Activity.RESULT_OK, resultIntent);
+                activity.finish(); // Close the activity and return the result
+            }
+        });
 
     }
 
@@ -168,18 +191,23 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
 
         Imgproc.warpPerspective(targetImage.getPhoto(), dst, homography, new Size(destWidth, destHeight));
 
-        // Create a submatrix (slice of the image)
-        Rect roi = new Rect(widthPadding, heightPadding, TARGET_INNER_SIZE, TARGET_INNER_SIZE); // Define the region of interest (ROI)
+        // Create a submatrix(slice of the image)
+        // Define the region of interest (ROI)
+        Rect roi = new Rect(widthPadding, heightPadding, TARGET_INNER_SIZE, TARGET_INNER_SIZE);
+
         return new Mat(dst, roi);
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+
         // Perform image processing here
         Mat imageMat = inputFrame.rgba();
 
+
         Mat gray = new Mat();
         Mat blackTh = new Mat();
+
 
         Imgproc.cvtColor(imageMat, gray, Imgproc.COLOR_BGR2GRAY);
 
@@ -187,7 +215,11 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
 
         List<MatOfPoint> contours = ImageAnalyzer.findRects(blackTh, 500, 0.15);
 
-        Log.d(TAG, "Found: " + contours.size() + " contours.");
+        Log.d(TAG, "Found: " + contours.size() + " contour(s).");
+
+        // TODO: handle situations, where the phone is laying on the table and the whole image is a black contour
+        // TODO: in that case, the rect shouldn't be detected
+        // TODO: the contour area shouldn't be too close to the whole image area
 
         if (contours.size() == 1) {
             Scalar color;
@@ -216,7 +248,7 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         return imageMat;
     }
 
-    public class TargetImage {
+    public static class TargetImage {
         private Mat photo;
         private MatOfPoint cont;
 

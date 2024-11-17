@@ -22,9 +22,12 @@ import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialDatabase
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.RoomMaterialRepositoryImpl
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.initialData
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.BrowseMaterialsScreen
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.BrowseMaterialsViewModel
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsViewModel
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseMaterialsViewModel
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseRemoteMaterialsViewModel
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.PermissionsScreen
 import kotlinx.coroutines.launch
 
@@ -38,12 +41,17 @@ class MainActivity : ComponentActivity() {
             "materials.db"
         ).build()
     }
+
+    private val materialRepository by lazy {
+        RoomMaterialRepositoryImpl(db.materialDao)
+    }
+
     private val viewModel by viewModels<BrowseMaterialsViewModel>(
         factoryProducer = {
             object: ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T: ViewModel> create(modelClass: Class<T>): T {
-                    return BrowseMaterialsViewModel(db.materialDao) as T
+                    return BrowseRemoteMaterialsViewModel(materialRepository) as T
                 }
             }
         }
@@ -54,11 +62,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //todo nechat? je to tu automaticky - asi nechat, je to kvuli roztahovani UI spravne
 
-        //val intent = Intent(this, Camera::class.java)
-        //startActivity(intent)
+//      val intent = Intent(this, Camera::class.java)
+//      startActivity(intent)
         setContent {
             CustomAppTheme {
-               // MainNavigation()
+                MainNavigation()
 
                 lifecycleScope.launch { //todo init somewhere else
                     if (db.materialDao.getMaterialsCount() == 0) {
