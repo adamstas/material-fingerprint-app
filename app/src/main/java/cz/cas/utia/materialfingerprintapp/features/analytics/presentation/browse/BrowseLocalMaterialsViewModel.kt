@@ -1,13 +1,16 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse
 
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class BrowseLocalMaterialsViewModel(
-    materialRepository: MaterialRepository
+@HiltViewModel
+class BrowseLocalMaterialsViewModel @Inject constructor(
+    materialRepository: LocalMaterialRepository
 ): BrowseMaterialsViewModel(materialRepository) {
 
     init {

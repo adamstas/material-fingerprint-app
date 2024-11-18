@@ -26,6 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,15 +39,49 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
+import androidx.hilt.navigation.compose.hiltViewModel
+
+@Composable
+fun BrowseLocalMaterialsScreen(
+    viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
+    /**
+     * todo:
+     * udelat RootMaterialScreenComposable anebo odkud sem dát hiltViewModel,
+     * abych pak mohl dávat uz jen onEvent funkci? - spis pro jine screeny to udelat,
+     * tady jsem to nedelal protoze mam dva rooty - remote a local
+     */
+) {
+    val state by viewModel.state.collectAsState()
+
+    BrowseMaterialsScreen(
+        title = "Browse local materials",
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+fun BrowseRemoteMaterialsScreen(
+    viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+
+    BrowseMaterialsScreen(
+        title = "Browse remote materials",
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
 
 @Composable
 fun BrowseMaterialsScreen(
+    title: String,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
 ) {
     Scaffold(
         topBar = {
-            BackTopBarTitle(title = "Browse materials") //todo rozlisit jestli jsou to lokal/online data?
+            BackTopBarTitle(title = title)
         }
     ) { paddingValues ->
             Column(

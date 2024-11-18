@@ -6,57 +6,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
 import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialDatabase
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.RoomMaterialRepositoryImpl
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.initialData
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsViewModel
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseMaterialsScreen
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseMaterialsViewModel
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseRemoteMaterialsViewModel
-import cz.cas.utia.materialfingerprintapp.features.setting.presentation.PermissionsScreen
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    //todo dependency injection
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            MaterialDatabase::class.java,
-            "materials.db"
-        ).build()
-    }
-
-    private val materialRepository by lazy {
-        RoomMaterialRepositoryImpl(db.materialDao)
-    }
-
-    private val viewModel by viewModels<BrowseMaterialsViewModel>(
-        factoryProducer = {
-            object: ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T: ViewModel> create(modelClass: Class<T>): T {
-                    return BrowseRemoteMaterialsViewModel(materialRepository) as T
-                }
-            }
-        }
-    )
-
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,18 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CustomAppTheme {
                 MainNavigation()
-
-                lifecycleScope.launch { //todo init somewhere else
-                    if (db.materialDao.getMaterialsCount() == 0) {
-                        //db.materialDao.deleteAllMaterials()
-                        db.materialDao.insertMaterials(initialData())
-                    }
-                }
-
-                val state by viewModel.state.collectAsState()
-                BrowseMaterialsScreen(state = state, onEvent = viewModel::onEvent)
                 //PermissionsScreen()
-
             }
         }
     }

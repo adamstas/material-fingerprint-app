@@ -4,9 +4,10 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.Loc
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class RoomMaterialRepositoryImpl(
-    private val materialDao: MaterialDao //todo inject with DI
+class RoomMaterialRepositoryImpl @Inject constructor(
+    private val materialDao: MaterialDao
 ): LocalMaterialRepository {
 
     override suspend fun getAllMaterialsOrderedByName(): List<Material> {

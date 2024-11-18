@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsScreen
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
 
 @Composable
@@ -27,7 +28,9 @@ fun MainGraph(
         }
 
         composable<AnalyticsScreens> {
-           // BrowseMaterialsScreen(state = MaterialsScreenState(), onEvent = M)
+            BrowseLocalMaterialsScreen()
+            //BrowseRemoteMaterialsScreen() //todo test this screen when i have working remote repository
+            //here will be another screen from which user goes to browse local / browse remote / filter..
         }
     }
 }

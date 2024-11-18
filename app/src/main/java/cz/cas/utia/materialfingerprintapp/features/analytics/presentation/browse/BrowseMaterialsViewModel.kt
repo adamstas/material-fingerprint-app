@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 abstract class BrowseMaterialsViewModel(
     private val materialRepository: MaterialRepository
-//todo later add dependency injection
 ): ViewModel() {
     //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v voleani combine, kde vznika state pro UI
     protected val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
