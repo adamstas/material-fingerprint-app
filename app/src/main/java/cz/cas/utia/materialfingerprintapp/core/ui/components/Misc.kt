@@ -19,5 +19,5 @@ fun CustomHorizontalDivider() {
 
 @Composable
 fun CustomSpacer() {
-    Spacer(modifier = Modifier.size(15.dp))
+    Spacer(modifier = Modifier.size(16.dp))
 }

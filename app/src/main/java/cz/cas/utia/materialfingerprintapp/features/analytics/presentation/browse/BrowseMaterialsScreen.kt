@@ -46,7 +46,7 @@ fun BrowseLocalMaterialsScreen(
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
     /**
      * todo:
-     * udelat RootMaterialScreenComposable anebo odkud sem dát hiltViewModel,
+     * udelat RootMaterialScreenComposable (BrowseMaterialsScreenRoot) anebo odkud sem dát hiltViewModel,
      * abych pak mohl dávat uz jen onEvent funkci? - spis pro jine screeny to udelat,
      * tady jsem to nedelal protoze mam dva rooty - remote a local
      */

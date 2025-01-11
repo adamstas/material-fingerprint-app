@@ -1,16 +1,11 @@
 package cz.cas.utia.materialfingerprintapp;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import org.opencv.android.OpenCVLoader;
 import android.util.Log;
 
+//todo is this class used? udelat si poradek v tech camera views atd.
 public class Camera extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -33,7 +28,7 @@ public class Camera extends AppCompatActivity {
         // Initialize the custom camera view
         cameraView = findViewById(R.id.camera_view);
 
-        cameraView.setContext(this);
+        //cameraView.setContext(this); TODO pokud toto je potreba tam vratit metodu setContext() do cameraView
 
         // Start the camera view
         cameraView.setCameraPermissionGranted();

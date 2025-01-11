@@ -1,19 +1,10 @@
 package cz.cas.utia.materialfingerprintapp;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
@@ -26,15 +17,13 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
-import java.io.ByteArrayOutputStream;
 import java.util.List;
+
+import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.ImageCapturedListener;
 
 public class CustomCameraView extends JavaCameraView implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     public static final String TAG = CustomCameraView.class.getSimpleName();
-
-    private Context context;
 
     private boolean targetImageLocked = false;
     private final TargetImage targetImage = new TargetImage();
@@ -42,13 +31,15 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
     private int yOffset;
     private int cameraHeightRealPixels;
 
+    private ImageCapturedListener imageCapturedListener;
+
+    public void setOnImageCapturedListener(ImageCapturedListener listener) {
+        this.imageCapturedListener = listener;
+    }
+
     public CustomCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setCvCameraViewListener(this);
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 
     @Override
@@ -94,7 +85,7 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
 
                 if (Imgproc.pointPolygonTest(contour2f, clickPoint, false) >= 0) {
 
-                    selectLastTargetPhoto();
+                    selectLastTargetPhoto(); //todo timhle by to melo proste zvolit posledni zeleny ramecek jako fotku = kdyz bych implementoval tlacitko na foceni tak volat tuhle metodu
 
                 }
 
@@ -111,52 +102,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         Bitmap materialBitmap = Bitmap.createBitmap(materialImage.cols(), materialImage.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(materialImage, materialBitmap);
 
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View popupView = inflater.inflate(R.layout.popup_layout, null);
-
-        // Find the ImageView and Buttons in the popup layout
-        ImageView imageView = popupView.findViewById(R.id.popup_image_view);
-        Button btn1 = popupView.findViewById(R.id.btn1);
-        Button btn2 = popupView.findViewById(R.id.btn2);
-
-        // Set the Bitmap to the ImageView
-        imageView.setImageBitmap(materialBitmap);
-
-
-        // Create and show the PopupWindow
-        PopupWindow popupWindow = new PopupWindow(popupView,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                true);
-
-        // Show the PopupWindow (adjust the anchor view as needed)
-        popupWindow.showAtLocation(this,
-                android.view.Gravity.CENTER,
-                0,
-                0);
-
-
-        // Set up buttons
-        btn1.setOnClickListener((ignored) -> popupWindow.dismiss());
-
-        btn2.setOnClickListener(v -> {
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            materialBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("material_photo", byteArray);
-
-
-            Context context = getContext();
-            if (context instanceof Activity) {
-                Activity activity = (Activity) context;
-                activity.setResult(Activity.RESULT_OK, resultIntent);
-                activity.finish(); // Close the activity and return the result
-            }
-        });
-
+        //todo add check if listener not null?
+        imageCapturedListener.onImageCaptured(materialBitmap);
     }
 
     private Mat getInnerImagePart() {
@@ -226,7 +173,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
             MatOfPoint rectCont = contours.get(0);
             if (ImageAnalyzer.isStraight(rectCont, 5) && ImageAnalyzer.isRect(rectCont, 0.1)) {
                 color = new Scalar(0, 255, 0);
-                targetImageLocked = true;
+                targetImageLocked = true; //todo tahle promenna rika ze je ramecek zeleny => udelat dalsi listener asi a na zaklade toho ovladat tlacitko na foceni (enabled/disabled)
+                Log.i("LOCKED", "zezelenalo");
                 targetImage.setCont(rectCont);
                 targetImage.setPhoto(imageMat);
             } else {

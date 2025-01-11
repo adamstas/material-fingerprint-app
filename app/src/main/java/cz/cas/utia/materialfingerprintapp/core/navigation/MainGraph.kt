@@ -1,11 +1,13 @@
 package cz.cas.utia.materialfingerprintapp.core.navigation
 
+import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
 
 @Composable
@@ -24,7 +26,8 @@ fun MainGraph(
         }
 
         composable<CameraScreens> {
-            Text(text = "navigacka_camera")
+            Log.i("CAMERA", "jsem v main grafu u kamery")
+            CameraScreenRoot()
         }
 
         composable<AnalyticsScreens> {
