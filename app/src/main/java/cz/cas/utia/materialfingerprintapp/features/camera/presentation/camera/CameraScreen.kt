@@ -102,6 +102,8 @@ fun CameraScreen(
         parent to camView
     }
 
+    //todo rozhodnout se zda bude v topbaru kromě šipky doprava na dalsi screen (Photo Summary) i přehled 2 fotek anebo jestli to bude v liště hned pod top barem (nejdriv to asi zkusit narvat nahoru protoze tam nebude ani nazev screeny)
+
     //camView's lifecycle is managed using DisposableEffect
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
@@ -150,7 +152,7 @@ fun CameraScreen(
 //            Text("Capture Image")
 //        }
 
-        if (state.capturedImage != null) { //todo introduce new variable for dialog showing
+        if (state.capturedImageSlot1 != null) { //todo introduce new variable for dialog showing
             CapturedImageDialog(
                 state = state,
                 onEvent = onEvent
@@ -182,7 +184,7 @@ fun CapturedImageDialog(
 
                 CustomSpacer()
 
-                state.capturedImage?.let { //todo needed to do this "let" because state.capturedImage is nullable
+                state.capturedImageSlot1?.let { //todo needed to do this "let" because state.capturedImage is nullable
                     Image( //todo check if this image looks the same as the image that will be sent to server
                         bitmap = it.asImageBitmap(),//todo if issues with images this may be a problem (description of the asImageBitmap method)
                         contentDescription = "Captured image",

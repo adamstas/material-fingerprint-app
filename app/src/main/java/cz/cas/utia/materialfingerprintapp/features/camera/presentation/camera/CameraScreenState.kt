@@ -3,8 +3,15 @@ package cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera
 import android.graphics.Bitmap
 
 data class CameraScreenState(
-    val capturedImage: Bitmap? = null //todo zmenit na neco co nemuze byt null? kdyztak si udelat nejaky EmptyBitmap a ten tam cpat
-    )
-{
+    val capturedImageSlot1: Bitmap? = null, //todo zmenit na neco co nemuze byt null? kdyztak si udelat nejaky EmptyBitmap a ten tam cpat
+    val capturedImageSlot2: Bitmap? = null,
+    val currentlyCapturedImage: Bitmap? = null, //just captured, not saved in any slot
+    val selectedImageSlot: ImageSlotPosition = ImageSlotPosition.FIRST,
 
+    val isDialogOpened: Boolean = false
+    )
+
+enum class ImageSlotPosition {
+    FIRST,
+    SECOND;
 }
