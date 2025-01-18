@@ -43,6 +43,7 @@ class CameraViewModel @Inject constructor(
             CameraEvent.RetakeImage -> retakeImage()
             is CameraEvent.SelectImageSlot -> selectImageSlot(event)
             CameraEvent.KeepImage -> keepImage()
+            is CameraEvent.EnableOrDisableCaptureImageButton -> enableOrDisableCaptureImageButton(event)
         }
     }
 
@@ -84,7 +85,17 @@ class CameraViewModel @Inject constructor(
 
             updated.copy(
                 currentlyCapturedImage = null,
-                selectedImageSlot = getNewSelectedImageSlotPosition()) //automatically go to next empty slot (if any exists)
+                selectedImageSlot = getNewSelectedImageSlotPosition(), //automatically go to next empty slot (if any exists)
+                isDialogOpened = false
+            )
+        }
+    }
+
+    private fun enableOrDisableCaptureImageButton(event: CameraEvent.EnableOrDisableCaptureImageButton) {
+        _state.update {
+            it.copy(
+                isCaptureImageButtonEnabled = event.enable
+            )
         }
     }
 }

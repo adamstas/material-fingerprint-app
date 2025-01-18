@@ -1,7 +1,6 @@
 package cz.cas.utia.materialfingerprintapp
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
-import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
 import dagger.hilt.android.AndroidEntryPoint
 import org.opencv.android.OpenCVLoader
 
@@ -35,7 +33,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CustomAppTheme {
                 MainNavigation()
-                //PermissionsScreen()
+               // PermissionsScreen()
             }
         }
     }

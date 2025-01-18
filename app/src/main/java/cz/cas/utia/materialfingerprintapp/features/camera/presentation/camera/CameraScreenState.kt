@@ -8,8 +8,14 @@ data class CameraScreenState(
     val currentlyCapturedImage: Bitmap? = null, //just captured, not saved in any slot
     val selectedImageSlot: ImageSlotPosition = ImageSlotPosition.FIRST,
 
-    val isDialogOpened: Boolean = false
+    val isDialogOpened: Boolean = false,
+    val isCaptureImageButtonEnabled: Boolean = false
     )
+{
+    fun isSlotSelected(slot: ImageSlotPosition): Boolean {
+        return slot == selectedImageSlot
+    }
+}
 
 enum class ImageSlotPosition {
     FIRST,

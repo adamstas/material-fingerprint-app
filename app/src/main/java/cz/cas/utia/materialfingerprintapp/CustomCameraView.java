@@ -20,10 +20,11 @@ import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.ImageCapturedListener;
+import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.ImageReadyToBeCapturedListener;
 
 public class CustomCameraView extends JavaCameraView implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-    public static final String TAG = CustomCameraView.class.getSimpleName();
+    public static final String TAG = "cameratag";
 
     private boolean targetImageLocked = false;
     private final TargetImage targetImage = new TargetImage();
@@ -32,9 +33,14 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
     private int cameraHeightRealPixels;
 
     private ImageCapturedListener imageCapturedListener;
+    private ImageReadyToBeCapturedListener imageReadyToBeCapturedListener;
 
     public void setOnImageCapturedListener(ImageCapturedListener listener) {
         this.imageCapturedListener = listener;
+    }
+
+    public void setImageReadyToBeCapturedListener(ImageReadyToBeCapturedListener listener) {
+        this.imageReadyToBeCapturedListener = listener;
     }
 
     public CustomCameraView(Context context, AttributeSet attrs) {
@@ -85,7 +91,7 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
 
                 if (Imgproc.pointPolygonTest(contour2f, clickPoint, false) >= 0) {
 
-                    selectLastTargetPhoto(); //todo timhle by to melo proste zvolit posledni zeleny ramecek jako fotku = kdyz bych implementoval tlacitko na foceni tak volat tuhle metodu
+                    selectLastTargetPhoto();
 
                 }
 
@@ -96,7 +102,7 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         return super.onTouchEvent(event);
     }
 
-    private void selectLastTargetPhoto() {
+    public void selectLastTargetPhoto() {
         Mat materialImage = getInnerImagePart();
 
         Bitmap materialBitmap = Bitmap.createBitmap(materialImage.cols(), materialImage.rows(), Bitmap.Config.ARGB_8888);
@@ -173,13 +179,18 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
             MatOfPoint rectCont = contours.get(0);
             if (ImageAnalyzer.isStraight(rectCont, 5) && ImageAnalyzer.isRect(rectCont, 0.1)) {
                 color = new Scalar(0, 255, 0);
-                targetImageLocked = true; //todo tahle promenna rika ze je ramecek zeleny => udelat dalsi listener asi a na zaklade toho ovladat tlacitko na foceni (enabled/disabled)
-                Log.i("LOCKED", "zezelenalo");
+                targetImageLocked = true;
+
+                imageReadyToBeCapturedListener.onImageReadyToBeCaptured(true);
+
                 targetImage.setCont(rectCont);
                 targetImage.setPhoto(imageMat);
             } else {
                 color = new Scalar(255, 0, 0);
                 targetImageLocked = false;
+
+                imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
+
             }
             Imgproc.drawContours(imageMat, contours, -1, color, 5);
 
@@ -190,6 +201,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
             // to the same thing for non-specular photo
         } else {
             targetImageLocked = false;
+
+            imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
         }
 
 

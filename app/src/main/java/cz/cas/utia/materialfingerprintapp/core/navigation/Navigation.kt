@@ -1,6 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.core.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
@@ -38,7 +40,9 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                modifier = Modifier.height(112.dp)
+            ) {
                 mainScreens.forEachIndexed { index, screen ->
                     NavigationBarItem(
                         selected = selectedScreenIndex == index,

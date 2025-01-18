@@ -88,7 +88,6 @@ fun BrowseMaterialsScreen(
                 Modifier
                     .padding(paddingValues)
                     .padding(25.dp)
-                    .padding(bottom = 16.dp)
                     .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
                     .fillMaxSize()
             ) {
