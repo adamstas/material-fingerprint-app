@@ -18,38 +18,45 @@ object AnalyticsScreens
 @Serializable
 object SettingsScreens
 
-@Serializable
-sealed class MainScreens<T>(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: T) {
-    @Serializable
-    data object Camera: MainScreens<CameraScreens>(
-        label = "Camera",
-        iconSelectedId = R.drawable.photo_camera_filled,
-        iconUnselectedId = R.drawable.photo_camera,
-        route = CameraScreens
+val mainScreens = listOf(
+    Screen.MainScreen.Camera,
+    Screen.MainScreen.Analytics,
+    Screen.MainScreen.Settings
     )
 
-    @Serializable
-    data object Analytics: MainScreens<AnalyticsScreens>(
-        label = "Analytics",
-        iconSelectedId = R.drawable.analytics_filled,
-        iconUnselectedId = R.drawable.analytics,
-        route = AnalyticsScreens
-    )
+sealed class Screen {
 
     @Serializable
-    data object Settings: MainScreens<SettingsScreens>(
-        label = "Settings",
-        iconSelectedId = R.drawable.settings_filled,
-        iconUnselectedId = R.drawable.settings,
-        route = SettingsScreens
-    )
+    sealed class MainScreen<T>(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: T) {
+        @Serializable
+        data object Camera: MainScreen<CameraScreens>(
+            label = "Camera",
+            iconSelectedId = R.drawable.photo_camera_filled,
+            iconUnselectedId = R.drawable.photo_camera,
+            route = CameraScreens
+        )
+
+        @Serializable
+        data object Analytics: MainScreen<AnalyticsScreens>(
+            label = "Analytics",
+            iconSelectedId = R.drawable.analytics_filled,
+            iconUnselectedId = R.drawable.analytics,
+            route = AnalyticsScreens
+        )
+
+        @Serializable
+        data object Settings: MainScreen<SettingsScreens>(
+            label = "Settings",
+            iconSelectedId = R.drawable.settings_filled,
+            iconUnselectedId = R.drawable.settings,
+            route = SettingsScreens
+        )
+    }
+
+    @Serializable
+    data object PhotosSummary: Screen()
 }
 
-val mainScreens = listOf(
-    MainScreens.Camera,
-    MainScreens.Analytics,
-    MainScreens.Settings
-    )
 
 //TODO smazat pokud budu pouzivat novou navigaci
 //@Serializable

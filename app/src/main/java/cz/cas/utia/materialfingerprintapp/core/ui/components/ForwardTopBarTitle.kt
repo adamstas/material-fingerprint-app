@@ -13,11 +13,14 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForwardTopBarTitle(title: String) {
+fun ForwardTopBarTitle(
+    title: String,
+    navigateToNextScreen: () -> Unit
+) {
     CenterAlignedTopAppBar(
         actions = {
             IconButton(onClick = {
-                // todo navigate to next screen
+                navigateToNextScreen()
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,

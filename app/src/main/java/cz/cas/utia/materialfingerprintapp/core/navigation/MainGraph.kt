@@ -1,13 +1,12 @@
 package cz.cas.utia.materialfingerprintapp.core.navigation
 
-import android.util.Log
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsScreen
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.PhotosSummaryScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
 
 @Composable
@@ -26,14 +25,21 @@ fun MainGraph(
         }
 
         composable<CameraScreens> {
-            Log.i("CAMERA", "jsem v main grafu u kamery")
-            CameraScreenRoot()
+            CameraScreenRoot(
+                navigateToPhotosSummaryScreen = { navController.navigate(Screen.PhotosSummary) }
+            )
         }
 
         composable<AnalyticsScreens> {
             BrowseLocalMaterialsScreen()
             //BrowseRemoteMaterialsScreen() //todo test this screen when i have working remote repository
             //here will be another screen from which user goes to browse local / browse remote / filter..
+        }
+
+        composable<Screen.PhotosSummary> {
+            PhotosSummaryScreenRoot(
+                navigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

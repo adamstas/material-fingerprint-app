@@ -2,10 +2,14 @@ package cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,8 +22,13 @@ class CameraViewModel @Inject constructor(
     private val _state = MutableStateFlow(CameraScreenState())
     val state = _state.asStateFlow()
 
-    // always select the next empty slot and if no other empty slot exists return the current one
-    private fun getNewSelectedImageSlotPosition(): ImageSlotPosition{
+    //for navigation events
+    private val _navigationEvents = MutableSharedFlow<CameraNavigationEvent>()
+    //todo if there are some navigation bugs when app is in the background then add replay = 10 or something (https://www.youtube.com/watch?v=BFhVvAzC52w&ab_channel=PhilippLackner 8:00)
+    val navigationEvents = _navigationEvents.asSharedFlow()
+
+    //always select the next empty slot and if no other empty slot exists return the current one
+    private fun getNewSelectedImageSlotPosition(): ImageSlotPosition {
         return when (_state.value.selectedImageSlot) {
             ImageSlotPosition.FIRST -> {
                 if (_state.value.capturedImageSlot2 == null)
@@ -44,6 +53,7 @@ class CameraViewModel @Inject constructor(
             is CameraEvent.SelectImageSlot -> selectImageSlot(event)
             CameraEvent.KeepImage -> keepImage()
             is CameraEvent.EnableOrDisableCaptureImageButton -> enableOrDisableCaptureImageButton(event)
+            CameraEvent.GoToPhotosSummaryScreen -> goToPhotosSummaryScreen()
         }
     }
 
@@ -96,6 +106,12 @@ class CameraViewModel @Inject constructor(
             it.copy(
                 isCaptureImageButtonEnabled = event.enable
             )
+        }
+    }
+
+    private fun goToPhotosSummaryScreen() {
+        viewModelScope.launch {
+            _navigationEvents.emit(CameraNavigationEvent.ToPhotosSummaryScreen)
         }
     }
 }

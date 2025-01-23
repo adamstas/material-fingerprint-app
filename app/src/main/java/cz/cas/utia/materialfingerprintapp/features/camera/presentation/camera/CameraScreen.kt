@@ -50,15 +50,29 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import cz.cas.utia.materialfingerprintapp.CustomCameraView
 import cz.cas.utia.materialfingerprintapp.R
+import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.ForwardTopBarTitle
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreenRoot(
-    viewModel: CameraViewModel = hiltViewModel()
+    viewModel: CameraViewModel = hiltViewModel(),
+    navigateToPhotosSummaryScreen: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+
+    //todo nebuguje to pak s temi permissions?
+    //observe navigation events and perform the navigation
+    NavigationHandler(
+        navigationEventFlow = viewModel.navigationEvents,
+        navigate = { event ->
+            when (event) {
+                CameraNavigationEvent.ToPhotosSummaryScreen -> navigateToPhotosSummaryScreen()
+            }
+        }
+    )
+
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
     //todo later move to permissions screen
@@ -144,8 +158,11 @@ fun CameraScreen(
 
     Scaffold(
         topBar = {
-            ForwardTopBarTitle(title = "Camera")
-        },
+            ForwardTopBarTitle(
+                title = "Camera",
+                navigateToNextScreen = { onEvent(CameraEvent.GoToPhotosSummaryScreen) }
+            )
+                 },
         content = { paddingValues ->
             Column(
                Modifier

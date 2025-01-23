@@ -81,7 +81,10 @@ fun BrowseMaterialsScreen(
 ) {
     Scaffold(
         topBar = {
-            BackTopBarTitle(title = title)
+            BackTopBarTitle(
+                title = title,
+                navigateBack = {} //todo later add navigation logic
+            )
         }
     ) { paddingValues ->
             Column(

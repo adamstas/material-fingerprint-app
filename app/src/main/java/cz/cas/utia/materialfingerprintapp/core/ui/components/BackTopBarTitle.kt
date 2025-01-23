@@ -14,11 +14,14 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BackTopBarTitle(title: String) {
+fun BackTopBarTitle(
+    title: String,
+    navigateBack: () -> Unit
+) {
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = {
-                //todo navigovat zpátky - pamatovat si, odkud jsem prisel
+                navigateBack()
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack, //todo udelat ji nejakou barvou z Theme?
