@@ -12,6 +12,8 @@ sealed interface CameraEvent {
     data class EnableOrDisableCaptureImageButton(val enable: Boolean): CameraEvent
 
     data object GoToPhotosSummaryScreen: CameraEvent
+
+    data object LoadImages: CameraEvent
 }
 
 sealed interface CameraNavigationEvent {

@@ -1,20 +1,24 @@
 package cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera
 
-import android.util.Log
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     //todo add service for calling server API for uploading images
+    private val imageStorageService: ImageStorageService
 ): ViewModel()
 {
     //todo typ "Bitmap?" jsem chtel obalit do State ale byl by to jen empty/available takze budu prote rovnou hceckovat jestli image je nebo neni null
@@ -46,6 +50,14 @@ class CameraViewModel @Inject constructor(
         }
     }
 
+    private fun storeImage(slot: ImageSlotPosition, image: Bitmap) {
+        when (slot) {
+            ImageSlotPosition.FIRST -> imageStorageService.storeImage(image = image, filename = "slot1")
+            ImageSlotPosition.SECOND -> imageStorageService.storeImage(image = image, filename = "slot2")
+        }
+      //todo nekde definovat to pojmenovavani globalne
+    }
+
     fun onEvent(event: CameraEvent) {
         when (event) {
             is CameraEvent.CaptureImage -> captureImage(event)
@@ -54,12 +66,11 @@ class CameraViewModel @Inject constructor(
             CameraEvent.KeepImage -> keepImage()
             is CameraEvent.EnableOrDisableCaptureImageButton -> enableOrDisableCaptureImageButton(event)
             CameraEvent.GoToPhotosSummaryScreen -> goToPhotosSummaryScreen()
+            CameraEvent.LoadImages -> loadImages()
         }
     }
 
     private fun captureImage(event: CameraEvent.CaptureImage) {
-        Log.i("CAMERATAGOS", "image captured in logs")
-
         _state.update {
             it.copy(
                 currentlyCapturedImage = event.imageBitmap,
@@ -75,7 +86,6 @@ class CameraViewModel @Inject constructor(
                 isDialogOpened = false
             )
         }
-
     }
 
     private fun selectImageSlot(event: CameraEvent.SelectImageSlot) {
@@ -92,6 +102,8 @@ class CameraViewModel @Inject constructor(
                 ImageSlotPosition.FIRST -> it.copy(capturedImageSlot1 = _state.value.currentlyCapturedImage)
                 ImageSlotPosition.SECOND -> it.copy(capturedImageSlot2 = _state.value.currentlyCapturedImage)
             }
+
+            storeImage(slot = _state.value.selectedImageSlot, _state.value.currentlyCapturedImage!!)
 
             updated.copy(
                 currentlyCapturedImage = null,
@@ -112,6 +124,20 @@ class CameraViewModel @Inject constructor(
     private fun goToPhotosSummaryScreen() {
         viewModelScope.launch {
             _navigationEvents.emit(CameraNavigationEvent.ToPhotosSummaryScreen)
+        }
+    }
+
+    private fun loadImages() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val imageSlot1 = imageStorageService.loadImage("slot1")
+            val imageSlot2 = imageStorageService.loadImage("slot2")
+
+            withContext(Dispatchers.Main) {
+                _state.update { it.copy(
+                    capturedImageSlot1 = imageSlot1,
+                    capturedImageSlot2 = imageSlot2
+                ) }
+            }
         }
     }
 }

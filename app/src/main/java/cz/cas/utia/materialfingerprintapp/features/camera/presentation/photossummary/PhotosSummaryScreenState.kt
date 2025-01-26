@@ -11,11 +11,13 @@ data class PhotosSummaryScreenState(
     val lightDirectionSlot2: LightDirection = LightDirection.FROM_LEFT,
 
     val materialName: String = "",
-    val selectedCategory: MaterialCategory = MaterialCategory.UNCATEGORIZED
+    val selectedCategory: MaterialCategory = MaterialCategory.UNCATEGORIZED,
+
+    val isDropdownMenuExpanded: Boolean = false
     )
 {
     fun isReadyToAnalyse(): Boolean {
-        return capturedImageSlot1 != null && capturedImageSlot2 != null
+        return capturedImageSlot1 != null && capturedImageSlot2 != null && materialName != "" //todo ted to uzivatele pusti i kdyz napise jen mezeru -> udělat to chytreji a mozna zakazat i nejake specialni znaky
     }
 }
 

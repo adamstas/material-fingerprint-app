@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
@@ -48,7 +49,14 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
                         selected = selectedScreenIndex == index,
                         onClick = {
                             selectedScreenIndex = index
-                            navController.navigate(screen.route)
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true //todo toto je super ze kdyz jdu z analytics do camera a pak zpet do analytics, tak v analytics zustane state
+                                                    // ale kdyz jdu z camera section do analytics a predtim jsem aspon jednou byl v photosummary, tak me to pak namisto do camera hazi do photosummary
+                            }
                         },
                         label = {
                             Text(text = screen.label)
@@ -56,6 +64,7 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
                         icon = {
                             Icon(
                                 painter = if (selectedScreenIndex == index) painterResource(screen.iconSelectedId) else painterResource(id = screen.iconUnselectedId),
+                                //todo toto lze predelat podle oficialniho tutorial na bottom bar navigaci (ted kdyz clovek byl v camera a jde do settings a da na mobilni spodni liste "back" tak ho to hodi zpatky d ocamera, ale v bottom navbaru stale sviti settings)
                                 contentDescription = screen.label //todo zmenit na nejaky sofistikovanejsi popis?
                             )
 

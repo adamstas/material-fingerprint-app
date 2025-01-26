@@ -90,6 +90,7 @@ fun DefaultWindowSection() {
     }
 }
 
+//todo remove the "Exposed" from the function name? e.g. DefaultWindowBasicDropdownMenu or DefaultWindowDropdownMenu
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultWindowExposedDropdownMenu() {

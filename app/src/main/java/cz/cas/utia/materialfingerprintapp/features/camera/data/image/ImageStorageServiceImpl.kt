@@ -17,6 +17,7 @@ class ImageStorageServiceImpl @Inject constructor(
     private val imagesDirectoryName = "images"
 
     private fun getImagesDirectory(): File {
+
         val imagesDirectory = File(context.filesDir, imagesDirectoryName)
 
         if (!imagesDirectory.exists()) {
@@ -25,31 +26,39 @@ class ImageStorageServiceImpl @Inject constructor(
         return imagesDirectory
     }
 
-    override fun saveImage(image: Bitmap, filename: String): String? {
+    override fun storeImage(image: Bitmap, filename: String): String? {
         val imageFile = File(getImagesDirectory(), filename)
 
         return try {
             FileOutputStream(imageFile).use { outputStream ->
                 image.compress(Bitmap.CompressFormat.PNG, 100, outputStream) //quality is ignored since PNG is lossless
             }
-            imageFile.absolutePath // todo - vracet neco?
+
+            imageFile.absolutePath // todo - vracet neco? zatim je ta navratova hodnota nepouzita
         } catch (e: IOException) { //todo nejak to handlovat? zobrazit v composablech ze nastala chyba?
+                                    // asi si udělat nejakou composablu Error(string errorText) a dát ji do core a pak ji volat na obrazovkach, kde nastala chyba (mit ve state promennou na to)
+
             e.printStackTrace()
             null
         }
     }
 
-    override fun loadImage(path: String): Bitmap? {
+    override fun loadImage(filename: String): Bitmap? {
+        val imagePath = getImagesDirectory().absolutePath + "/" + filename
+
         return try {
-            BitmapFactory.decodeFile(path)
+            BitmapFactory.decodeFile(imagePath)
+
         } catch (e: Exception) {
-            e.printStackTrace() //todo neprintit stack trace protoze to, ze se vraci prazdny image, je OK v pripade ukladani tech 2 fotek
+            //e.printStackTrace() //todo neprintit stack trace protoze to, ze se vraci prazdny image, je OK v pripade ukladani tech 2 fotek
             null
         }
     }
 
-    override fun deleteImage(path: String): Boolean { //todo vracet neco?
-        val imageFile = File(path)
+    override fun deleteImage(filename: String): Boolean { //todo vracet neco?
+        val imagePath = getImagesDirectory().absolutePath + "/" + filename
+
+        val imageFile = File(imagePath)
         return if (imageFile.exists()) {
             imageFile.delete()
         } else {

@@ -10,13 +10,13 @@ import kotlinx.serialization.Serializable
 //}
 
 @Serializable
-object CameraScreens
+object CameraScreen
 
 @Serializable
-object AnalyticsScreens
+object AnalyticsScreen
 
 @Serializable
-object SettingsScreens
+object SettingsScreen
 
 val mainScreens = listOf(
     Screen.MainScreen.Camera,
@@ -29,27 +29,27 @@ sealed class Screen {
     @Serializable
     sealed class MainScreen<T>(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: T) {
         @Serializable
-        data object Camera: MainScreen<CameraScreens>(
+        data object Camera: MainScreen<CameraScreen>(
             label = "Camera",
             iconSelectedId = R.drawable.photo_camera_filled,
             iconUnselectedId = R.drawable.photo_camera,
-            route = CameraScreens
+            route = CameraScreen
         )
 
         @Serializable
-        data object Analytics: MainScreen<AnalyticsScreens>(
+        data object Analytics: MainScreen<AnalyticsScreen>(
             label = "Analytics",
             iconSelectedId = R.drawable.analytics_filled,
             iconUnselectedId = R.drawable.analytics,
-            route = AnalyticsScreens
+            route = AnalyticsScreen
         )
 
         @Serializable
-        data object Settings: MainScreen<SettingsScreens>(
+        data object Settings: MainScreen<SettingsScreen>(
             label = "Settings",
             iconSelectedId = R.drawable.settings_filled,
             iconUnselectedId = R.drawable.settings,
-            route = SettingsScreens
+            route = SettingsScreen
         )
     }
 

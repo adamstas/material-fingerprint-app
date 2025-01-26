@@ -62,6 +62,10 @@ fun CameraScreenRoot(
 ) {
     val state by viewModel.state.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(CameraEvent.LoadImages)
+    }
+
     //todo nebuguje to pak s temi permissions?
     //observe navigation events and perform the navigation
     NavigationHandler(
@@ -232,14 +236,12 @@ fun CapturedImageDialog(
 
                 CustomSpacer()
 
-                state.currentlyCapturedImage?.let { //needed to do this "let" because state.currentlyCapturedImage is nullable
-                    Image( //todo check if this image looks the same as the image that will be sent to server
-                        bitmap = it.asImageBitmap(),//todo if issues with images this may be a problem (description of the asImageBitmap method)
-                        contentDescription = "Captured image",
-                        modifier = Modifier.aspectRatio(1f),
-                        contentScale = ContentScale.Crop //fits the image inside the 1:1 ratio so it does not take just the middle of the image
-                    )
-                }
+                Image( //todo check if this image looks the same as the image that will be sent to server
+                    bitmap = state.currentlyCapturedImage!!.asImageBitmap(),//todo if issues with images this may be a problem (description of the asImageBitmap method)
+                    contentDescription = "Captured image",
+                    modifier = Modifier.aspectRatio(1f),
+                    contentScale = ContentScale.Crop //fits the image inside the 1:1 ratio so it does not take just the middle of the image
+                )
 
                 CustomSpacer()
 
