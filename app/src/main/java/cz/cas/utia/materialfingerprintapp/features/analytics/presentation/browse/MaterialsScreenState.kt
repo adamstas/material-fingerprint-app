@@ -1,11 +1,11 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse
 
-import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 
 //todo rename to BrowseMaterialsScreenState? if new material screens are added...
 data class MaterialsScreenState(
-    val materials: List<Material> = emptyList(),
+    val materials: List<MaterialSummary> = emptyList(),
  //todo keep these initial values? or introduce Loaded state etc.?
     val checkedMaterials: Set<Int> = emptySet(),
 

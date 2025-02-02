@@ -1,5 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.domain
 
+import android.graphics.Bitmap
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,28 +9,14 @@ import androidx.room.PrimaryKey
 data class Material(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0, //ID will be overriden by the generated ID by Room Database
-    val serverId: Int,
+    val serverId: Int?,
     val name: String,
-    val photoPath: Int,//made int so i can load test images from resources
-    val fingerprintPath: Int,//made int so i can load test images from resources
+    val photoThumbnailPath: Int,//made int so i can load test images from resources //todo pokud to budu brat proste z ID, tak to odebrat odsud
+    val fingerprintPath: Int,//made int so i can load test images from resources //todo pokud to budu brat proste z ID, tak to odebrat odsud
     val category: MaterialCategory,
 
-    val statBrightness: Double,
-    val statColorVibrancy: Double,
-    val statHardness: Double,
-    val statCheckeredPattern: Double,
-    val statMovementEffect: Double,
-    val statMulticolored: Double,
-    val statNaturalness: Double,
-    val statPatternComplexity: Double,
-    val statScaleOfPattern: Double,
-    val statShininess: Double,
-    val statSparkle: Double,
-    val statStripedPattern: Double,
-    val statSurfaceRoughness: Double,
-    val statThickness: Double,
-    val statValue: Double,
-    val statWarmth: Double
+    @Embedded
+    val characteristics: MaterialCharacteristics
 )
 
 enum class MaterialCategory {
@@ -50,3 +38,31 @@ enum class MaterialCategory {
         }
     }
 }
+
+data class MaterialCharacteristics(
+    val brightness: Double,
+    val colorVibrancy: Double,
+    val hardness: Double,
+    val checkeredPattern: Double,
+    val movementEffect: Double,
+    val multicolored: Double,
+    val naturalness: Double,
+    val patternComplexity: Double,
+    val scaleOfPattern: Double,
+    val shininess: Double,
+    val sparkle: Double,
+    val stripedPattern: Double,
+    val surfaceRoughness: Double,
+    val thickness: Double,
+    val value: Double,
+    val warmth: Double
+)
+
+//data needed for displaying the material in the BrowseMaterialsScreen
+data class MaterialSummary(
+    val id: Int, //todo zatim jen jedno ID takze pokud je to material ze serveru, tak je to id ze sreveru a pokud to ej material z lokalu, tak je lokalni (kdyztak to pak zmenit ze pridam boolean jestli to je ze serveru enbo ne a podle toho se pozna, jake to je id)
+    val name: String,
+    val photoThumbnail: Bitmap, //no path because these data are not in database
+    val fingerprintThumbnail: Bitmap, //todo later will be SVG probably
+    val category: MaterialCategory
+)

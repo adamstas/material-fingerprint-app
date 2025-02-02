@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialDao
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialDatabase
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.MaterialSummaryMapper
+import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,5 +33,11 @@ object MaterialModule {
     @Singleton
     fun provideMaterialDao(materialDatabase: MaterialDatabase): MaterialDao {
         return materialDatabase.materialDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideMaterialSummaryMapper(imageStorageService: ImageStorageService): MaterialSummaryMapper {
+        return MaterialSummaryMapper(imageStorageService)
     }
 }

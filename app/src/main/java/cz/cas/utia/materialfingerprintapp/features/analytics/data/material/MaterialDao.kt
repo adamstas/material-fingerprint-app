@@ -37,4 +37,6 @@ interface MaterialDao {
     @Query("DELETE FROM material") //just for testing, delete later
     suspend fun deleteAllMaterials()
 
+    @Query("SELECT * FROM material WHERE id = :id") //todo nebo dat equals?
+    suspend fun getMaterial(id: Int): Material
 }

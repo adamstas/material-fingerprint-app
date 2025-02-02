@@ -30,16 +30,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithCheckboxesItem
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
-import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import androidx.hilt.navigation.compose.hiltViewModel
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 
 @Composable
 fun BrowseLocalMaterialsScreen(
@@ -217,7 +217,7 @@ fun MaterialsListSection(
 
 @Composable
 fun MaterialListRow(
-    material: Material,
+    material: MaterialSummary,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
 ) {
@@ -228,7 +228,7 @@ fun MaterialListRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = material.photoPath),
+                bitmap = material.photoThumbnail.asImageBitmap(),
                 contentDescription = "Latka Image", //todo zmenit
                 contentScale = ContentScale.Crop, //todo nechat?
                 modifier = Modifier.size(96.dp) // todo adjust size so the polar plot is somehow readable
@@ -237,7 +237,7 @@ fun MaterialListRow(
             Spacer(modifier = Modifier.width(24.dp))
 
             Image( //polar plots wont have axes names so this should be enough size..or make bigger?
-                painter = painterResource(id = material.fingerprintPath),
+                bitmap = material.fingerprintThumbnail.asImageBitmap(),
                 contentDescription = "Latka fingerprint image",
                 contentScale = ContentScale.Crop, //todo nechat?
                 modifier = Modifier.size(96.dp)  // todo adjust size so the polar plot is somehow readable

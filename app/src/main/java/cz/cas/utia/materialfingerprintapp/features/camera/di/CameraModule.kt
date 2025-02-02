@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ImageStorageModule {
+abstract class CameraModule {
 
     @Binds
     @Singleton

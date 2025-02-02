@@ -3,9 +3,9 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.brows
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -24,7 +24,7 @@ abstract class BrowseMaterialsViewModel(
     //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v volani combine, kde vznika state pro UI
     protected val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
     private val _checkedMaterials = MutableStateFlow<Set<Int>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
-    private val _materials = MutableStateFlow<List<Material>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
+    private val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
     protected val _searchBarText = MutableStateFlow("")
 
     protected val _state = MutableStateFlow(MaterialsScreenState())
