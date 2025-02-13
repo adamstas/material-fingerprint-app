@@ -5,6 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseSimilarLocalMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.ApplyFilterScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.home.AnalyticsHomeScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.PhotosSummaryScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.SettingsScreen
@@ -41,10 +44,44 @@ fun MainGraph(
             )
         }
 
-        composable<AnalyticsScreen> {
-            BrowseLocalMaterialsScreen()
+        composable<Screen.AnalyticsHomeScreen> {
+            AnalyticsHomeScreenRoot(
+                navigateToBrowseLocalMaterialsScreen = { navController.navigate(Screen.BrowseLocalMaterials) },
+                navigateToBrowseRemoteMaterialsScreen = { navController.navigate(Screen.BrowseRemoteMaterials) },
+                navigateToApplyFilterScreen = { navController.navigate(Screen.ApplyFilter) }
+            )
+        }
+
+        composable<Screen.BrowseLocalMaterials> {
+            BrowseLocalMaterialsScreen(
+                navigateToBrowseSimilarLocalMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = materialId)) },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = materialId)) }
+            )
             //BrowseRemoteMaterialsScreen() //todo test this screen when i have working remote repository
             //here will be another screen from which user goes to browse local / browse remote / filter..
+        }
+
+        composable<Screen.BrowseRemoteMaterials> {
+            //todo az bude ready remote repository tak to sem pridat
+        }
+
+        composable<Screen.ApplyFilter> {
+            ApplyFilterScreenRoot()
+        }
+
+        composable<Screen.BrowseSimilarLocalMaterials> {
+            BrowseSimilarLocalMaterialsScreen(
+                navigateToBrowseSimilarLocalMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = materialId)) },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = materialId)) }
+            )
+        }
+
+        composable<Screen.BrowseSimilarRemoteMaterials> {
+
         }
 
         composable<Screen.PhotosSummary> {

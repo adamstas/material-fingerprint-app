@@ -13,9 +13,6 @@ import kotlinx.serialization.Serializable
 object CameraScreen
 
 @Serializable
-object AnalyticsScreen
-
-@Serializable
 object SettingsScreen
 
 val mainScreens = listOf(
@@ -37,11 +34,11 @@ sealed class Screen {
         )
 
         @Serializable
-        data object Analytics: MainScreen<AnalyticsScreen>(
+        data object Analytics: MainScreen<AnalyticsHomeScreen>(
             label = "Analytics",
             iconSelectedId = R.drawable.analytics_filled,
             iconUnselectedId = R.drawable.analytics,
-            route = AnalyticsScreen
+            route = AnalyticsHomeScreen
         )
 
         @Serializable
@@ -55,6 +52,24 @@ sealed class Screen {
 
     @Serializable
     data object PhotosSummary: Screen()
+
+    @Serializable
+    data object AnalyticsHomeScreen: Screen()
+
+    @Serializable
+    data object BrowseLocalMaterials: Screen()
+
+    @Serializable
+    data object BrowseRemoteMaterials: Screen()
+
+    @Serializable
+    data object ApplyFilter: Screen()
+
+    @Serializable
+    data class BrowseSimilarLocalMaterials(val materialId: Long): Screen()
+
+    @Serializable
+    data class BrowseSimilarRemoteMaterials(val materialId: Long): Screen()
 }
 
 

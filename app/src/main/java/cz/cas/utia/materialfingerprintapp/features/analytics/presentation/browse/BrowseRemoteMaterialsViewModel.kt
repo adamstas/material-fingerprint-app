@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +16,11 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 //@HiltViewModel //todo enable these hilt commands after creating working remote repository
 class BrowseRemoteMaterialsViewModel( //@Inject constructor(
-    materialRepository: RemoteMaterialRepository
-): BrowseMaterialsViewModel(materialRepository) {
+    materialRepository: RemoteMaterialRepository,
+    savedStateHandle: SavedStateHandle
+): BrowseMaterialsViewModel(
+    materialRepository = materialRepository,
+    savedStateHandle = savedStateHandle) {
 
     init {
         _searchBarText

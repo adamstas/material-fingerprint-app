@@ -1,7 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
 import android.graphics.Bitmap
-import android.util.Log
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
@@ -17,11 +16,25 @@ class RoomMaterialRepositoryImpl @Inject constructor(
 ): LocalMaterialRepository {
 
     override suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary> {
-        if (getMaterialsCount() == 0) //todo remove later, now just for seeding the database
+        if (getMaterialsCount() == 0L) //todo remove later, now just for seeding the database
             materialDao.insertMaterials(initialData())
 
         val materials = materialDao.getAllMaterialsOrderedByName()
         return materials.map { material -> materialSummaryMapper.map(material) }
+    }
+
+    override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
+        //TODO fixnout
+        val materials = materialDao.getAllMaterialsOrderedByName()
+        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
+        return listOf(mapped[0], mapped[1])
+    }
+
+    override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
+        //TODO fixnout
+        val materials = materialDao.getAllMaterialsOrderedByName()
+        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
+        return listOf(mapped[0], mapped[1])
     }
 
     override suspend fun getMaterialsOrderedByName(
@@ -31,19 +44,52 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         //delay(1000) //todo remove later
 
         val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
-        Log.i("depuk", "materials v room impl jsou: $materials")
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 
-    override suspend fun getMaterialsCount(): Int {
+    override suspend fun getSimilarMaterialsOrderedByName(
+        categories: List<MaterialCategory>,
+        searchText: String,
+        materialId: Long
+    ): List<MaterialSummary> {
+        //TODO fixnout
+        val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
+        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
+
+        if (mapped.isEmpty())
+            return mapped
+
+        val resList = emptyList<MaterialSummary>().toMutableList()
+        resList += mapped[0]
+        return resList
+    }
+
+    override suspend fun getSimilarMaterialsOrderedByName(
+        categories: List<MaterialCategory>,
+        searchText: String,
+        materialCharacteristics: MaterialCharacteristics
+    ): List<MaterialSummary> {
+        //TODO fixnout
+        val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
+        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
+
+        if (mapped.isEmpty())
+            return mapped
+
+        val resList = emptyList<MaterialSummary>().toMutableList()
+        resList += mapped[0]
+        return resList
+    }
+
+    override suspend fun getMaterialsCount(): Long {
         return materialDao.getMaterialsCount()
     }
 
-    override suspend fun getMaterial(id: Int): Material {
+    override suspend fun getMaterial(id: Long): Material {
         return materialDao.getMaterial(id)
     }
 
-    override suspend fun getPolarPlot(id: Int): Bitmap {
+    override suspend fun getPolarPlot(id: Long): Bitmap {
         TODO("Not yet implemented")
     }
 

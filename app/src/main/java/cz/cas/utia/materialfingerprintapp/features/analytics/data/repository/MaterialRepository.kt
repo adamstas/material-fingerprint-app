@@ -8,14 +8,21 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSumm
 
 interface MaterialRepository {
     suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary>
+
+    suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary>
+    suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary>
+
     suspend fun getMaterialsOrderedByName(categories: List<MaterialCategory>, searchText: String): List<MaterialSummary>
+
+    suspend fun getSimilarMaterialsOrderedByName(categories: List<MaterialCategory>, searchText: String, materialId: Long): List<MaterialSummary>
+    suspend fun getSimilarMaterialsOrderedByName(categories: List<MaterialCategory>, searchText: String, materialCharacteristics: MaterialCharacteristics): List<MaterialSummary>
 
     //todo tato metoda bude vubec potreba? nebo jen pridat characteristics do getMaterialsOrderedByName(..)?
     suspend fun getAllMaterialsSortedBySimilarity(characteristics: MaterialCharacteristics): List<MaterialSummary> //room material repository bude mit private servicku, ktera mu to spocita
 
-    suspend fun getMaterialsCount(): Int
-    suspend fun getMaterial(id: Int): Material //todo nebo to lze dat niz jen k tem repum, ktere to potrebuji?
-    suspend fun getPolarPlot(id: Int): Bitmap //todo later change to svg
+    suspend fun getMaterialsCount(): Long
+    suspend fun getMaterial(id: Long): Material //todo nebo to lze dat niz jen k tem repum, ktere to potrebuji?
+    suspend fun getPolarPlot(id: Long): Bitmap //todo later change to svg
 
     //todo obrazovka ApplyFilterOnPolarPlot(characteristics: MaterialCharacteristics)
 
@@ -24,6 +31,8 @@ interface MaterialRepository {
     // polarPlotVisalization(polarPlot1, polarPlot2, polarPlotWithBothMaterials) - viz gogole docs s popisem
     // takze polarPlotVisalualisation(mat1: dvojice id a local/remote, mat2: to same, ale nullable) = udelat si na to novy objekt
 }
+
+// todo obrazovka apply filter: pres Proto Data Store ukladat ten objekt 16 statistik a nacitat si ho pak i v BrowseMaterialsVM, takze do composables predavat krome ID i treba ID = -1 jakoze to nema ID a maji se nacist statistiky z data store
 
 //todo 1:
 // na BrowseMaterials screenach udelat zavislost na obou viewmodelech, protoze tam pridam i dialog, kde se uzivatel rozhodne, zda najit similar material k lokalnim nebo remote datum
@@ -49,3 +58,6 @@ interface MaterialRepository {
 
 //todo 4:
 // a servicku pro pocitání podobného materiálu udělat tak, ze repositrář ji bude volat, nikoli přímo ti viewmodelové, co ji budou potřebovat, protože oni sami vědí, jaký repositář jim to má udělat, takže oni sami si ho zavolají a až ta implementace lokálního room repositáře bude mít u sebe tu srevicku, aby si mohla nechat ty materiály porovnat dle té podobnosti
+
+//todo DULEZITE - predelat to zpatky na Material namisto MaterialSummary protoze budu polar ploty kreslit sam a zadny SVG nebudou potreba -> nebude getPolarPlot() ani v local ani v remote - composable na kresleni polar plotu dostane ID materialu a informaci jestli je lokalni nebo remote a jeji viewmodel si sam fetchne 16 charakteristik (nebo 32 pro dva grafy) a composable je vykresli
+// ny vykresleni tech polar plotu z remote: Protoze uz mam ve state v browse materials screen ulozene ty 16tice charakteristik, tak nechci je znovu tahat ze serveru -> ulozit je do data store pod nejaky klic "remoteMaterialCharacteristics1" a "...2" a v navigaci rict jen REMOTE/LOCAL, Long idcko, Long? idcko (jakoze nullable protoze klidne muze byt jen jedno) -> a v viewmodelu polar plot screen si jen precist jestli je i to druhe null a kdyz je, tak vykreslit jen to z prvniho slotu, jinak oba

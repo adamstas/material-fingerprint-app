@@ -39,10 +39,14 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import androidx.hilt.navigation.compose.hiltViewModel
+import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun BrowseLocalMaterialsScreen(
+    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
     /**
      * todo:
@@ -55,6 +59,9 @@ fun BrowseLocalMaterialsScreen(
 
     BrowseMaterialsScreen(
         title = "Browse local materials",
+        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
+        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
     )
@@ -62,12 +69,53 @@ fun BrowseLocalMaterialsScreen(
 
 @Composable
 fun BrowseRemoteMaterialsScreen(
+    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
     BrowseMaterialsScreen(
         title = "Browse remote materials",
+        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
+        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigationEvents = viewModel.navigationEvents,
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+//todo dat ty similar materials screens definice do jineho souboru?
+@Composable
+fun BrowseSimilarLocalMaterialsScreen(
+    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+
+    BrowseMaterialsScreen(
+        title = "Browse similar local materials",
+        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
+        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigationEvents = viewModel.navigationEvents,
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+fun BrowseSimilarRemoteMaterialsScreen(
+    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+
+    BrowseMaterialsScreen(
+        title = "Browse similar remote materials",
+        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
+        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
     )
@@ -76,9 +124,22 @@ fun BrowseRemoteMaterialsScreen(
 @Composable
 fun BrowseMaterialsScreen(
     title: String,
+    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigationEvents: SharedFlow<MaterialNavigationEvent>,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
 ) {
+    NavigationHandler(
+        navigationEventFlow = navigationEvents,
+        navigate = { event ->
+            when (event) {
+                is MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialID)
+                is MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen(event.materialID)
+            }
+        }
+    )
+
     Scaffold(
         topBar = {
             BackTopBarTitle(
@@ -107,6 +168,7 @@ fun BrowseMaterialsScreen(
 
                 BottomButtonsSection(
                     state = state,
+                    onEvent = onEvent,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
@@ -261,11 +323,12 @@ fun MaterialListRow(
 @Composable
 fun BottomButtonsSection(
     state: MaterialsScreenState,
+    onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier) {
         Button(
             modifier = modifier,
             enabled = state.isFindSimilarMaterialButtonEnabled,
-            onClick = { /*TODO*/ }) {
+            onClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterialId())) }) { //todo tady pak otevrit dialog a v nem rozhodnout, zda jit na lokal nebo remote similar materials
                 Text(text = "Find similar material")
         }
 

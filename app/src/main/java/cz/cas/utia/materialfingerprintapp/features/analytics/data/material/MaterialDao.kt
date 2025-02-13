@@ -32,11 +32,11 @@ interface MaterialDao {
     suspend fun getAllMaterialsOrderedByName(): List<Material>
 
     @Query("SELECT COUNT(*) FROM material")
-    suspend fun getMaterialsCount(): Int //delete later, now used just for DB init
+    suspend fun getMaterialsCount(): Long //delete later, now used just for DB init
 
     @Query("DELETE FROM material") //just for testing, delete later
     suspend fun deleteAllMaterials()
 
     @Query("SELECT * FROM material WHERE id = :id") //todo nebo dat equals?
-    suspend fun getMaterial(id: Int): Material
+    suspend fun getMaterial(id: Long): Material
 }

@@ -14,6 +14,14 @@ class RetrofitRemoteMaterialRepositoryImpl: RemoteMaterialRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getMaterialsOrderedByName(
         categories: List<MaterialCategory>,
         searchText: String
@@ -21,7 +29,23 @@ class RetrofitRemoteMaterialRepositoryImpl: RemoteMaterialRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMaterialsCount(): Int {
+    override suspend fun getSimilarMaterialsOrderedByName(
+        categories: List<MaterialCategory>,
+        searchText: String,
+        materialId: Long
+    ): List<MaterialSummary> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSimilarMaterialsOrderedByName(
+        categories: List<MaterialCategory>,
+        searchText: String,
+        materialCharacteristics: MaterialCharacteristics
+    ): List<MaterialSummary> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getMaterialsCount(): Long {
         TODO("Not yet implemented")
     }
 
@@ -42,11 +66,11 @@ class RetrofitRemoteMaterialRepositoryImpl: RemoteMaterialRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMaterial(id: Int): Material {
+    override suspend fun getMaterial(id: Long): Material {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPolarPlot(id: Int): Bitmap {
+    override suspend fun getPolarPlot(id: Long): Bitmap {
         TODO("Not yet implemented")
     }
 }
