@@ -5,6 +5,8 @@ plugins {
 
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+
+    id("com.google.protobuf") version "0.9.4"
 }
 
 android {
@@ -89,4 +91,24 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.accompanist.permissions)
+
+    implementation(libs.androidx.datastore.preferences) // todo if not used this basic data store, remove it
+    implementation(libs.androidx.datastore)
+    implementation(libs.protobuf.javalite)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.12"
+    }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                maybeCreate("java").apply {
+                    option("lite")
+                }
+            }
+        }
+    }
 }

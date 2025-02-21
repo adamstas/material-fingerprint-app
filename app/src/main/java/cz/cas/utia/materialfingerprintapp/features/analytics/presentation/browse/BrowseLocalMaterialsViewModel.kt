@@ -3,6 +3,7 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.brows
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsProtoDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -12,10 +13,12 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowseLocalMaterialsViewModel @Inject constructor(
     materialRepository: LocalMaterialRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    dataStore: MaterialCharacteristicsProtoDataStore
 ): BrowseMaterialsViewModel(
     materialRepository = materialRepository,
-    savedStateHandle = savedStateHandle) {
+    savedStateHandle = savedStateHandle,
+    materialCharacteristicsRepository = dataStore) {
 
     init {
         _selectedCategoryIDs.onEach {

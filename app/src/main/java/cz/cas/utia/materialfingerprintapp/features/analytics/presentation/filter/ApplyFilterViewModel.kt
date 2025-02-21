@@ -1,19 +1,51 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsStorageSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ApplyFilterViewModel @Inject constructor(
-
+    private val materialCharacteristicsRepository: MaterialCharacteristicsRepository
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ApplyFilterScreenState())
     val state = _state.asStateFlow()
+
+    private val _navigationEvents = MutableSharedFlow<ApplyFilterNavigationEvent>()
+    val navigationEvents = _navigationEvents.asSharedFlow()
+
+    private fun storeMaterialCharacteristics() {
+        val materialCharacteristics = fromListForDrawingToMaterialCharacteristics(_state.value.axisValues)
+
+        viewModelScope.launch {
+            materialCharacteristicsRepository.saveMaterialCharacteristics(
+                materialCharacteristics = materialCharacteristics,
+                slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN
+            )
+        }
+    }
+
+    private fun navigateToBrowseSimilarLocalMaterialsScreen() {
+        viewModelScope.launch {
+            _navigationEvents.emit(ApplyFilterNavigationEvent.ToBrowseSimilarLocalMaterialsScreen)
+        }
+    }
+
+    private fun navigateToBrowseSimilarRemoteMaterialsScreen() {
+        viewModelScope.launch {
+            _navigationEvents.emit(ApplyFilterNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen)
+        }
+    }
 
     fun onEvent(event: ApplyFilterEvent) {
         when(event) {
@@ -24,15 +56,24 @@ class ApplyFilterViewModel @Inject constructor(
             is ApplyFilterEvent.SetSelectedAxisValue -> setSelectedAxisValue(event)
             ApplyFilterEvent.ShowOrHideAxesLabels -> showOrHideAxesLabels()
             ApplyFilterEvent.UndoDrawingState -> undoDrawingState()
+            ApplyFilterEvent.GoBackToAnalyticsHomeScreen -> goBackToAnalyticsHomeScreen()
+        }
+    }
+
+    private fun goBackToAnalyticsHomeScreen() {
+        viewModelScope.launch {
+            _navigationEvents.emit(ApplyFilterNavigationEvent.BackToAnalyticsHomeScreen)
         }
     }
 
     private fun applyOnLocalData() {
-
+        storeMaterialCharacteristics()
+        navigateToBrowseSimilarLocalMaterialsScreen()
     }
 
     private fun applyOnRemoteData() {
-
+        storeMaterialCharacteristics()
+        navigateToBrowseSimilarRemoteMaterialsScreen()
     }
 
     private fun addDrawingStateToStack(event: ApplyFilterEvent.AddDrawingStateToStack) {

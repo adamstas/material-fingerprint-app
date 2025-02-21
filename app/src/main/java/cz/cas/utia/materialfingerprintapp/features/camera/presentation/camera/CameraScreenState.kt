@@ -19,5 +19,5 @@ data class CameraScreenState(
 
 enum class ImageSlotPosition {
     FIRST,
-    SECOND;
+    SECOND
 }

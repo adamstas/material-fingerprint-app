@@ -68,7 +68,11 @@ fun MainGraph(
         }
 
         composable<Screen.ApplyFilter> {
-            ApplyFilterScreenRoot()
+            ApplyFilterScreenRoot(
+                navigateBack = { /* todo */ },
+                navigateToBrowseSimilarLocalMaterialsScreen = { navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = -1L)) },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = -1L)) }
+            )
         }
 
         composable<Screen.BrowseSimilarLocalMaterials> {

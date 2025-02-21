@@ -11,4 +11,12 @@ sealed interface ApplyFilterEvent {
 
     data object ApplyOnLocalData: ApplyFilterEvent
     data object ApplyOnServerData: ApplyFilterEvent
+
+    data object GoBackToAnalyticsHomeScreen: ApplyFilterEvent
+}
+
+sealed interface ApplyFilterNavigationEvent {
+    data object BackToAnalyticsHomeScreen: ApplyFilterNavigationEvent
+    data object ToBrowseSimilarLocalMaterialsScreen: ApplyFilterNavigationEvent
+    data object ToBrowseSimilarRemoteMaterialsScreen: ApplyFilterNavigationEvent
 }

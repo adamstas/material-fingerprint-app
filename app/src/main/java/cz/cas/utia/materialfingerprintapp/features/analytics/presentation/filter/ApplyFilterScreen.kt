@@ -24,6 +24,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import kotlin.math.PI
@@ -34,9 +35,23 @@ import kotlin.math.sin
 
 @Composable
 fun ApplyFilterScreenRoot(
-    viewModel: ApplyFilterViewModel = hiltViewModel()
+    viewModel: ApplyFilterViewModel = hiltViewModel(),
+    navigateBack: () -> Unit,
+    navigateToBrowseSimilarLocalMaterialsScreen: () -> Unit,
+    navigateToBrowseSimilarRemoteMaterialsScreen: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+
+    NavigationHandler(
+        navigationEventFlow = viewModel.navigationEvents,
+        navigate = { event ->
+            when (event) {
+                is ApplyFilterNavigationEvent.BackToAnalyticsHomeScreen -> navigateBack()
+                is ApplyFilterNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen()
+                is ApplyFilterNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen()
+            }
+        }
+    )
 
     ApplyFilterScreen(
         state = state,

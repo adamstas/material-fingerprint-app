@@ -23,5 +23,5 @@ data class PhotosSummaryScreenState(
 
 enum class LightDirection {
     FROM_LEFT,
-    FROM_ABOVE;
+    FROM_ABOVE
 }

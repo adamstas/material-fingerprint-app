@@ -26,8 +26,31 @@ fun scaleToCharacteristics(value: Float, fromMin: Float = 0f, fromMax: Float = 3
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin)
 }
 
+// todo ten range -2,75 a +2,75 hodit někam do configu mimo
 fun scaleToDrawingFloats(value: Double, fromMin: Double = -2.75, fromMax: Double = 2.75, toMin: Float = 0f, toMax: Float = 300f): Float {
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin).toFloat()
+}
+
+// todo osetrit zda je velikost presne axesAMount, jinak hodit exception..?
+fun fromListForDrawingToMaterialCharacteristics(list: List<Float>): MaterialCharacteristics {
+    return MaterialCharacteristics(
+        brightness = scaleToCharacteristics(list[0]),
+        colorVibrancy = scaleToCharacteristics(list[1]),
+        hardness = scaleToCharacteristics(list[2]),
+        checkeredPattern = scaleToCharacteristics(list[3]),
+        movementEffect = scaleToCharacteristics(list[4]),
+        multicolored = scaleToCharacteristics(list[5]),
+        naturalness = scaleToCharacteristics(list[6]),
+        patternComplexity = scaleToCharacteristics(list[7]),
+        scaleOfPattern = scaleToCharacteristics(list[8]),
+        shininess = scaleToCharacteristics(list[9]),
+        sparkle = scaleToCharacteristics(list[10]),
+        stripedPattern = scaleToCharacteristics(list[11]),
+        surfaceRoughness = scaleToCharacteristics(list[12]),
+        thickness = scaleToCharacteristics(list[13]),
+        value = scaleToCharacteristics(list[14]),
+        warmth = scaleToCharacteristics(list[15])
+    )
 }
 
 const val axesAmount = 16 // todo dat do nejakeho configu mimo
@@ -48,5 +71,5 @@ enum class MaterialCharacteristicsAttribute { // todo pouzit az budu mapovat idc
     SURFACE_ROUGHNESS,
     THICKNESS,
     VALUE,
-    WARMTH;
+    WARMTH
 }

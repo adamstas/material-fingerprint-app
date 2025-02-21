@@ -17,7 +17,6 @@ class ImageStorageServiceImpl @Inject constructor(
     private val imagesDirectoryName = "images"
 
     private fun getImagesDirectory(): File {
-
         val imagesDirectory = File(context.filesDir, imagesDirectoryName)
 
         if (!imagesDirectory.exists()) {

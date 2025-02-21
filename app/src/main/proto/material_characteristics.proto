@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "cz.cas.utia.materialfingerprintapp.application.proto";
+option java_multiple_files = true;
+
+message ProtoMaterialCharacteristics {
+  double brightness = 1;
+  double colorVibrancy = 2;
+  double hardness = 3;
+  double checkeredPattern = 4;
+  double movementEffect = 5;
+  double multicolored = 6;
+  double naturalness = 7;
+  double patternComplexity = 8;
+  double scaleOfPattern = 9;
+  double shininess = 10;
+  double sparkle = 11;
+  double stripedPattern = 12;
+  double surfaceRoughness = 13;
+  double thickness = 14;
+  double value = 15;
+  double warmth = 16;
+}

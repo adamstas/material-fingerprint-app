@@ -1,6 +1,5 @@
 package cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
