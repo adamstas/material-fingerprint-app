@@ -27,7 +27,8 @@ class MaterialSummaryMapper(
            name = material.name,
            photoThumbnail = photoThumbnail!!, //todo nechat "!!" ?
            fingerprintThumbnail = fingerprintThumbnail!!,
-           category = material.category
+           category = material.category,
+           characteristics = material.characteristics
        )
    }
 }

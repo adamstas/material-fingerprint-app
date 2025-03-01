@@ -1,6 +1,5 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
-import android.graphics.Bitmap
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
@@ -87,10 +86,6 @@ class RoomMaterialRepositoryImpl @Inject constructor(
 
     override suspend fun getMaterial(id: Long): Material {
         return materialDao.getMaterial(id)
-    }
-
-    override suspend fun getPolarPlot(id: Long): Bitmap {
-        TODO("Not yet implemented")
     }
 
     override suspend fun getAllMaterialsSortedBySimilarity(characteristics: MaterialCharacteristics): List<MaterialSummary> {

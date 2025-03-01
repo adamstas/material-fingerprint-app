@@ -1,7 +1,10 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import cz.cas.utia.materialfingerprintapp.core.navigation.Screen
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsStorageSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApplyFilterViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val materialCharacteristicsRepository: MaterialCharacteristicsRepository
 ): ViewModel() {
 
@@ -23,6 +27,23 @@ class ApplyFilterViewModel @Inject constructor(
 
     private val _navigationEvents = MutableSharedFlow<ApplyFilterNavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
+
+    init {
+        val args = savedStateHandle.toRoute<Screen.ApplyFilter>()
+
+        viewModelScope.launch {
+            if (args.loadCharacteristicsFromStorage) {
+                val characteristics = materialCharacteristicsRepository.loadMaterialCharacteristics(slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
+
+                _state.update {
+                    it.copy(
+                        axisValues = characteristics.toListForDrawing(),
+                        drawingStateStack = listOf(characteristics.toListForDrawing())
+                    )
+                }
+            }
+        }
+    }
 
     private fun storeMaterialCharacteristics() {
         val materialCharacteristics = fromListForDrawingToMaterialCharacteristics(_state.value.axisValues)

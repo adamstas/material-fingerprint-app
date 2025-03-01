@@ -8,7 +8,7 @@ data class CameraScreenState(
     val currentlyCapturedImage: Bitmap? = null, //just captured, not saved in any slot
     val selectedImageSlot: ImageSlotPosition = ImageSlotPosition.FIRST,
 
-    val isDialogOpened: Boolean = false,
+    val isDialogShown: Boolean = false,
     val isCaptureImageButtonEnabled: Boolean = false
     )
 {

@@ -41,7 +41,7 @@ fun initialData(): List<Material> {
                 stripedPattern = 0.0,
                 surfaceRoughness = 0.1,
                 thickness = 0.15,
-                value = 90.0,
+                value = -0.5,
                 warmth = 0.7
             )
         ),
@@ -68,7 +68,7 @@ fun initialData(): List<Material> {
                 stripedPattern = 0.4,
                 surfaceRoughness = 0.0,
                 thickness = 0.18,
-                value = 94.0,
+                value = 0.1,
                 warmth = 0.78
             )
         ),
@@ -95,7 +95,7 @@ fun initialData(): List<Material> {
                 stripedPattern = 0.4,
                 surfaceRoughness = 0.0,
                 thickness = 0.18,
-                value = 94.0,
+                value = 2.70,
                 warmth = 0.78
             )
         ),
@@ -122,7 +122,7 @@ fun initialData(): List<Material> {
                 stripedPattern = 0.4,
                 surfaceRoughness = 0.0,
                 thickness = 0.18,
-                value = 94.0,
+                value = -2.70,
                 warmth = 0.78
             )
         ),
@@ -149,7 +149,7 @@ fun initialData(): List<Material> {
                 stripedPattern = 0.4,
                 surfaceRoughness = 0.0,
                 thickness = 0.18,
-                value = 94.0,
+                value = -1.25,
                 warmth = 0.78
             )
         )

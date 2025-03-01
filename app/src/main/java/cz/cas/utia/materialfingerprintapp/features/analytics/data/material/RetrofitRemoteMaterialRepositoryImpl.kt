@@ -69,8 +69,4 @@ class RetrofitRemoteMaterialRepositoryImpl: RemoteMaterialRepository {
     override suspend fun getMaterial(id: Long): Material {
         TODO("Not yet implemented")
     }
-
-    override suspend fun getPolarPlot(id: Long): Bitmap {
-        TODO("Not yet implemented")
-    }
 }

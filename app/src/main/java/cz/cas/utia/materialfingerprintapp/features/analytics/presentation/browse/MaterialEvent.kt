@@ -19,9 +19,20 @@ sealed interface MaterialEvent {
 
     data class FindSimilarLocalMaterials(val materialID: Long): MaterialEvent
     data class FindSimilarRemoteMaterials(val materialID: Long): MaterialEvent
+    data object FindSimilarMaterial: MaterialEvent
+
+    data object CreatePolarPlot: MaterialEvent
+
+    data object DismissFindSimilarMaterialsDialog: MaterialEvent
 }
 
 sealed interface MaterialNavigationEvent { //todo nehcat to takhle "MaterialNavigationEvent"?
     data class ToBrowseSimilarLocalMaterialsScreen(val materialID: Long): MaterialNavigationEvent
     data class ToBrowseSimilarRemoteMaterialsScreen(val materialID: Long): MaterialNavigationEvent
+    data class ToPolarPlotVisualisationScreen(
+        val isFirstMaterialSourceLocal: Boolean,
+        val firstMaterialId: Long,
+        val isSecondMaterialSourceLocal: Boolean?,
+        val secondMaterialId: Long?
+    ): MaterialNavigationEvent
 }

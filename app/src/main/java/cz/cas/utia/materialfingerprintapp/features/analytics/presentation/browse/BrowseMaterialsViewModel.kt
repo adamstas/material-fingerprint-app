@@ -30,11 +30,11 @@ abstract class BrowseMaterialsViewModel(
     //_searchBarText tu taky musi byt jako private, protoze je na nej v reakce v BrowseLocalMaterialsViewModelu, totez pro _selectedCategoryIDs
     //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v volani combine, kde vznika state pro UI
     protected val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
-    private val _checkedMaterials = MutableStateFlow<Set<Long>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
+    protected val _checkedMaterials = MutableStateFlow<Set<Long>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
     private val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
     protected val _searchBarText = MutableStateFlow("")
 
-    private val _similarMaterialId = savedStateHandle.get<Long?>("materialId")
+    private val _similarMaterialId = savedStateHandle.get<Long?>("materialId") // cannot use toRoute since the ViewModel can be in 2 routes (BrowseSimilarMaterials and BrowseMaterials)
 
     protected val _state = MutableStateFlow(MaterialsScreenState())
     val state = combine(_state, _selectedCategoryIDs, _materials, _checkedMaterials, _searchBarText)
@@ -47,7 +47,7 @@ abstract class BrowseMaterialsViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaterialsScreenState())
 
-    private val _navigationEvents = MutableSharedFlow<MaterialNavigationEvent>()
+    protected val _navigationEvents = MutableSharedFlow<MaterialNavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
 
     private fun enableOrDisableFindSimilarMaterialButton() {
@@ -109,6 +109,7 @@ abstract class BrowseMaterialsViewModel(
                 } // todo pomoci data store nacist charakteristiky a predat je, protoze neni ID
                 else -> _materials.value = materialRepository.getAllSimilarMaterialsOrderedByName(_similarMaterialId)
             }
+            Log.i("testicek", "similar material ID je $_similarMaterialId")
 
             //todo check if this works after setting up DI
             Log.i("ONEVENT", "materials: " + materialRepository.getAllMaterialsOrderedByName()) //this should NOT return empty list
@@ -138,6 +139,9 @@ abstract class BrowseMaterialsViewModel(
             is MaterialEvent.SearchMaterials -> searchMaterials(event)
             is MaterialEvent.FindSimilarLocalMaterials -> findSimilarLocalMaterials(event)
             is MaterialEvent.FindSimilarRemoteMaterials -> findSimilarRemoteMaterials(event)
+            MaterialEvent.CreatePolarPlot -> createPolarPlot()
+            MaterialEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
+            MaterialEvent.FindSimilarMaterial -> findSimilarMaterials()
         }
     }
 
@@ -184,6 +188,24 @@ abstract class BrowseMaterialsViewModel(
     private fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials) {
         viewModelScope.launch {
             _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(event.materialID))
+        }
+    }
+
+    protected abstract fun createPolarPlot()
+
+    private fun dismissFindSimilarMaterialsDialog() {
+        _state.update {
+            it.copy(
+                isFindSimilarMaterialsDialogShown = false
+            )
+        }
+    }
+
+    private fun findSimilarMaterials() {
+        _state.update {
+            it.copy(
+                isFindSimilarMaterialsDialogShown = true
+            )
         }
     }
 }

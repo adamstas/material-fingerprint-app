@@ -74,7 +74,7 @@ class CameraViewModel @Inject constructor(
         _state.update {
             it.copy(
                 currentlyCapturedImage = event.imageBitmap,
-                isDialogOpened = true
+                isDialogShown = true
             )
         }
     }
@@ -83,7 +83,7 @@ class CameraViewModel @Inject constructor(
         _state.update {
             it.copy(
                 currentlyCapturedImage = null,
-                isDialogOpened = false
+                isDialogShown = false
             )
         }
     }
@@ -108,7 +108,7 @@ class CameraViewModel @Inject constructor(
             updated.copy(
                 currentlyCapturedImage = null,
                 selectedImageSlot = getNewSelectedImageSlotPosition(), //automatically go to next empty slot (if any exists)
-                isDialogOpened = false
+                isDialogShown = false
             )
         }
     }

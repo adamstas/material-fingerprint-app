@@ -17,7 +17,9 @@ data class MaterialsScreenState(
     val isSearching: Boolean = false,
 
     val isFindSimilarMaterialButtonEnabled: Boolean = false,
-    val isCreatePolarPlotButtonEnabled: Boolean = false
+    val isCreatePolarPlotButtonEnabled: Boolean = false,
+
+    val isFindSimilarMaterialsDialogShown: Boolean = false
     )
 {
     fun isMaterialChecked(materialID: Long): Boolean {

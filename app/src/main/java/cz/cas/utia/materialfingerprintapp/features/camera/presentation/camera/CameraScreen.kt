@@ -202,7 +202,7 @@ fun CameraScreen(
                    Text("Capture")
                }
 
-                if (state.isDialogOpened) {
+                if (state.isDialogShown) {
                     CapturedImageDialog(
                         state = state,
                         onEvent = onEvent

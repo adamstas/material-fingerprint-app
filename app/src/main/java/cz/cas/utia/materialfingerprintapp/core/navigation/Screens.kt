@@ -63,7 +63,17 @@ sealed class Screen {
     data object BrowseRemoteMaterials: Screen()
 
     @Serializable
-    data object ApplyFilter: Screen()
+    data class ApplyFilter(
+        val loadCharacteristicsFromStorage: Boolean
+    ): Screen()
+
+    @Serializable
+    data class PolarPlotVisualisation(
+        val isFirstMaterialSourceLocal: Boolean,
+        val firstMaterialId: Long,
+        val isSecondMaterialSourceLocal: Boolean?,
+        val secondMaterialId: Long?
+    ): Screen()
 
     @Serializable
     data class BrowseSimilarLocalMaterials(val materialId: Long): Screen()

@@ -41,12 +41,14 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCate
 import androidx.hilt.navigation.compose.hiltViewModel
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.FindSimilarMaterialsDialog
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun BrowseLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
     /**
      * todo:
@@ -61,6 +63,7 @@ fun BrowseLocalMaterialsScreen(
         title = "Browse local materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -71,6 +74,7 @@ fun BrowseLocalMaterialsScreen(
 fun BrowseRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -79,6 +83,7 @@ fun BrowseRemoteMaterialsScreen(
         title = "Browse remote materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -89,6 +94,7 @@ fun BrowseRemoteMaterialsScreen(
 fun BrowseSimilarLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -97,6 +103,7 @@ fun BrowseSimilarLocalMaterialsScreen(
         title = "Browse similar local materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -107,6 +114,7 @@ fun BrowseSimilarLocalMaterialsScreen(
 fun BrowseSimilarRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -115,6 +123,7 @@ fun BrowseSimilarRemoteMaterialsScreen(
         title = "Browse similar remote materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
+        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -126,6 +135,7 @@ fun BrowseMaterialsScreen(
     title: String,
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
     navigationEvents: SharedFlow<MaterialNavigationEvent>,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
@@ -136,6 +146,12 @@ fun BrowseMaterialsScreen(
             when (event) {
                 is MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialID)
                 is MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen(event.materialID)
+                is MaterialNavigationEvent.ToPolarPlotVisualisationScreen -> navigateToPolarPlotVisualisationScreen(
+                    event.isFirstMaterialSourceLocal,
+                    event.firstMaterialId,
+                    event.isSecondMaterialSourceLocal,
+                    event.secondMaterialId
+                )
             }
         }
     )
@@ -171,6 +187,14 @@ fun BrowseMaterialsScreen(
                     onEvent = onEvent,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
+
+                if (state.isFindSimilarMaterialsDialogShown) {
+                    FindSimilarMaterialsDialog(
+                        onDismissRequest = { onEvent(MaterialEvent.DismissFindSimilarMaterialsDialog) },
+                        onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterialId())) },
+                        onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterialId())) }
+                    )
+                }
             }
     }
 }
@@ -328,14 +352,14 @@ fun BottomButtonsSection(
         Button(
             modifier = modifier,
             enabled = state.isFindSimilarMaterialButtonEnabled,
-            onClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterialId())) }) { //todo tady pak otevrit dialog a v nem rozhodnout, zda jit na lokal nebo remote similar materials
+            onClick = { onEvent(MaterialEvent.FindSimilarMaterial) }) {
                 Text(text = "Find similar material")
         }
 
         Button(
             modifier = modifier,
             enabled = state.isCreatePolarPlotButtonEnabled,
-            onClick = { /*TODO*/ }) {
+            onClick = { onEvent(MaterialEvent.CreatePolarPlot) }) {
                 Text(text = "Create polar plot")
         }
 }

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,5 +35,18 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
         _state.update { it.copy(
             isDropdownMenuExpanded = false
         ) }
+    }
+
+    override fun createPolarPlot() {
+        viewModelScope.launch {
+            val isSecondMaterialChecked = _checkedMaterials.value.size > 1
+
+            _navigationEvents.emit(MaterialNavigationEvent.ToPolarPlotVisualisationScreen(
+                isFirstMaterialSourceLocal = true,
+                firstMaterialId = _checkedMaterials.value.first(),
+                isSecondMaterialSourceLocal = if (isSecondMaterialChecked) true else null,
+                secondMaterialId = if (isSecondMaterialChecked) _checkedMaterials.value.elementAt(1) else null,
+            ))
+        }
     }
 }

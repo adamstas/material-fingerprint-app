@@ -45,5 +45,16 @@ class BrowseRemoteMaterialsViewModel( //@Inject constructor(
         }
     }
 
+    override fun createPolarPlot() { //todo otestovat az bude ready repositar
+        viewModelScope.launch {
+            val isSecondMaterialChecked = _checkedMaterials.value.size > 1
 
+            _navigationEvents.emit(MaterialNavigationEvent.ToPolarPlotVisualisationScreen(
+                isFirstMaterialSourceLocal = false,
+                firstMaterialId = _checkedMaterials.value.first(),
+                isSecondMaterialSourceLocal = if (isSecondMaterialChecked) false else null,
+                secondMaterialId = if (isSecondMaterialChecked) _checkedMaterials.value.elementAt(1) else null,
+            ))
+        }
+    }
 }
