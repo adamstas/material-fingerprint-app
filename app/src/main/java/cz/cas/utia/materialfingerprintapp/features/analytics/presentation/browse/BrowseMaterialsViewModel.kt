@@ -23,15 +23,15 @@ import kotlinx.coroutines.launch
 abstract class BrowseMaterialsViewModel(
     private val savedStateHandle: SavedStateHandle, //for fetching navigation arguments
     private val materialRepository: MaterialRepository,
-    private val materialCharacteristicsRepository: MaterialCharacteristicsRepository
+    protected val materialCharacteristicsRepository: MaterialCharacteristicsRepository
 ): ViewModel() {
     //private atributy jsou to proto, ze je pri jejich zmene potreba udelat nejakou reakci (napr. pri zmene _materials je potreba updatovat tlacitka
     //napr. _checkedMaterials by se mohlo brat z public statu, ale pak by neslo reagovat na zmenu toho _checkedMaterials
     //_searchBarText tu taky musi byt jako private, protoze je na nej v reakce v BrowseLocalMaterialsViewModelu, totez pro _selectedCategoryIDs
     //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v volani combine, kde vznika state pro UI
     protected val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
-    protected val _checkedMaterials = MutableStateFlow<Set<Long>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
-    private val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
+    protected val _checkedMaterials = MutableStateFlow<Set<MaterialSummary>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
+    protected val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
     protected val _searchBarText = MutableStateFlow("")
 
     private val _similarMaterialId = savedStateHandle.get<Long?>("materialId") // cannot use toRoute since the ViewModel can be in 2 routes (BrowseSimilarMaterials and BrowseMaterials)
@@ -146,11 +146,11 @@ abstract class BrowseMaterialsViewModel(
     }
 
     private fun checkMaterial(event: MaterialEvent.CheckMaterial) {
-        _checkedMaterials.value += event.materialID
+        _checkedMaterials.value += event.material
     }
 
     private fun uncheckMaterial(event: MaterialEvent.UncheckMaterial) {
-        _checkedMaterials.value -= event.materialID
+        _checkedMaterials.value -= event.material
     }
 
     private fun checkOrUncheckCategory(event: MaterialEvent.CheckOrUncheckCategory) {
@@ -179,17 +179,9 @@ abstract class BrowseMaterialsViewModel(
 
     protected abstract fun closeDropdownMenu()
 
-    private fun findSimilarLocalMaterials(event: MaterialEvent.FindSimilarLocalMaterials) {
-        viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(event.materialID))
-        }
-    }
+    protected abstract fun findSimilarLocalMaterials(event: MaterialEvent.FindSimilarLocalMaterials)
 
-    private fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials) {
-        viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(event.materialID))
-        }
-    }
+    protected abstract fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials)
 
     protected abstract fun createPolarPlot()
 

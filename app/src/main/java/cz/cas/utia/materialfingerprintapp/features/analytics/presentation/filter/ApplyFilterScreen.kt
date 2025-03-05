@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
@@ -137,7 +139,7 @@ fun PolarPlotWithSliders(
     val circleColor = MaterialTheme.colorScheme.primary // for drawing colors, cannot be obtained later
     val axisColor = MaterialTheme.colorScheme.secondary
     val backgroundColor = MaterialTheme.colorScheme.background
-    val plotColor = MaterialTheme.colorScheme.tertiary
+    val plotColor = colorResource(id = AppConfig.Colors.primaryPlotColorId)
 
     // these attributes are changed in each frame when dragging so they are transient state and not needed to be stored at viewmodel
     var activeAxis by remember { mutableStateOf<Int?>(null) }
@@ -257,7 +259,6 @@ fun PolarPlotWithSliders(
         ) {
             PolarPlotCanvas(
                 axisValues = state.axisValues,
-                axesAmount = axesAmount,
                 axisLabels = axisLabels,
                 circleColor = circleColor,
                 axisColor = axisColor,

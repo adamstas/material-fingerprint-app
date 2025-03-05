@@ -5,7 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseRemoteMaterialsScreen
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseSimilarLocalMaterialsScreen
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseSimilarRemoteMaterialsScreen
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.ApplyFilterScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.home.AnalyticsHomeScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.visualise.PolarPlotVisualisationScreenRoot
@@ -62,21 +64,43 @@ fun MainGraph(
                 navigateToPolarPlotVisualisationScreen = {
                         isFirstMaterialSourceLocal: Boolean,
                         firstMaterialId: Long,
+                        firstMaterialName: String,
                         isSecondMaterialSourceLocal: Boolean?,
-                        secondMaterialId: Long? -> navController.navigate(Screen.PolarPlotVisualisation(
+                        secondMaterialId: Long?,
+                        secondMaterialName: String? -> navController.navigate(Screen.PolarPlotVisualisation(
                     isFirstMaterialSourceLocal = isFirstMaterialSourceLocal,
                     firstMaterialId = firstMaterialId,
+                    firstMaterialName = firstMaterialName,
                     isSecondMaterialSourceLocal = isSecondMaterialSourceLocal,
-                    secondMaterialId = secondMaterialId
+                    secondMaterialId = secondMaterialId,
+                    secondMaterialName = secondMaterialName
                 ))
                 }
             )
-            //BrowseRemoteMaterialsScreen() //todo test this screen when i have working remote repository
-            //here will be another screen from which user goes to browse local / browse remote / filter..
         }
 
         composable<Screen.BrowseRemoteMaterials> {
-            //todo az bude ready remote repository tak to sem pridat
+            BrowseRemoteMaterialsScreen(
+                navigateToBrowseSimilarLocalMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = materialId)) },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = materialId)) },
+                navigateToPolarPlotVisualisationScreen = {
+                        isFirstMaterialSourceLocal: Boolean,
+                        firstMaterialId: Long,
+                        firstMaterialName: String,
+                        isSecondMaterialSourceLocal: Boolean?,
+                        secondMaterialId: Long?,
+                        secondMaterialName: String? -> navController.navigate(Screen.PolarPlotVisualisation(
+                    isFirstMaterialSourceLocal = isFirstMaterialSourceLocal,
+                    firstMaterialId = firstMaterialId,
+                    firstMaterialName = firstMaterialName,
+                    isSecondMaterialSourceLocal = isSecondMaterialSourceLocal,
+                    secondMaterialId = secondMaterialId,
+                    secondMaterialName = secondMaterialName
+                ))
+                }
+            )
         }
 
         composable<Screen.ApplyFilter> {
@@ -96,19 +120,43 @@ fun MainGraph(
                 navigateToPolarPlotVisualisationScreen = {
                         isFirstMaterialSourceLocal: Boolean,
                         firstMaterialId: Long,
+                        firstMaterialName: String,
                         isSecondMaterialSourceLocal: Boolean?,
-                        secondMaterialId: Long? -> navController.navigate(Screen.PolarPlotVisualisation(
+                        secondMaterialId: Long?,
+                        secondMaterialName: String? -> navController.navigate(Screen.PolarPlotVisualisation(
                     isFirstMaterialSourceLocal = isFirstMaterialSourceLocal,
                     firstMaterialId = firstMaterialId,
+                    firstMaterialName = firstMaterialName,
                     isSecondMaterialSourceLocal = isSecondMaterialSourceLocal,
-                    secondMaterialId = secondMaterialId
+                    secondMaterialId = secondMaterialId,
+                    secondMaterialName = secondMaterialName
                 ))
                 }
             )
         }
 
         composable<Screen.BrowseSimilarRemoteMaterials> {
-
+            BrowseSimilarRemoteMaterialsScreen(
+                navigateToBrowseSimilarLocalMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = materialId)) },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = materialId)) },
+                navigateToPolarPlotVisualisationScreen = {
+                        isFirstMaterialSourceLocal: Boolean,
+                        firstMaterialId: Long,
+                        firstMaterialName: String,
+                        isSecondMaterialSourceLocal: Boolean?,
+                        secondMaterialId: Long?,
+                        secondMaterialName: String? -> navController.navigate(Screen.PolarPlotVisualisation(
+                    isFirstMaterialSourceLocal = isFirstMaterialSourceLocal,
+                    firstMaterialId = firstMaterialId,
+                    firstMaterialName = firstMaterialName,
+                    isSecondMaterialSourceLocal = isSecondMaterialSourceLocal,
+                    secondMaterialId = secondMaterialId,
+                    secondMaterialName = secondMaterialName
+                ))
+                }
+            )
         }
 
         composable<Screen.PolarPlotVisualisation> {
@@ -116,7 +164,8 @@ fun MainGraph(
                 navigateBack = { /*TODO*/ },
                 navigateToBrowseSimilarLocalMaterialsScreen = { materialId ->
                     navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = materialId)) },
-                navigateToBrowseSimilarRemoteMaterialsScreen = { /*TODO*/ },
+                navigateToBrowseSimilarRemoteMaterialsScreen = { materialId: Long ->
+                    navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = materialId)) },
                 navigateToApplyFilterScreen = { navController.navigate(Screen.ApplyFilter(loadCharacteristicsFromStorage = true)) }
             )
         }

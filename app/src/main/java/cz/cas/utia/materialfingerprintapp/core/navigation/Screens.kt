@@ -71,8 +71,10 @@ sealed class Screen {
     data class PolarPlotVisualisation(
         val isFirstMaterialSourceLocal: Boolean,
         val firstMaterialId: Long,
+        val firstMaterialName: String,
         val isSecondMaterialSourceLocal: Boolean?,
-        val secondMaterialId: Long?
+        val secondMaterialId: Long?,
+        val secondMaterialName: String?
     ): Screen()
 
     @Serializable

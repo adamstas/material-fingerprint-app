@@ -6,12 +6,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -25,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.getAxisName
@@ -39,8 +46,8 @@ fun DrawScope.drawBasicPolarPlot(
     maxRadius: Float,
     circleColor: Color,
     axisColor: Color,
-    axisLabels: List<String>,
-    showAxisLabels: Boolean
+    axisLabels: List<String>? = null,
+    showAxisLabels: Boolean = false
 ) {
     // draw outer circle
     drawCircle(
@@ -73,7 +80,7 @@ fun DrawScope.drawBasicPolarPlot(
 
         // show axis labels
         if (showAxisLabels) {
-            val label = axisLabels.getOrNull(i) ?: "Axis $i"
+            val label = axisLabels!!.getOrNull(i) ?: "Axis $i"
             val labelX = center.x + cos(angle) * (maxRadius * 0.75f)
             val labelY = center.y + sin(angle) * (maxRadius * 0.75f)
             drawContext.canvas.nativeCanvas.drawText(
@@ -126,8 +133,8 @@ fun DrawScope.drawPolarPath(
 @Composable
 fun PolarPlotCanvas(
     axisValues: List<Float>,
-    axesAmount: Int,
-    axisLabels: List<String>,
+    axisLabels: List<String>? = null,
+    showAxisLabels: Boolean = false,
     circleColor: Color,
     axisColor: Color,
     backgroundColor: Color,
@@ -135,12 +142,13 @@ fun PolarPlotCanvas(
     secondAxisValues: List<Float>? = null,
     secondPlotColor: Color? = null,
     pointRadius: Float = 10f,
-    showAxisLabels: Boolean = false,
     activeAxis: Int? = null,
     isInteractive: Boolean = false,
     canvasSizeState: MutableState<Size>? = null,
     modifier: Modifier = Modifier
 ) {
+    val axesAmount = axisValues.size
+
     Canvas(
         modifier = modifier
             .background(color = backgroundColor),
@@ -190,14 +198,14 @@ fun PolarPlotCanvas(
 
 @Composable
 fun NonInteractivePolarPlot(
-    axisValues: List<Float>,
+    firstAxisValues: List<Float>,
     showAxisLabels: Boolean,
     secondAxisValues: List<Float>? = null,
     firstPlotColor: Color,
     secondPlotColor: Color,
-    maxPlotSize: Dp = 400.dp
+    maxPlotSize: Dp = 400.dp,
 ) {
-    val axesAmount = axisValues.size
+    val axesAmount = firstAxisValues.size
     val axisLabels = List(axesAmount) { axisId -> getAxisName(axisId) }
 
     val circleColor: Color = MaterialTheme.colorScheme.primary
@@ -220,8 +228,7 @@ fun NonInteractivePolarPlot(
                 .aspectRatio(1f)
         ) {
             PolarPlotCanvas(
-                axisValues = axisValues,
-                axesAmount = axesAmount,
+                axisValues = firstAxisValues,
                 axisLabels = axisLabels,
                 circleColor = circleColor,
                 axisColor = axisColor,
@@ -234,5 +241,27 @@ fun NonInteractivePolarPlot(
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+}
+
+@Composable
+fun PolarPlotLegendRow(
+    rectangleColor: Color,
+    text: String,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Canvas(
+            modifier = Modifier.size(12.dp)
+        ) {
+            drawRect(color = rectangleColor)
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            style = textStyle
+        )
     }
 }

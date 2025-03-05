@@ -8,7 +8,10 @@ data class PolarPlotVisualisationScreenState(
 
     val showAxisLabels: Boolean = false,
 
-    val isFindSimilarMaterialsDialogShown: Boolean = false
+    val isFindSimilarMaterialsDialogShown: Boolean = false,
+
+    val firstMaterialName: String = "",
+    val secondMaterialName: String? = null
 ) {
     fun areBottomButtonsEnabled(): Boolean {
         return axisValuesSecond == null

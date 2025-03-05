@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,15 +19,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.SingleChoiceSegmentedButton
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.FindSimilarMaterialsDialog
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.NonInteractivePolarPlot
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.PolarPlotLegendRow
 
 @Composable
 fun PolarPlotVisualisationScreenRoot(
@@ -56,12 +60,12 @@ fun PolarPlotVisualisationScreenRoot(
 }
 
 @Composable
-fun PolarPlotVisualisationScreen( // TODO chybi tam jeste napsany nazvy materialu, ktery ma kterou barvu
+fun PolarPlotVisualisationScreen(
     state: PolarPlotVisualisationScreenState,
     onEvent: (PolarPlotVisualisationEvent) -> Unit
 ) {
-    val MatplotlibBlue = Color(0xFF1F77B4)
-    val MatplotlibOrange = Color(0xFFFF7F0E)
+    val primaryPlotColor = colorResource(id = AppConfig.Colors.primaryPlotColorId)
+    val secondaryPlotColor = colorResource(id = AppConfig.Colors.secondaryPlotColorId)
 
     Scaffold(
         topBar = {
@@ -81,9 +85,27 @@ fun PolarPlotVisualisationScreen( // TODO chybi tam jeste napsany nazvy material
                     modifier = Modifier
                         .align(Alignment.End)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Top
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        PolarPlotLegendRow(
+                            rectangleColor = primaryPlotColor,
+                            text = state.firstMaterialName
+                        ) // todo k polar plotum celkove pridat asi vice kruznic jako je ta v nule a k nim dat cisla, at je jasne, ze to je 0, 1 atd... a udelat asi -1, 0, 1 případně i -2 a 2
+
+                        if (state.axisValuesSecond != null) { // todo a labels printeni uz dat ty real labels + velikosti poresit
+                            Spacer(modifier = Modifier.width(8.dp))
+                            PolarPlotLegendRow(
+                                rectangleColor = secondaryPlotColor,
+                                text = state.secondMaterialName!!
+                            )
+                        }
+                    }
+
                     IconButton(onClick = { onEvent(PolarPlotVisualisationEvent.ShowOrHideAxesLabels) }) {
                         Icon(
                             painter = painterResource(android.R.drawable.ic_dialog_info),
@@ -94,11 +116,11 @@ fun PolarPlotVisualisationScreen( // TODO chybi tam jeste napsany nazvy material
                 when (state.plotDisplayMode) {
                     PlotDisplayMode.SINGLE_PLOT -> {
                         NonInteractivePolarPlot(
-                            axisValues = state.axisValuesFirst,
+                            firstAxisValues = state.axisValuesFirst,
                             secondAxisValues = state.axisValuesSecond,
                             showAxisLabels = state.showAxisLabels,
-                            firstPlotColor = MatplotlibOrange,
-                            secondPlotColor = MatplotlibBlue
+                            firstPlotColor = primaryPlotColor,
+                            secondPlotColor = secondaryPlotColor
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -129,18 +151,18 @@ fun PolarPlotVisualisationScreen( // TODO chybi tam jeste napsany nazvy material
 
                     PlotDisplayMode.TWO_PLOTS -> {
                         NonInteractivePolarPlot(
-                            axisValues = state.axisValuesFirst,
+                            firstAxisValues = state.axisValuesFirst,
                             showAxisLabels = state.showAxisLabels,
-                            firstPlotColor = MatplotlibOrange,
-                            secondPlotColor = MatplotlibBlue,
-                            maxPlotSize = 250.dp
+                            firstPlotColor = primaryPlotColor,
+                            secondPlotColor = secondaryPlotColor,
+                            maxPlotSize = 250.dp,
                         )
                         NonInteractivePolarPlot(
-                            axisValues = state.axisValuesSecond!!,
+                            firstAxisValues = state.axisValuesSecond!!,
                             showAxisLabels = state.showAxisLabels,
-                            firstPlotColor = MatplotlibBlue,
-                            secondPlotColor = MatplotlibBlue,
-                            maxPlotSize = 250.dp
+                            firstPlotColor = secondaryPlotColor,
+                            secondPlotColor = secondaryPlotColor,
+                            maxPlotSize = 250.dp,
                         )
                     }
                 }

@@ -7,7 +7,7 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSumm
 data class MaterialsScreenState(
     val materials: List<MaterialSummary> = emptyList(),
  //todo keep these initial values? or introduce Loaded state etc.?
-    val checkedMaterials: Set<Long> = emptySet(),
+    val checkedMaterials: Set<MaterialSummary> = emptySet(),
 
     val selectedCategoryIDs: List<Int> = (0..<MaterialCategory.entries.size).toList(), //default all categories selected
     val selectedCategoriesText: String = "All selected",
@@ -22,15 +22,15 @@ data class MaterialsScreenState(
     val isFindSimilarMaterialsDialogShown: Boolean = false
     )
 {
-    fun isMaterialChecked(materialID: Long): Boolean {
-        return checkedMaterials.contains(materialID)
+    fun isMaterialChecked(material: MaterialSummary): Boolean {
+        return checkedMaterials.contains(material)
     }
 
     fun isMaterialsListEmpty(): Boolean {
         return materials.isEmpty()
     }
 
-    fun getFirstCheckedMaterialId(): Long {
+    fun getFirstCheckedMaterial(): MaterialSummary {
         return checkedMaterials.first()
     }
 }

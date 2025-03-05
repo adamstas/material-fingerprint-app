@@ -39,7 +39,7 @@ class PolarPlotVisualisationViewModel @Inject constructor(
             val firstMaterial: MaterialCharacteristics = if (_args.isFirstMaterialSourceLocal) {
                 localMaterialRepository.getMaterial(_args.firstMaterialId).characteristics
             } else {
-                materialCharacteristicsRepository.loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.REMOTE_FIRST) //todo udelat ukladani z remote viewmodelu!
+                materialCharacteristicsRepository.loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.REMOTE_FIRST)
             }
 
             val secondMaterial = if (_args.isSecondMaterialSourceLocal != null) {
@@ -53,7 +53,9 @@ class PolarPlotVisualisationViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     axisValuesFirst = firstMaterial.toListForDrawing(),
-                    axisValuesSecond = secondMaterial?.toListForDrawing()
+                    firstMaterialName = _args.firstMaterialName,
+                    axisValuesSecond = secondMaterial?.toListForDrawing(),
+                    secondMaterialName = _args.secondMaterialName
                 )
             }
         }
@@ -120,13 +122,32 @@ class PolarPlotVisualisationViewModel @Inject constructor(
 
     private fun findSimilarLocalMaterial() {
         viewModelScope.launch {
-            _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(materialId = _args.firstMaterialId))
+            if (_args.isFirstMaterialSourceLocal) { // material is local, therefore its ID is from local database and it can be passed to browse similar LOCAL materials screen
+                _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(materialId = _args.firstMaterialId))
+
+            } else { // material is remote, therefore its ID is from remote database and it cannot be passed to browse similar LOCAL materials screen => store it to data store and pass -1L as parameter
+                materialCharacteristicsRepository.saveMaterialCharacteristics(
+                    materialCharacteristics = fromListForDrawingToMaterialCharacteristics(_state.value.axisValuesFirst),
+                    slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN
+                )
+                _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(materialId = -1L))
+            }
         }
     }
 
     private fun findSimilarRemoteMaterial() {
         viewModelScope.launch {
-            _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(materialId = _args.firstMaterialId)) // todo takhle to delat - i pres to, ze tenhle material je klidne remote a jeho 16 cahrakteristik si nacitam z data store, tak pri hledani podobneho materialu mezi remote materialy mu to ID normalne dat namísto abych mu dal -1 a on si to muse ltahat z data storu
+
+            if (_args.isFirstMaterialSourceLocal) { // material is local, therefore its ID is from local database and it cannot be passed to browse similar REMOTE materials screen
+                materialCharacteristicsRepository.saveMaterialCharacteristics(
+                    materialCharacteristics = fromListForDrawingToMaterialCharacteristics(_state.value.axisValuesFirst),
+                    slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN
+                )
+                _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(materialId = -1L))
+
+            } else { // material is remote, therefore its ID is from remote database and it can be passed to browse similar REMOTE materials screen
+                _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(materialId = _args.firstMaterialId))
+            }
         }
     }
 }

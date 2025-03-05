@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
@@ -39,16 +40,18 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import androidx.hilt.navigation.compose.hiltViewModel
+import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.FindSimilarMaterialsDialog
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.PolarPlotCanvas
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun BrowseLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
     /**
      * todo:
@@ -74,7 +77,7 @@ fun BrowseLocalMaterialsScreen(
 fun BrowseRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -94,7 +97,7 @@ fun BrowseRemoteMaterialsScreen(
 fun BrowseSimilarLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -114,7 +117,7 @@ fun BrowseSimilarLocalMaterialsScreen(
 fun BrowseSimilarRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -135,7 +138,7 @@ fun BrowseMaterialsScreen(
     title: String,
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, Boolean?, Long?) -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     navigationEvents: SharedFlow<MaterialNavigationEvent>,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
@@ -149,8 +152,10 @@ fun BrowseMaterialsScreen(
                 is MaterialNavigationEvent.ToPolarPlotVisualisationScreen -> navigateToPolarPlotVisualisationScreen(
                     event.isFirstMaterialSourceLocal,
                     event.firstMaterialId,
+                    event.firstMaterialName,
                     event.isSecondMaterialSourceLocal,
-                    event.secondMaterialId
+                    event.secondMaterialId,
+                    event.secondMaterialName
                 )
             }
         }
@@ -191,8 +196,8 @@ fun BrowseMaterialsScreen(
                 if (state.isFindSimilarMaterialsDialogShown) {
                     FindSimilarMaterialsDialog(
                         onDismissRequest = { onEvent(MaterialEvent.DismissFindSimilarMaterialsDialog) },
-                        onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterialId())) },
-                        onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterialId())) }
+                        onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterial())) },
+                        onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterial())) }
                     )
                 }
             }
@@ -307,41 +312,50 @@ fun MaterialListRow(
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
 ) {
-        Text(text = material.name) //todo styling
+    val imageSize = 96.dp
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    Text(text = material.name) //todo styling
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            bitmap = material.photoThumbnail.asImageBitmap(),
+            contentDescription = "Latka Image", //todo zmenit
+            contentScale = ContentScale.Crop, //todo nechat?
+            modifier = Modifier.size(imageSize) // todo adjust size so the polar plot is somehow readable
+        )
+
+        Spacer(modifier = Modifier.width(24.dp))
+
+        Box(
+            modifier = Modifier.size(imageSize)
         ) {
-            Image(
-                bitmap = material.photoThumbnail.asImageBitmap(),
-                contentDescription = "Latka Image", //todo zmenit
-                contentScale = ContentScale.Crop, //todo nechat?
-                modifier = Modifier.size(96.dp) // todo adjust size so the polar plot is somehow readable
+            PolarPlotCanvas(
+                axisValues = material.characteristics.toListForDrawing(),
+                circleColor = MaterialTheme.colorScheme.primary,
+                axisColor = MaterialTheme.colorScheme.secondary,
+                backgroundColor = MaterialTheme.colorScheme.background,
+                firstPlotColor = colorResource(id = AppConfig.Colors.primaryPlotColorId),
+                pointRadius = 4f,
+                modifier = Modifier.fillMaxSize()
             )
-
-            Spacer(modifier = Modifier.width(24.dp))
-
-            Image( //polar plots wont have axes names so this should be enough size..or make bigger?
-                bitmap = material.fingerprintThumbnail.asImageBitmap(),
-                contentDescription = "Latka fingerprint image",
-                contentScale = ContentScale.Crop, //todo nechat?
-                modifier = Modifier.size(96.dp)  // todo adjust size so the polar plot is somehow readable
-            )
-
-            Checkbox(
-                checked = state.isMaterialChecked(material.id),
-                onCheckedChange = { checked ->
-                    if (checked) {
-                        onEvent(MaterialEvent.CheckMaterial(material.id))
-                    } else {
-                        onEvent(MaterialEvent.UncheckMaterial(material.id))
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.End))
         }
+
+        Checkbox(
+            checked = state.isMaterialChecked(material),
+            onCheckedChange = { checked ->
+                if (checked) {
+                    onEvent(MaterialEvent.CheckMaterial(material))
+                } else {
+                    onEvent(MaterialEvent.UncheckMaterial(material))
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End))
+    }
 }
 
 @Composable

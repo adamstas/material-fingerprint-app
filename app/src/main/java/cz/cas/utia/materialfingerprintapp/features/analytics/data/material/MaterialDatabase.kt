@@ -24,7 +24,6 @@ fun initialData(): List<Material> {
             serverId = 1,
             name = "Leather1",
             photoThumbnailPath = R.drawable.latka,
-            fingerprintPath = R.drawable.latkapolarplot,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.85,
@@ -51,7 +50,6 @@ fun initialData(): List<Material> {
             serverId = 2,
             name = "Leather2",
             photoThumbnailPath = R.drawable.latka2,
-            fingerprintPath = R.drawable.latka2polarplot,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -78,7 +76,6 @@ fun initialData(): List<Material> {
             serverId = 3,
             name = "Leather3",
             photoThumbnailPath = R.drawable.latka3,
-            fingerprintPath = R.drawable.latka3polarplot,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -105,7 +102,6 @@ fun initialData(): List<Material> {
             serverId = 4,
             name = "MetalSObrazkemLatky",
             photoThumbnailPath = R.drawable.latka4,
-            fingerprintPath = R.drawable.latka4polarplot,
             category = MaterialCategory.METAL,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -132,7 +128,6 @@ fun initialData(): List<Material> {
             serverId = 5,
             name = "WoodSObrazkemLatky",
             photoThumbnailPath = R.drawable.latka2,
-            fingerprintPath = R.drawable.latka2polarplot,
             category = MaterialCategory.WOOD,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
