@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -34,10 +33,27 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.getAxisName
+import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.scaleToDrawingFloats
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+
+// compute text size of axis labels based on maxRadius of the polar plot
+fun computeTextSize(maxRadius: Float): Float {
+    val textSizeRatio = 0.075f
+    return maxRadius * textSizeRatio
+}
+
+// draw text that is wrapped after each word (for axis labels in polar plot)
+fun DrawScope.drawWrappedText(text: String, x: Float, y: Float, paint: Paint) {
+    val words = text.split(" ")
+    var offsetY = 0f
+
+    for (word in words) {
+        drawContext.canvas.nativeCanvas.drawText(word, x, y + offsetY, paint)
+        offsetY += paint.textSize
+    }
+}
 
 // draw PolarPlot basic objects (two circles and 16 (or different amount) axes) to existing canvas
 fun DrawScope.drawBasicPolarPlot(
@@ -47,14 +63,14 @@ fun DrawScope.drawBasicPolarPlot(
     circleColor: Color,
     axisColor: Color,
     axisLabels: List<String>? = null,
-    showAxisLabels: Boolean = false
+    axisLabelsColor: Color = circleColor
 ) {
     // draw outer circle
     drawCircle(
         color = circleColor,
         center = center,
         radius = maxRadius,
-        style = Stroke(width = 2f)
+        style = Stroke(width = 3f)
     )
 
     // draw circle in zero
@@ -66,7 +82,35 @@ fun DrawScope.drawBasicPolarPlot(
         style = Stroke(width = 4f)
     )
 
-    // Draw axes and labels
+    // circles at -2, -1, 1, 2 and also in 0 which we already have but now we redraw it just to add the label "0" next to it
+    listOf(-2.0, -1.0, 0.0, 1.0, 2.0).forEach { value ->
+        val radius = scaleToDrawingFloats(value, toMax = maxRadius)
+        drawCircle(
+            color = circleColor,
+            center = center,
+            radius = radius,
+            style = Stroke(width = 1.5f)
+        )
+
+        // label for each value
+        val label = value.toInt().toString()
+        val labelX = center.x + radius + 10f
+        val labelY = center.y - 10f
+        drawContext.canvas.nativeCanvas.drawText(
+            label,
+            labelX,
+            labelY,
+            Paint().apply {
+                color = axisLabelsColor.toArgb()
+                textSize = computeTextSize(maxRadius)
+                textAlign = Paint.Align.LEFT
+            }
+        )
+    }
+
+    val textSize = computeTextSize(maxRadius)
+
+    // draw axes and labels
     for (i in 0 until axesAmount) {
         val angle = (2 * PI * i / axesAmount).toFloat()
         val endX = center.x + cos(angle) * maxRadius
@@ -79,17 +123,17 @@ fun DrawScope.drawBasicPolarPlot(
         )
 
         // show axis labels
-        if (showAxisLabels) {
-            val label = axisLabels!!.getOrNull(i) ?: "Axis $i"
-            val labelX = center.x + cos(angle) * (maxRadius * 0.75f)
-            val labelY = center.y + sin(angle) * (maxRadius * 0.75f)
-            drawContext.canvas.nativeCanvas.drawText(
+        if (axisLabels != null) {
+            val label = axisLabels.getOrNull(i) ?: "Axis $i"
+            val labelX = center.x + cos(angle) * (maxRadius * 0.9f)
+            val labelY = center.y + sin(angle) * (maxRadius * 0.9f)
+            drawWrappedText(
                 label,
                 labelX,
                 labelY,
                 Paint().apply {
-                    color = circleColor.toArgb()
-                    textSize = 40f // todo az budou opravdova jmena os tak kdyztak zmensit at se to tam vejde
+                    color = axisLabelsColor.toArgb()
+                    this.textSize = textSize
                     textAlign = Paint.Align.CENTER
                 }
             )
@@ -134,13 +178,13 @@ fun DrawScope.drawPolarPath(
 fun PolarPlotCanvas(
     axisValues: List<Float>,
     axisLabels: List<String>? = null,
-    showAxisLabels: Boolean = false,
-    circleColor: Color,
-    axisColor: Color,
-    backgroundColor: Color,
+    axisLabelsColor: Color = MaterialTheme.colorScheme.onSurface,
+    circleColor: Color = MaterialTheme.colorScheme.primary,
+    axisColor: Color = MaterialTheme.colorScheme.secondary,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     firstPlotColor: Color,
     secondAxisValues: List<Float>? = null,
-    secondPlotColor: Color? = null,
+    secondPlotColor: Color = MaterialTheme.colorScheme.tertiary,
     pointRadius: Float = 10f,
     activeAxis: Int? = null,
     isInteractive: Boolean = false,
@@ -166,7 +210,7 @@ fun PolarPlotCanvas(
                 circleColor = circleColor,
                 axisColor = axisColor,
                 axisLabels = axisLabels,
-                showAxisLabels = showAxisLabels
+                axisLabelsColor = axisLabelsColor
             )
 
             drawPolarPath(
@@ -180,14 +224,13 @@ fun PolarPlotCanvas(
                 isInteractive = isInteractive
             )
 
-            // Optionally draw the second set of axis values
             secondAxisValues?.let { secondValues ->
                 drawPolarPath(
                     axisValues = secondValues,
                     axesAmount = axesAmount,
                     center = center,
                     maxRadius = maxRadius,
-                    color = secondPlotColor!!,
+                    color = secondPlotColor,
                     pointRadius = pointRadius,
                     isInteractive = false
                 )
@@ -199,19 +242,12 @@ fun PolarPlotCanvas(
 @Composable
 fun NonInteractivePolarPlot(
     firstAxisValues: List<Float>,
-    showAxisLabels: Boolean,
+    axisLabels: List<String>?,
     secondAxisValues: List<Float>? = null,
     firstPlotColor: Color,
     secondPlotColor: Color,
     maxPlotSize: Dp = 400.dp,
 ) {
-    val axesAmount = firstAxisValues.size
-    val axisLabels = List(axesAmount) { axisId -> getAxisName(axisId) }
-
-    val circleColor: Color = MaterialTheme.colorScheme.primary
-    val axisColor: Color = MaterialTheme.colorScheme.secondary //todo stejne barvy jako u apply filter? Dát si je někam do configu a tahat je odtamtud d osdilenych composablí
-    val backgroundColor: Color = MaterialTheme.colorScheme.background
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,14 +266,10 @@ fun NonInteractivePolarPlot(
             PolarPlotCanvas(
                 axisValues = firstAxisValues,
                 axisLabels = axisLabels,
-                circleColor = circleColor,
-                axisColor = axisColor,
-                backgroundColor = backgroundColor,
                 firstPlotColor = firstPlotColor,
                 secondAxisValues = secondAxisValues,
                 secondPlotColor = secondPlotColor,
                 pointRadius = 10f,
-                showAxisLabels = showAxisLabels,
                 modifier = Modifier.fillMaxSize()
             )
         }

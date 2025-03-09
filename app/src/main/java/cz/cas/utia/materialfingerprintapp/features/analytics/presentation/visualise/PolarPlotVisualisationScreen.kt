@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -95,9 +94,9 @@ fun PolarPlotVisualisationScreen(
                         PolarPlotLegendRow(
                             rectangleColor = primaryPlotColor,
                             text = state.firstMaterialName
-                        ) // todo k polar plotum celkove pridat asi vice kruznic jako je ta v nule a k nim dat cisla, at je jasne, ze to je 0, 1 atd... a udelat asi -1, 0, 1 případně i -2 a 2
+                        )
 
-                        if (state.axisValuesSecond != null) { // todo a labels printeni uz dat ty real labels + velikosti poresit
+                        if (state.axisValuesSecond != null) {
                             Spacer(modifier = Modifier.width(8.dp))
                             PolarPlotLegendRow(
                                 rectangleColor = secondaryPlotColor,
@@ -113,12 +112,15 @@ fun PolarPlotVisualisationScreen(
                         )
                     }
                 }
+
+                val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
+
                 when (state.plotDisplayMode) {
                     PlotDisplayMode.SINGLE_PLOT -> {
                         NonInteractivePolarPlot(
                             firstAxisValues = state.axisValuesFirst,
+                            axisLabels = axisLabels,
                             secondAxisValues = state.axisValuesSecond,
-                            showAxisLabels = state.showAxisLabels,
                             firstPlotColor = primaryPlotColor,
                             secondPlotColor = secondaryPlotColor
                         )
@@ -152,14 +154,14 @@ fun PolarPlotVisualisationScreen(
                     PlotDisplayMode.TWO_PLOTS -> {
                         NonInteractivePolarPlot(
                             firstAxisValues = state.axisValuesFirst,
-                            showAxisLabels = state.showAxisLabels,
+                            axisLabels = axisLabels,
                             firstPlotColor = primaryPlotColor,
                             secondPlotColor = secondaryPlotColor,
                             maxPlotSize = 250.dp,
                         )
                         NonInteractivePolarPlot(
                             firstAxisValues = state.axisValuesSecond!!,
-                            showAxisLabels = state.showAxisLabels,
+                            axisLabels = axisLabels,
                             firstPlotColor = secondaryPlotColor,
                             secondPlotColor = secondaryPlotColor,
                             maxPlotSize = 250.dp,

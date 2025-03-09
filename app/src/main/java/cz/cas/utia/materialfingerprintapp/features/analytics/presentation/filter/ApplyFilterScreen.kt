@@ -137,7 +137,6 @@ fun PolarPlotWithSliders(
     val axesAmount = state.axisValues.size
 
     val circleColor = MaterialTheme.colorScheme.primary // for drawing colors, cannot be obtained later
-    val axisColor = MaterialTheme.colorScheme.secondary
     val backgroundColor = MaterialTheme.colorScheme.background
     val plotColor = colorResource(id = AppConfig.Colors.primaryPlotColorId)
 
@@ -157,8 +156,6 @@ fun PolarPlotWithSliders(
     LaunchedEffect(recomposePointerInput) {
         recomposePointerInput = false
     }
-
-    val axisLabels = List(axesAmount) { axisId -> getAxisName(axisId) }
 
     val newAxisValues = state.axisValues.toMutableList()
 
@@ -257,14 +254,15 @@ fun PolarPlotWithSliders(
                 )
                 .aspectRatio(1f)
         ) {
+
+            val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
+
             PolarPlotCanvas(
                 axisValues = state.axisValues,
                 axisLabels = axisLabels,
                 circleColor = circleColor,
-                axisColor = axisColor,
                 backgroundColor = backgroundColor,
                 firstPlotColor = plotColor,
-                showAxisLabels = state.showAxisLabels,
                 isInteractive = true,
                 activeAxis = activeAxis,
                 pointRadius = 15f,

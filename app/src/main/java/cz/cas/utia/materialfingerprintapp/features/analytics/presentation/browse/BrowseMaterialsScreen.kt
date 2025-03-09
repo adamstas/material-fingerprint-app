@@ -334,9 +334,6 @@ fun MaterialListRow(
         ) {
             PolarPlotCanvas(
                 axisValues = material.characteristics.toListForDrawing(),
-                circleColor = MaterialTheme.colorScheme.primary,
-                axisColor = MaterialTheme.colorScheme.secondary,
-                backgroundColor = MaterialTheme.colorScheme.background,
                 firstPlotColor = colorResource(id = AppConfig.Colors.primaryPlotColorId),
                 pointRadius = 4f,
                 modifier = Modifier.fillMaxSize()

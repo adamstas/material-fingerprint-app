@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter
 
+import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCharacteristics
 
 data class ApplyFilterScreenState( //todo fakt jsou materialy od zhruba -2,75 do +2,75 ?
@@ -19,15 +20,24 @@ data class ApplyFilterScreenState( //todo fakt jsou materialy od zhruba -2,75 do
     }
 }
 
-fun getAxisName(axisId: Int) = "Axis ${axisId + 1}"
-
 // https://stackoverflow.com/questions/929103/convert-a-number-range-to-another-range-maintaining-ratio
-fun scaleToCharacteristics(value: Float, fromMin: Float = 0f, fromMax: Float = 300f, toMin: Double = -2.75, toMax: Double = 2.75): Double {
+fun scaleToCharacteristics(
+    value: Float,
+    fromMin: Float = 0f,
+    fromMax: Float = 300f,
+    toMin: Double = AppConfig.PolarPlot.characteristicsMin,
+    toMax: Double = AppConfig.PolarPlot.characteristicsMax)
+: Double {
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin)
 }
 
-// todo ten range -2,75 a +2,75 hodit někam do configu mimo
-fun scaleToDrawingFloats(value: Double, fromMin: Double = -2.75, fromMax: Double = 2.75, toMin: Float = 0f, toMax: Float = 300f): Float {
+fun scaleToDrawingFloats(
+    value: Double,
+    fromMin: Double = AppConfig.PolarPlot.characteristicsMin,
+    fromMax: Double = AppConfig.PolarPlot.characteristicsMax,
+    toMin: Float = 0f,
+    toMax: Float = 300f)
+: Float {
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin).toFloat()
 }
 
@@ -51,25 +61,4 @@ fun fromListForDrawingToMaterialCharacteristics(list: List<Float>): MaterialChar
         value = scaleToCharacteristics(list[14]),
         warmth = scaleToCharacteristics(list[15])
     )
-}
-
-const val axesAmount = 16 // todo dat do nejakeho configu mimo
-
-enum class MaterialCharacteristicsAttribute { // todo pouzit az budu mapovat idcka os na jejich popisky?
-    BRIGHTNESS,
-    COLOR_VIBRANCY,
-    HARDNESS,
-    CHECKERED_PATTERN,
-    MOVEMENT_EFFECT,
-    MULTICOLORED,
-    NATURALNESS,
-    PATTERN_COMPLEXITY,
-    SCALE_OF_PATTERN,
-    SHININESS,
-    SPARKLE,
-    STRIPED_PATTERN,
-    SURFACE_ROUGHNESS,
-    THICKNESS,
-    VALUE,
-    WARMTH
 }
