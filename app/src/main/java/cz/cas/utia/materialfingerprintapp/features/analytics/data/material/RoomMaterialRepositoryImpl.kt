@@ -5,7 +5,6 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 //todo rename to RoomLocalMaterialRepositoryImpl ?
@@ -13,6 +12,10 @@ class RoomMaterialRepositoryImpl @Inject constructor(
     private val materialDao: MaterialDao,
     private val materialSummaryMapper: MaterialSummaryMapper
 ): LocalMaterialRepository {
+
+    override suspend fun insertMaterial(material: Material): Long {
+        return materialDao.insertMaterial(material)
+    }
 
     override suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary> {
         if (getMaterialsCount() == 0L) //todo remove later, now just for seeding the database
@@ -38,21 +41,21 @@ class RoomMaterialRepositoryImpl @Inject constructor(
 
     override suspend fun getMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String
+        nameSearch: String
     ): List<MaterialSummary> {
         //delay(1000) //todo remove later
 
-        val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
+        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 
     override suspend fun getSimilarMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String,
+        nameSearch: String,
         materialId: Long
     ): List<MaterialSummary> {
         //TODO fixnout
-        val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
+        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
         val mapped = materials.map { material -> materialSummaryMapper.map(material) }
 
         if (mapped.isEmpty())
@@ -65,11 +68,11 @@ class RoomMaterialRepositoryImpl @Inject constructor(
 
     override suspend fun getSimilarMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String,
+        nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
     ): List<MaterialSummary> {
         //TODO fixnout
-        val materials = materialDao.getMaterialsOrderedByName(categories, searchText)
+        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
         val mapped = materials.map { material -> materialSummaryMapper.map(material) }
 
         if (mapped.isEmpty())
@@ -86,9 +89,5 @@ class RoomMaterialRepositoryImpl @Inject constructor(
 
     override suspend fun getMaterial(id: Long): Material {
         return materialDao.getMaterial(id)
-    }
-
-    override suspend fun getAllMaterialsSortedBySimilarity(characteristics: MaterialCharacteristics): List<MaterialSummary> {
-        TODO("Not yet implemented")
     }
 }

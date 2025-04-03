@@ -2,6 +2,8 @@ package cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhotosSummaryViewModel @Inject constructor(
-    private val imageStorageService: ImageStorageService
+    private val imageStorageService: ImageStorageService,
+    private val remoteMaterialRepository: RemoteMaterialRepository,
+    private val localMaterialRepository: LocalMaterialRepository
 ): ViewModel() {
 
     private val _state = MutableStateFlow(PhotosSummaryScreenState())
@@ -92,15 +96,36 @@ class PhotosSummaryViewModel @Inject constructor(
     }
 
     private fun analyseImages() {
-        // todo call service and until it returns data, show some loading circle animation..
-
-        //todo later move this just after the app receives successful result from server
-        imageStorageService.deleteImage("slot1")
-        imageStorageService.deleteImage("slot2")
-
         _state.update { it.copy(
-            capturedImageSlot1 = null,
-            capturedImageSlot2 = null
+            isLoadingDialogShown = true
         ) }
+
+        viewModelScope.launch {
+            val material = remoteMaterialRepository.analyseMaterial(
+                firstImageLightDirection = _state.value.lightDirectionSlot1,
+                name = _state.value.materialName,
+                category = _state.value.selectedCategory
+            )
+
+            val materialId = localMaterialRepository.insertMaterial(material)
+
+            // todo ted ukladam specular (coz je zatim ten, na ktery se sviti zleva), pak se lze dohodnout, jaky budeme ukladat
+            val imageToStore = if (_state.value.lightDirectionSlot1 == LightDirection.FROM_LEFT) _state.value.capturedImageSlot1 else _state.value.capturedImageSlot2
+            imageStorageService.storeImage(imageToStore!!, materialId.toString())
+
+            imageStorageService.deleteImage("slot1")
+            imageStorageService.deleteImage("slot2")
+
+            _state.update { it.copy(
+                capturedImageSlot1 = null,
+                capturedImageSlot2 = null,
+                isLoadingDialogShown = false
+            ) }
+
+            _navigationEvents.emit(PhotosSummaryNavigationEvent.ToPolarPlotVisualisationScreen(
+                    firstMaterialId = materialId,
+                    firstMaterialName = _state.value.materialName
+            ))
+        }
     }
 }

@@ -2,7 +2,6 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCharacteristics
@@ -23,7 +22,6 @@ fun initialData(): List<Material> {
             //id = -1, //some dummy ID, will be overriden
             serverId = 1,
             name = "Leather1",
-            photoThumbnailPath = R.drawable.latka,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.85,
@@ -49,7 +47,6 @@ fun initialData(): List<Material> {
             //id = -1, //some dummy ID, will be overriden
             serverId = 2,
             name = "Leather2",
-            photoThumbnailPath = R.drawable.latka2,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -75,7 +72,6 @@ fun initialData(): List<Material> {
            // id = -1, //some dummy ID, will be overriden
             serverId = 3,
             name = "Leather3",
-            photoThumbnailPath = R.drawable.latka3,
             category = MaterialCategory.LEATHER,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -101,7 +97,6 @@ fun initialData(): List<Material> {
            // id = -1, //some dummy ID, will be overriden
             serverId = 4,
             name = "MetalSObrazkemLatky",
-            photoThumbnailPath = R.drawable.latka4,
             category = MaterialCategory.METAL,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,
@@ -127,7 +122,6 @@ fun initialData(): List<Material> {
             // id = -1, //some dummy ID, will be overriden
             serverId = 5,
             name = "WoodSObrazkemLatky",
-            photoThumbnailPath = R.drawable.latka2,
             category = MaterialCategory.WOOD,
             characteristics = MaterialCharacteristics(
                 brightness = 0.45,

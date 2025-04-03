@@ -18,4 +18,8 @@ sealed interface PhotosSummaryEvent {
 
 sealed interface PhotosSummaryNavigationEvent {
     data object BackToCameraScreen: PhotosSummaryNavigationEvent
+    data class ToPolarPlotVisualisationScreen(
+        val firstMaterialId: Long,
+        val firstMaterialName: String
+    ): PhotosSummaryNavigationEvent
 }

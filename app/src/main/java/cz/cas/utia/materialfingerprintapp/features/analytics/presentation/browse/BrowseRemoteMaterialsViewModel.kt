@@ -2,9 +2,9 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.brows
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsStorageSlot
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -16,10 +16,9 @@ import javax.inject.Inject
 
 //todo umistit jinam nez do presentation? ..treba rozdelit packagem na local a remote, jinak to nechat v prezentacni vrstve
 @OptIn(FlowPreview::class)
-@HiltViewModel //todo enable these hilt commands after creating working remote repository
+@HiltViewModel
 class BrowseRemoteMaterialsViewModel @Inject constructor(
-    //materialRepository: RemoteMaterialRepository,
-    materialRepository: LocalMaterialRepository, // todo remove this and use the remote repository later
+    materialRepository: RemoteMaterialRepository,
     savedStateHandle: SavedStateHandle,
     materialCharacteristicsRepository: MaterialCharacteristicsRepository
 ): BrowseMaterialsViewModel(

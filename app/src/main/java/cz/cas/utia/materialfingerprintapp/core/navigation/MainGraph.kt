@@ -173,8 +173,20 @@ fun MainGraph(
         composable<Screen.PhotosSummary> {
             PhotosSummaryScreenRoot(
                 //pop current (PhotoSummary) screen from the backstack but save its state
-                navigateBack = { navController.popBackStack<CameraScreen>(inclusive = false, saveState = true) }
+                navigateBack = { navController.popBackStack<CameraScreen>(inclusive = false, saveState = true) },
                 //todo kdyz uzivatel zmackne back na spodni liste, tak to udela obycejny popUp a cely state se smaze.. mozna teda vymazat cely backstack a nechat jen ulozeny state?
+
+                navigateToPolarPlotVisualisationScreen = {
+                        firstMaterialId: Long,
+                        firstMaterialName: String -> navController.navigate(Screen.PolarPlotVisualisation(
+                    isFirstMaterialSourceLocal = true,
+                    firstMaterialId = firstMaterialId,
+                    firstMaterialName = firstMaterialName,
+                    isSecondMaterialSourceLocal = null,
+                    secondMaterialId = null,
+                    secondMaterialName = null
+                ))
+                }
             )
         }
     }

@@ -5,7 +5,9 @@ import cz.cas.utia.materialfingerprintapp.R
 object AppConfig {
 
     object Server {
-        const val ip: String = "localhost" // todo pouzit jiny typ nez string? string asi staci..
+        const val URL: String = "http://127.0.0.1:8000"
+        const val MATERIALS_URL: String = "$URL/materials/"
+        const val GET_MATERIAL_IMAGE_URL_APPEND: String = "/image"
     }
 
     object Colors {
@@ -14,8 +16,8 @@ object AppConfig {
     }
 
     object PolarPlot {
-        const val characteristicsMin = -2.75
-        const val characteristicsMax = 2.75
+        const val CHARACTERISTICS_MIN = -2.75
+        const val CHARACTERISTICS_MAX = 2.75
 
         val axisLabels = listOf( // todo nechat tady nebo hodit do nejakeho Core UI pro analytics?
             "Brightness",

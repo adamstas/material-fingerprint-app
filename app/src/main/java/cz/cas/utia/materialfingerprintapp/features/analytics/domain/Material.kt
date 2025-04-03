@@ -1,6 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.domain
 
-import android.graphics.Bitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,9 +10,8 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter
 data class Material(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0, //ID will be overriden by the generated ID by Room Database
-    val serverId: Int?,
+    val serverId: Long?, // not used but stored in case it is needed later
     val name: String,
-    val photoThumbnailPath: Int,//made int so i can load test images from resources //todo pokud to budu brat proste z ID, tak to odebrat odsud
     val category: MaterialCategory,
 
     @Embedded
@@ -84,7 +83,12 @@ data class MaterialCharacteristics(
 data class MaterialSummary(
     val id: Long, //todo zatim jen jedno ID takze pokud je to material ze serveru, tak je to id ze sreveru a pokud to ej material z lokalu, tak je lokalni (kdyztak to pak zmenit ze pridam boolean jestli to je ze serveru enbo ne a podle toho se pozna, jake to je id)
     val name: String,
-    val photoThumbnail: Bitmap, //no path because these data are not in database
+    val photoThumbnail: MaterialImage,
     val category: MaterialCategory,
     val characteristics: MaterialCharacteristics // for storing the characteristics to MaterialCharacteristicsRepository in Browse(Similar)RemoteMaterialsScreen and loading them in PolarPlotVisualisationScreen
 )
+
+sealed class MaterialImage {
+    data class BitmapImage(val imageBitmap: ImageBitmap): MaterialImage()
+    data object UrlImage: MaterialImage()
+}

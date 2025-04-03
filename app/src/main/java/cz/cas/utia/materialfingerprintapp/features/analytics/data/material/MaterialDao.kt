@@ -14,7 +14,7 @@ interface MaterialDao {
     //todo maybe set UNIQUE to serverId attribute
     //todo data from server that are not photographed locally will be stored to the same database?
     @Insert
-    suspend fun insertMaterial(material: Material)
+    suspend fun insertMaterial(material: Material): Long
 
     @Insert
     suspend fun insertMaterials(materials: List<Material>) //now just for DB seeding

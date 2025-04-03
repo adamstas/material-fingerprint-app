@@ -1,68 +1,144 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
-import android.graphics.Bitmap
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialApiService
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialCharacteristicsRequestResponse
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
+import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.LightDirection
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import javax.inject.Inject
 
-//todo if retrofit not used, change the name
-class RetrofitRemoteMaterialRepositoryImpl: RemoteMaterialRepository {
+class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
+    private val materialApiService: MaterialApiService,
+    private val imageStorageService: ImageStorageService
+): RemoteMaterialRepository {
+
+    private fun fromMaterialCharacteristicsToRequestResponse(characteristics: MaterialCharacteristics)
+    : MaterialCharacteristicsRequestResponse {
+        return MaterialCharacteristicsRequestResponse(
+            brightness = characteristics.brightness,
+            checkered_pattern = characteristics.checkeredPattern,
+            color_vibrancy = characteristics.colorVibrancy,
+            hardness = characteristics.hardness,
+            movement_effect = characteristics.movementEffect,
+            multicolored = characteristics.multicolored,
+            naturalness = characteristics.naturalness,
+            pattern_complexity = characteristics.patternComplexity,
+            scale_of_pattern = characteristics.scaleOfPattern,
+            shininess = characteristics.shininess,
+            sparkle = characteristics.sparkle,
+            striped_pattern = characteristics.stripedPattern,
+            surface_roughness = characteristics.surfaceRoughness,
+            thickness = characteristics.thickness,
+            value = characteristics.value,
+            warmth = characteristics.warmth
+        )
+    }
+
+    private fun createImagePart(filename: String, partName: String): MultipartBody.Part {
+        val file = imageStorageService.loadImageAsFile(filename)
+        val requestBody = file.asRequestBody("image/png".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData(name = partName, filename = filename, body = requestBody)
+    }
 
     override suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getAllMaterialsOrderedByName() // todo furt se to vola dvakrat pri initu nejaky get materialu? zkusit kdyztak fixnout
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getAllSimilarMaterialsOrderedByName(materialId)
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
+    // todo tyhle metody se similar prejmenovat protoze ted to vypada ze to vraci podle jmena ale ony to vraci podle similarity
     override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getAllSimilarMaterialsOrderedByName(
+            characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics)
+        )
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String
+        nameSearch: String
     ): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getMaterialsOrderedByName(
+            name = nameSearch,
+            categories = categories.map { it.toString() }
+        )
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getSimilarMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String,
+        nameSearch: String,
         materialId: Long
     ): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getSimilarMaterialsOrderedByName(
+            materialId = materialId,
+            name = nameSearch,
+            categories = categories.map { it.toString() })
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getSimilarMaterialsOrderedByName(
         categories: List<MaterialCategory>,
-        searchText: String,
+        nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
     ): List<MaterialSummary> {
-        TODO("Not yet implemented")
+        val responseMaterials = materialApiService.getSimilarMaterialsOrderedByName(
+            characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics),
+            name = nameSearch,
+            categories = categories.map { it.toString() }
+        )
+        return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getMaterialsCount(): Long {
-        TODO("Not yet implemented")
+        return 0L // todo probably will be removed
     }
 
     override suspend fun analyseMaterial(
-        specularImage: Bitmap,
-        nonSpecularImage: Bitmap,
+        firstImageLightDirection: LightDirection,
         name: String,
         category: MaterialCategory
     ): Material {
-        TODO("Not yet implemented")
+    // todo ted predpokladam ze SPECULAR = svetlo zleva // todo "slot1" a "slot2" dát asi do configu
+
+        val (specularFilename, nonSpecularFilename) = when (firstImageLightDirection) {
+            LightDirection.FROM_LEFT -> "slot1" to "slot2"
+            LightDirection.FROM_ABOVE -> "slot2" to "slot1"
+        }
+
+        val specularImage = createImagePart(filename = specularFilename, partName = "specular_image")
+        val nonSpecularImage = createImagePart(filename = nonSpecularFilename, partName = "non_specular_image")
+
+        val responseMaterial = materialApiService.analyseMaterial(
+            name = name,
+            category = category.toString(),
+            storeInDb = true, // todo pak tahat odnekud z nastaveni
+            specular_image = specularImage,
+            non_specular_image = nonSpecularImage
+        )
+
+        return responseMaterial.toMaterial()
     }
 
-    override suspend fun getAllMaterialsSortedBySimilarity(characteristics: MaterialCharacteristics): List<MaterialSummary> {
-        TODO("Not yet implemented")
-    }
-
+    // todo probably will be deleted
     override suspend fun getMaterial(id: Long): Material {
-        TODO("Not yet implemented")
+        return Material(
+            name = "karelTest", serverId = 25, category = MaterialCategory.METAL,
+            characteristics = MaterialCharacteristics(
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        )
     }
 }

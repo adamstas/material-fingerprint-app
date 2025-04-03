@@ -92,7 +92,10 @@ abstract class BrowseMaterialsViewModel(
             -1L -> { // todo pomoci data store nacist charakteristiky a predat je, protoze neni ID
                 val characteristics = materialCharacteristicsRepository
                     .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
-                _materials.value = materialRepository.getAllSimilarMaterialsOrderedByName(materialCharacteristics = characteristics)
+                _materials.value = materialRepository.getSimilarMaterialsOrderedByName(
+                    materialCharacteristics = characteristics,
+                    categories = MaterialCategory.fromIDs(_selectedCategoryIDs.value),
+                    nameSearch = _searchBarText.value)
             }
             else -> _materials.value = materialRepository.getSimilarMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value, _similarMaterialId)
         }

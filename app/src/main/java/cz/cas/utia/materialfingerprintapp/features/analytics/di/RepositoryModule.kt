@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.di
 
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.RetrofitRemoteMaterialRepositoryImpl
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.RoomMaterialRepositoryImpl
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsProtoDataStore
@@ -21,11 +22,11 @@ abstract class RepositoryModule {
         roomMaterialRepositoryImpl: RoomMaterialRepositoryImpl
     ): LocalMaterialRepository
 
-//    @Binds
-//    @Singleton
-//    abstract fun bindRemoteMaterialRepository(
-//        roomMaterialRepositoryImpl: RoomMaterialRepositoryImpl //todo change to remote repo, currently not working
-//    ): RemoteMaterialRepository
+    @Binds
+    @Singleton
+    abstract fun bindRemoteMaterialRepository(
+        retrofitRemoteMaterialRepositoryImpl: RetrofitRemoteMaterialRepositoryImpl
+    ): RemoteMaterialRepository
 
     @Binds
     @Singleton

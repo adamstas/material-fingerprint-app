@@ -30,7 +30,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
@@ -40,12 +39,16 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.FindSimilarMaterialsDialog
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.PolarPlotCanvas
 import kotlinx.coroutines.flow.SharedFlow
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_IMAGE_URL_APPEND
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.MATERIALS_URL
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialImage
 
 @Composable
 fun BrowseLocalMaterialsScreen(
@@ -320,12 +323,23 @@ fun MaterialListRow(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            bitmap = material.photoThumbnail.asImageBitmap(),
-            contentDescription = "Latka Image", //todo zmenit
-            contentScale = ContentScale.Crop, //todo nechat?
-            modifier = Modifier.size(imageSize) // todo adjust size so the polar plot is somehow readable
-        )
+        when (material.photoThumbnail) {
+            is MaterialImage.BitmapImage ->
+                Image(
+                    bitmap = material.photoThumbnail.imageBitmap,
+                    contentDescription = "Material specular image",
+                    contentScale = ContentScale.Crop, //todo nechat?
+                    modifier = Modifier.size(imageSize) // todo adjust size so the polar plot is somehow readable
+                )
+
+            MaterialImage.UrlImage ->
+                AsyncImage(
+                    model = MATERIALS_URL + material.id + GET_MATERIAL_IMAGE_URL_APPEND,
+                    contentDescription = "Material specular image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(imageSize)
+                )
+        }
 
         Spacer(modifier = Modifier.width(24.dp))
 

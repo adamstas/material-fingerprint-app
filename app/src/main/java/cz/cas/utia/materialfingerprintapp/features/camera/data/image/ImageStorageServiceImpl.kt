@@ -54,6 +54,10 @@ class ImageStorageServiceImpl @Inject constructor(
         }
     }
 
+    override fun loadImageAsFile(filename: String): File {
+        return File(getImagesDirectory(), filename) // todo tady to nezarve kdyz image chybi?
+    }
+
     override fun deleteImage(filename: String): Boolean { //todo vracet neco?
         val imagePath = getImagesDirectory().absolutePath + "/" + filename
 

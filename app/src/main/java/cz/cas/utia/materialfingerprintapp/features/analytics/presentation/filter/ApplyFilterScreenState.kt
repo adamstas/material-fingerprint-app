@@ -25,16 +25,16 @@ fun scaleToCharacteristics(
     value: Float,
     fromMin: Float = 0f,
     fromMax: Float = 300f,
-    toMin: Double = AppConfig.PolarPlot.characteristicsMin,
-    toMax: Double = AppConfig.PolarPlot.characteristicsMax)
+    toMin: Double = AppConfig.PolarPlot.CHARACTERISTICS_MIN,
+    toMax: Double = AppConfig.PolarPlot.CHARACTERISTICS_MAX)
 : Double {
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin)
 }
 
 fun scaleToDrawingFloats(
     value: Double,
-    fromMin: Double = AppConfig.PolarPlot.characteristicsMin,
-    fromMax: Double = AppConfig.PolarPlot.characteristicsMax,
+    fromMin: Double = AppConfig.PolarPlot.CHARACTERISTICS_MIN,
+    fromMax: Double = AppConfig.PolarPlot.CHARACTERISTICS_MAX,
     toMin: Float = 0f,
     toMax: Float = 300f)
 : Float {

@@ -95,6 +95,15 @@ dependencies {
     implementation(libs.androidx.datastore.preferences) // todo if not used this basic data store, remove it
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.javalite)
+
+    implementation(libs.retrofit)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.converter.moshi)
+    implementation(libs.logging.interceptor) // todo remove if logging not used in final build
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }
 
 protobuf {

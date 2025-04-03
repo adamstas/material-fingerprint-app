@@ -13,7 +13,9 @@ data class PhotosSummaryScreenState(
     val materialName: String = "",
     val selectedCategory: MaterialCategory = MaterialCategory.UNCATEGORIZED,
 
-    val isDropdownMenuExpanded: Boolean = false
+    val isDropdownMenuExpanded: Boolean = false,
+
+    val isLoadingDialogShown: Boolean = false
     )
 {
     fun isReadyToAnalyse(): Boolean {

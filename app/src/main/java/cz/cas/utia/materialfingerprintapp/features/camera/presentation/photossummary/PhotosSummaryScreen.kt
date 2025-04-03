@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import cz.cas.utia.materialfingerprintapp.R
@@ -44,7 +48,8 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCate
 @Composable
 fun PhotosSummaryScreenRoot(
     viewModel: PhotosSummaryViewModel = hiltViewModel(),
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToPolarPlotVisualisationScreen: (Long, String) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -58,6 +63,10 @@ fun PhotosSummaryScreenRoot(
         navigate = { event ->
             when (event) {
                 PhotosSummaryNavigationEvent.BackToCameraScreen -> navigateBack()
+                is PhotosSummaryNavigationEvent.ToPolarPlotVisualisationScreen -> navigateToPolarPlotVisualisationScreen(
+                    event.firstMaterialId,
+                    event.firstMaterialName
+                )
             }
         }
     )
@@ -89,6 +98,9 @@ fun PhotosSummaryScreen(
                     .windowInsetsPadding(WindowInsets.navigationBars),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (state.isLoadingDialogShown)
+                    MaterialBeingAnalysedDialog()
+                
                 MaterialNameRow(state, onEvent)
 
                 CustomSpacer()
@@ -249,4 +261,33 @@ fun AnalyseButton(
     ) {
         Text(text = "Analyse")
     }
+}
+
+@Composable
+fun MaterialBeingAnalysedDialog() {
+    AlertDialog(
+        onDismissRequest = { },
+        title = {
+            Text(
+                text = "Analysing your images",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        },
+        text = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "Please wait...")
+                }
+            }
+        },
+        confirmButton = { }
+    )
 }
