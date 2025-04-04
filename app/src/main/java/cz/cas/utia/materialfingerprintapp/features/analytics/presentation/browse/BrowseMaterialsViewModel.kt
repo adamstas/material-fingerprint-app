@@ -1,6 +1,5 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 abstract class BrowseMaterialsViewModel(
     private val savedStateHandle: SavedStateHandle, //for fetching navigation arguments
@@ -89,7 +87,7 @@ abstract class BrowseMaterialsViewModel(
     protected suspend fun filterMaterials() {
         when (_similarMaterialId) {
             null -> _materials.value = materialRepository.getMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value)
-            -1L -> { // todo pomoci data store nacist charakteristiky a predat je, protoze neni ID
+            -1L -> {
                 val characteristics = materialCharacteristicsRepository
                     .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
                 _materials.value = materialRepository.getSimilarMaterialsOrderedByName(
@@ -102,22 +100,6 @@ abstract class BrowseMaterialsViewModel(
     }
 
     init {
-        viewModelScope.launch {
-            when (_similarMaterialId) {
-                null -> _materials.value = materialRepository.getAllMaterialsOrderedByName()
-                -1L -> {
-                    val characteristics = materialCharacteristicsRepository
-                        .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
-                    _materials.value = materialRepository.getAllSimilarMaterialsOrderedByName(materialCharacteristics = characteristics)
-                } // todo pomoci data store nacist charakteristiky a predat je, protoze neni ID
-                else -> _materials.value = materialRepository.getAllSimilarMaterialsOrderedByName(_similarMaterialId)
-            }
-            Log.i("testicek", "similar material ID je $_similarMaterialId")
-
-            //todo check if this works after setting up DI
-            Log.i("ONEVENT", "materials: " + materialRepository.getAllMaterialsOrderedByName()) //this should NOT return empty list
-        }
-
         _materials.onEach { _ ->
             _checkedMaterials.value = emptySet()
             updateButtons()

@@ -6,6 +6,8 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.Loc
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsProtoDataStore
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsStorageSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -22,14 +24,22 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
     savedStateHandle = savedStateHandle,
     materialCharacteristicsRepository = dataStore) {
 
+    // state flow has a default value so when this _selectedCategoryIDs.onEach { ... } is set in init block, it has to immediately call filterMaterials()
+    // because there is a value to be emitted already
     init {
-        _selectedCategoryIDs.onEach {
-            filterMaterials()
-        }.launchIn(viewModelScope)
-
-        _searchBarText.onEach {
-            filterMaterials()
-        }.launchIn(viewModelScope)
+        combine( // combine those flows so filterMaterials() is not called twice when ViewModel is created
+            // (otherwise it would call filterMaterials() twice because there would be initial change in both flows)
+            _selectedCategoryIDs,
+            _searchBarText
+        ) { selectedCategoryIDs, searchBarText ->
+            // combined flow emits a Pair of current values
+            Pair(selectedCategoryIDs, searchBarText)
+        }
+            .distinctUntilChanged()
+            .onEach {
+                filterMaterials()
+            }
+            .launchIn(viewModelScope)
     }
 
     override fun closeDropdownMenu() {
