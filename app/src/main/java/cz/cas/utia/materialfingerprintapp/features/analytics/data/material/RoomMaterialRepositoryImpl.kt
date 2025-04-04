@@ -1,6 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analytics.domain.CalculateSimilarityUseCase
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCharacteristics
@@ -10,7 +11,8 @@ import javax.inject.Inject
 //todo rename to RoomLocalMaterialRepositoryImpl ?
 class RoomMaterialRepositoryImpl @Inject constructor(
     private val materialDao: MaterialDao,
-    private val materialSummaryMapper: MaterialSummaryMapper
+    private val materialSummaryMapper: MaterialSummaryMapper,
+    private val calculateSimilarityUseCase: CalculateSimilarityUseCase
 ): LocalMaterialRepository {
 
     override suspend fun insertMaterial(material: Material): Long {
@@ -26,17 +28,18 @@ class RoomMaterialRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
-        //TODO fixnout
-        val materials = materialDao.getAllMaterialsOrderedByName()
-        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
-        return listOf(mapped[0], mapped[1])
+        val targetMaterial = materialDao.getMaterial(materialId) // todo lze pak volat rovnou metodu getMaterial toho repozitáře a ne toho dao (pokud to tu zustane)
+        val targetMaterialSummary = materialSummaryMapper.map(targetMaterial)
+
+        val materials = getAllMaterialsOrderedByName()
+        val result = calculateSimilarityUseCase.calculateSimilarity(materials, targetMaterialSummary)
+
+        return result
     }
 
     override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
-        //TODO fixnout
-        val materials = materialDao.getAllMaterialsOrderedByName()
-        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
-        return listOf(mapped[0], mapped[1])
+        val materials = getAllMaterialsOrderedByName()
+        return calculateSimilarityUseCase.calculateSimilarity(materials, materialCharacteristics)
     }
 
     override suspend fun getMaterialsOrderedByName(
@@ -54,16 +57,11 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         nameSearch: String,
         materialId: Long
     ): List<MaterialSummary> {
-        //TODO fixnout
-        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
-        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
+        val targetMaterial = materialDao.getMaterial(materialId)  // todo lze pak volat rovnou metodu getMaterial toho repozitáře a ne toho dao (pokud to tu zustane)
+        val targetMaterialSummary = materialSummaryMapper.map(targetMaterial)
 
-        if (mapped.isEmpty())
-            return mapped
-
-        val resList = emptyList<MaterialSummary>().toMutableList()
-        resList += mapped[0]
-        return resList
+        val materials = getAllMaterialsOrderedByName()
+        return calculateSimilarityUseCase.calculateSimilarity(materials, targetMaterialSummary, nameSearch, categories)
     }
 
     override suspend fun getSimilarMaterialsOrderedByName(
@@ -71,16 +69,8 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
     ): List<MaterialSummary> {
-        //TODO fixnout
-        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
-        val mapped = materials.map { material -> materialSummaryMapper.map(material) }
-
-        if (mapped.isEmpty())
-            return mapped
-
-        val resList = emptyList<MaterialSummary>().toMutableList()
-        resList += mapped[0]
-        return resList
+        val materials = getAllMaterialsOrderedByName()
+        return calculateSimilarityUseCase.calculateSimilarity(materials, materialCharacteristics, nameSearch, categories)
     }
 
     override suspend fun getMaterialsCount(): Long {
