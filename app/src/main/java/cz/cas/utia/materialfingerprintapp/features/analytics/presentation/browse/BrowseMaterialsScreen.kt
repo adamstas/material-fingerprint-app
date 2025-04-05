@@ -39,7 +39,6 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropDownMenuWithCheckboxesItem
 import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithCheckboxes
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
@@ -53,112 +52,18 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.ErrorScreen
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialImage
 
 @Composable
-fun BrowseLocalMaterialsScreen(
+fun BrowseMaterialsScreenRoot(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
     navigateToAnalyticsHomeScreen: () -> Unit,
-    viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
-    /**
-     * todo:
-     * udelat RootMaterialScreenComposable (BrowseMaterialsScreenRoot) anebo odkud sem dát hiltViewModel,
-     * abych pak mohl dávat uz jen onEvent funkci? - spis pro jine screeny to udelat,
-     * tady jsem to nedelal protoze mam dva rooty - remote a local
-     */
+    viewModel: BrowseMaterialsViewModel,
+    title: String
 ) {
     val state by viewModel.state.collectAsState()
 
-    BrowseMaterialsScreenSuccessOrError(
-        title = "Browse local materials",
-        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
-        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
-        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
-        navigationEvents = viewModel.navigationEvents,
-        state = state,
-        onEvent = viewModel::onEvent
-    )
-}
-
-@Composable
-fun BrowseRemoteMaterialsScreen(
-    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
-    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
-    navigateToAnalyticsHomeScreen: () -> Unit,
-    viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
-) {
-    val state by viewModel.state.collectAsState()
-
-    BrowseMaterialsScreenSuccessOrError(
-        title = "Browse remote materials",
-        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
-        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
-        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
-        navigationEvents = viewModel.navigationEvents,
-        state = state,
-        onEvent = viewModel::onEvent
-    )
-}
-//todo dat ty similar materials screens definice do jineho souboru?
-@Composable
-fun BrowseSimilarLocalMaterialsScreen(
-    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
-    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
-    navigateToAnalyticsHomeScreen: () -> Unit,
-    viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
-) {
-    val state by viewModel.state.collectAsState()
-
-    BrowseMaterialsScreenSuccessOrError(
-        title = "Browse similar local materials",
-        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
-        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
-        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
-        navigationEvents = viewModel.navigationEvents,
-        state = state,
-        onEvent = viewModel::onEvent
-    )
-}
-
-@Composable
-fun BrowseSimilarRemoteMaterialsScreen(
-    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
-    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
-    navigateToAnalyticsHomeScreen: () -> Unit,
-    viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
-) {
-    val state by viewModel.state.collectAsState()
-
-    BrowseMaterialsScreenSuccessOrError(
-        title = "Browse similar remote materials",
-        navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
-        navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
-        navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
-        navigationEvents = viewModel.navigationEvents,
-        state = state,
-        onEvent = viewModel::onEvent
-    )
-}
-
-@Composable
-fun BrowseMaterialsScreenSuccessOrError(
-    title: String,
-    navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
-    navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
-    navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
-    navigateToAnalyticsHomeScreen: () -> Unit,
-    navigationEvents: SharedFlow<MaterialNavigationEvent>,
-    state: MaterialsScreenState,
-    onEvent: (MaterialEvent) -> Unit
-) {
     NavigationHandler(
-        navigationEventFlow = navigationEvents,
+        navigationEventFlow = viewModel.navigationEvents,
         navigate = { event ->
             when (event) {
                 is MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialID)
@@ -176,18 +81,18 @@ fun BrowseMaterialsScreenSuccessOrError(
         }
     )
 
-    when (state) {
+    when (val screenState = state) {
         is MaterialsScreenState.Success -> BrowseMaterialsScreen(
             title = title,
-            state = state,
-            onEvent = onEvent
+            state = screenState,
+            onEvent = viewModel::onEvent
         )
 
         is MaterialsScreenState.Error -> ErrorScreen(
-            message = stringResource(id = state.messageResId),
-            onAction = { onEvent(MaterialEvent.GoToAnalyticsHomeScreen) },
+            message = stringResource(id = screenState.messageResId),
+            onAction = { viewModel.onEvent(MaterialEvent.GoToAnalyticsHomeScreen) },
             buttonText = "Go to Analytics Home Screen",
-            exception = state.exception
+            exception = screenState.exception
         )
     }
 }
