@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,9 +42,7 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
     }
 
     override fun closeDropdownMenu() {
-        _state.update { it.copy(
-            isDropdownMenuExpanded = false
-        ) }
+        updateSuccessState { it.copy(isDropdownMenuExpanded = false) }
     }
 
     override fun createPolarPlot() {

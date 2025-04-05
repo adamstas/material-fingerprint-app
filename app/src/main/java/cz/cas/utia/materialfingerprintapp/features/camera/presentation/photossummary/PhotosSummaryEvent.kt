@@ -9,6 +9,7 @@ sealed interface PhotosSummaryEvent {
     data object AnalyseImages: PhotosSummaryEvent
 
     data object GoBackToCameraScreen: PhotosSummaryEvent
+    data object GoBackFromErrorScreen: PhotosSummaryEvent
 
     data object ShowDropdownMenu: PhotosSummaryEvent
     data object CloseDropdownMenu: PhotosSummaryEvent

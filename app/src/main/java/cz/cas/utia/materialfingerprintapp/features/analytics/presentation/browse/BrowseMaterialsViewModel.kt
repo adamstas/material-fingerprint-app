@@ -3,6 +3,8 @@ package cz.cas.utia.materialfingerprintapp.features.analytics.presentation.brows
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cas.utia.materialfingerprintapp.R
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.exception.NoInternetException
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.MaterialCharacteristicsStorageSlot
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 abstract class BrowseMaterialsViewModel(
     private val savedStateHandle: SavedStateHandle, //for fetching navigation arguments
@@ -34,36 +37,43 @@ abstract class BrowseMaterialsViewModel(
 
     private val _similarMaterialId = savedStateHandle.get<Long?>("materialId") // cannot use toRoute since the ViewModel can be in 2 routes (BrowseSimilarMaterials and BrowseMaterials)
 
-    protected val _state = MutableStateFlow(MaterialsScreenState())
+    protected val _state = MutableStateFlow<MaterialsScreenState>(MaterialsScreenState.Success())
     val state = combine(_state, _selectedCategoryIDs, _materials, _checkedMaterials, _searchBarText)
     { state, selectedCategoryIDs, materials, checkedMaterials, searchBarText ->
-        state.copy(
-            selectedCategoryIDs = selectedCategoryIDs,
-            materials = materials,
-            checkedMaterials = checkedMaterials,
-            searchBarText = searchBarText
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaterialsScreenState())
+
+        when (state) {
+            is MaterialsScreenState.Success -> {
+                state.copy(
+                    selectedCategoryIDs = selectedCategoryIDs,
+                    materials = materials,
+                    checkedMaterials = checkedMaterials,
+                    searchBarText = searchBarText
+                )
+            }
+
+            is MaterialsScreenState.Error -> state
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaterialsScreenState.Success())
 
     protected val _navigationEvents = MutableSharedFlow<MaterialNavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
 
+    // helper for less boiler plate code
+    protected fun updateSuccessState(update: (MaterialsScreenState.Success) -> MaterialsScreenState) {
+        val currentState = _state.value
+        if (currentState is MaterialsScreenState.Success) {
+            _state.value = update(currentState)
+        }
+    }
+
     private fun enableOrDisableFindSimilarMaterialButton() {
         val enable = _checkedMaterials.value.size == 1
-        _state.update {
-            it.copy(
-                isFindSimilarMaterialButtonEnabled = enable
-            )
-        }
+        updateSuccessState { it.copy(isFindSimilarMaterialButtonEnabled = enable) }
     }
 
     private fun enableOrDisableCreatePolarPlotButton() {
         val enable = _checkedMaterials.value.size in 1..2
-        _state.update {
-            it.copy(
-                isCreatePolarPlotButtonEnabled = enable
-            )
-        }
+        updateSuccessState { it.copy(isCreatePolarPlotButtonEnabled = enable) }
     }
 
     private fun updateButtons() {
@@ -72,30 +82,49 @@ abstract class BrowseMaterialsViewModel(
     }
 
     private fun updateSelectedCategoriesText() {
-        _state.update {
-            it.copy(
-                selectedCategoriesText = when (_selectedCategoryIDs.value.size) {
-                    0 -> "None selected"
-                    1 -> MaterialCategory.fromIDs(_selectedCategoryIDs.value).first().toString()
-                    MaterialCategory.entries.size -> "All selected"
-                    else -> "Selected ${_selectedCategoryIDs.value.size}"
-                }
-            )
-        }
+        updateSuccessState { it.copy(
+            selectedCategoriesText = when (_selectedCategoryIDs.value.size) {
+                0 -> "None selected"
+                1 -> MaterialCategory.fromIDs(_selectedCategoryIDs.value).first().toString()
+                MaterialCategory.entries.size -> "All selected"
+                else -> "Selected ${_selectedCategoryIDs.value.size}"
+            }
+        ) }
     }
 
     protected suspend fun filterMaterials() {
-        when (_similarMaterialId) {
-            null -> _materials.value = materialRepository.getMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value)
-            -1L -> {
-                val characteristics = materialCharacteristicsRepository
-                    .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
-                _materials.value = materialRepository.getSimilarMaterialsOrderedByName(
-                    materialCharacteristics = characteristics,
-                    categories = MaterialCategory.fromIDs(_selectedCategoryIDs.value),
-                    nameSearch = _searchBarText.value)
+        try {
+            when (_similarMaterialId) {
+                null -> _materials.value = materialRepository.getMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value)
+                -1L -> {
+                    val characteristics = materialCharacteristicsRepository
+                        .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
+                    _materials.value = materialRepository.getSimilarMaterialsOrderedByName(
+                        materialCharacteristics = characteristics,
+                        categories = MaterialCategory.fromIDs(_selectedCategoryIDs.value),
+                        nameSearch = _searchBarText.value)
+                }
+                else -> _materials.value = materialRepository.getSimilarMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value, _similarMaterialId)
             }
-            else -> _materials.value = materialRepository.getSimilarMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value, _similarMaterialId)
+        }
+
+        catch (e: NoInternetException) {
+            _state.value = MaterialsScreenState.Error(
+                messageResId = R.string.no_internet_exception,
+                exception = e
+            )
+        }
+        catch (e: IOException) {
+            _state.value = MaterialsScreenState.Error(
+                messageResId = R.string.io_exception,
+                exception = e
+            )
+        }
+        catch (e: Exception) {
+            _state.value = MaterialsScreenState.Error(
+                messageResId = R.string.unknown_exception,
+                exception = e
+            )
         }
     }
 
@@ -127,6 +156,7 @@ abstract class BrowseMaterialsViewModel(
             MaterialEvent.CreatePolarPlot -> createPolarPlot()
             MaterialEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
             MaterialEvent.FindSimilarMaterial -> findSimilarMaterials()
+            MaterialEvent.GoToAnalyticsHomeScreen -> goToAnalyticsHomeScreen()
         }
     }
 
@@ -153,9 +183,7 @@ abstract class BrowseMaterialsViewModel(
     }
 
     private fun showDropdownMenu() {
-        _state.update { it.copy(
-            isDropdownMenuExpanded = true
-        ) }
+        updateSuccessState { it.copy(isDropdownMenuExpanded = true) }
     }
 
     private fun searchMaterials(event: MaterialEvent.SearchMaterials) {
@@ -171,18 +199,16 @@ abstract class BrowseMaterialsViewModel(
     protected abstract fun createPolarPlot()
 
     private fun dismissFindSimilarMaterialsDialog() {
-        _state.update {
-            it.copy(
-                isFindSimilarMaterialsDialogShown = false
-            )
-        }
+        updateSuccessState { it.copy(isFindSimilarMaterialsDialogShown = false) }
     }
 
     private fun findSimilarMaterials() {
-        _state.update {
-            it.copy(
-                isFindSimilarMaterialsDialogShown = true
-            )
+        updateSuccessState { it.copy(isFindSimilarMaterialsDialogShown = true) }
+    }
+
+    private fun goToAnalyticsHomeScreen() {
+        viewModelScope.launch {
+            _navigationEvents.emit(MaterialNavigationEvent.ToAnalyticsHomeScreen)
         }
     }
 }

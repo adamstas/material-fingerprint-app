@@ -75,7 +75,8 @@ fun MainGraph(
                     secondMaterialId = secondMaterialId,
                     secondMaterialName = secondMaterialName
                 ))
-                }
+                },
+                navigateToAnalyticsHomeScreen = { navController.navigate(Screen.AnalyticsHomeScreen) }
             )
         }
 
@@ -99,7 +100,8 @@ fun MainGraph(
                     secondMaterialId = secondMaterialId,
                     secondMaterialName = secondMaterialName
                 ))
-                }
+                },
+                navigateToAnalyticsHomeScreen = { navController.navigate(Screen.AnalyticsHomeScreen) }
             )
         }
 
@@ -131,7 +133,8 @@ fun MainGraph(
                     secondMaterialId = secondMaterialId,
                     secondMaterialName = secondMaterialName
                 ))
-                }
+                },
+                navigateToAnalyticsHomeScreen = { navController.navigate(Screen.AnalyticsHomeScreen) }
             )
         }
 
@@ -155,7 +158,8 @@ fun MainGraph(
                     secondMaterialId = secondMaterialId,
                     secondMaterialName = secondMaterialName
                 ))
-                }
+                },
+                navigateToAnalyticsHomeScreen = { navController.navigate(Screen.AnalyticsHomeScreen) }
             )
         }
 

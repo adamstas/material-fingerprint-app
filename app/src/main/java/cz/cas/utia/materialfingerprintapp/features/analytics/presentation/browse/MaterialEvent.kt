@@ -26,6 +26,8 @@ sealed interface MaterialEvent {
     data object CreatePolarPlot: MaterialEvent
 
     data object DismissFindSimilarMaterialsDialog: MaterialEvent
+
+    data object GoToAnalyticsHomeScreen: MaterialEvent
 }
 
 sealed interface MaterialNavigationEvent { //todo nehcat to takhle "MaterialNavigationEvent"?
@@ -39,4 +41,5 @@ sealed interface MaterialNavigationEvent { //todo nehcat to takhle "MaterialNavi
         val secondMaterialId: Long?,
         val secondMaterialName: String?
     ): MaterialNavigationEvent
+    data object ToAnalyticsHomeScreen: MaterialNavigationEvent // to exit error screen
 }

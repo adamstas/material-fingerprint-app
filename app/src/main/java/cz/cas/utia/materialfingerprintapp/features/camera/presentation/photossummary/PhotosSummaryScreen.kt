@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +44,7 @@ import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BasicDropdownMenu
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
+import cz.cas.utia.materialfingerprintapp.core.ui.components.ErrorScreen
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
 
 @Composable
@@ -71,15 +73,27 @@ fun PhotosSummaryScreenRoot(
         }
     )
 
-    PhotosSummaryScreen(
-        state = state,
-        onEvent = viewModel::onEvent
-    )
+    when (val screenState = state) {
+        is PhotosSummaryScreenState.Success ->
+            PhotosSummaryScreen(
+                state = screenState,
+                onEvent = viewModel::onEvent
+            )
+
+        is PhotosSummaryScreenState.Error -> {
+            ErrorScreen(
+                message = stringResource(id = screenState.messageResId),
+                onAction = { viewModel.onEvent(PhotosSummaryEvent.GoBackFromErrorScreen) },
+                buttonText = "Back to Photos Summary Screen",
+                exception = screenState.exception
+            )
+        }
+    }
 }
 
 @Composable
 fun PhotosSummaryScreen(
-    state: PhotosSummaryScreenState,
+    state: PhotosSummaryScreenState.Success,
     onEvent: (PhotosSummaryEvent) -> Unit
 ) {
     Scaffold(
@@ -132,7 +146,7 @@ fun PhotosSummaryScreen(
 
 @Composable
 fun MaterialNameRow(
-    state: PhotosSummaryScreenState,
+    state: PhotosSummaryScreenState.Success,
     onEvent: (PhotosSummaryEvent) -> Unit
 ) {
     Row(
@@ -157,7 +171,7 @@ fun MaterialNameRow(
 
 @Composable
 fun CategorySelectionRow(
-    state: PhotosSummaryScreenState,
+    state: PhotosSummaryScreenState.Success,
     onEvent: (PhotosSummaryEvent) -> Unit
 ) {
     Row(
@@ -175,7 +189,7 @@ fun CategorySelectionRow(
 
 @Composable
 fun CategoriesDropdownMenu(
-    state: PhotosSummaryScreenState,
+    state: PhotosSummaryScreenState.Success,
     onEvent: (PhotosSummaryEvent) -> Unit
 ) {
     BasicDropdownMenu(
@@ -252,7 +266,7 @@ fun CenteredImage(
 
 @Composable
 fun AnalyseButton(
-    state: PhotosSummaryScreenState,
+    state: PhotosSummaryScreenState.Success,
     onEvent: (PhotosSummaryEvent) -> Unit
 ) {
     Button(

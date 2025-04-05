@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
@@ -48,6 +49,7 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.common
 import kotlinx.coroutines.flow.SharedFlow
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_IMAGE_URL_APPEND
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.MATERIALS_URL
+import cz.cas.utia.materialfingerprintapp.core.ui.components.ErrorScreen
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialImage
 
 @Composable
@@ -55,6 +57,7 @@ fun BrowseLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
+    navigateToAnalyticsHomeScreen: () -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
     /**
      * todo:
@@ -65,11 +68,12 @@ fun BrowseLocalMaterialsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    BrowseMaterialsScreen(
+    BrowseMaterialsScreenSuccessOrError(
         title = "Browse local materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
         navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
+        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -81,15 +85,17 @@ fun BrowseRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
+    navigateToAnalyticsHomeScreen: () -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
-    BrowseMaterialsScreen(
+    BrowseMaterialsScreenSuccessOrError(
         title = "Browse remote materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
         navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
+        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -101,15 +107,17 @@ fun BrowseSimilarLocalMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
+    navigateToAnalyticsHomeScreen: () -> Unit,
     viewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
-    BrowseMaterialsScreen(
+    BrowseMaterialsScreenSuccessOrError(
         title = "Browse similar local materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
         navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
+        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -121,15 +129,17 @@ fun BrowseSimilarRemoteMaterialsScreen(
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
+    navigateToAnalyticsHomeScreen: () -> Unit,
     viewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
-    BrowseMaterialsScreen(
+    BrowseMaterialsScreenSuccessOrError(
         title = "Browse similar remote materials",
         navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
         navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
         navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
+        navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
         navigationEvents = viewModel.navigationEvents,
         state = state,
         onEvent = viewModel::onEvent
@@ -137,11 +147,12 @@ fun BrowseSimilarRemoteMaterialsScreen(
 }
 
 @Composable
-fun BrowseMaterialsScreen(
+fun BrowseMaterialsScreenSuccessOrError(
     title: String,
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
+    navigateToAnalyticsHomeScreen: () -> Unit,
     navigationEvents: SharedFlow<MaterialNavigationEvent>,
     state: MaterialsScreenState,
     onEvent: (MaterialEvent) -> Unit
@@ -160,10 +171,33 @@ fun BrowseMaterialsScreen(
                     event.secondMaterialId,
                     event.secondMaterialName
                 )
+                MaterialNavigationEvent.ToAnalyticsHomeScreen -> navigateToAnalyticsHomeScreen()
             }
         }
     )
 
+    when (state) {
+        is MaterialsScreenState.Success -> BrowseMaterialsScreen(
+            title = title,
+            state = state,
+            onEvent = onEvent
+        )
+
+        is MaterialsScreenState.Error -> ErrorScreen(
+            message = stringResource(id = state.messageResId),
+            onAction = { onEvent(MaterialEvent.GoToAnalyticsHomeScreen) },
+            buttonText = "Go to Analytics Home Screen",
+            exception = state.exception
+        )
+    }
+}
+
+@Composable
+fun BrowseMaterialsScreen(
+    title: String,
+    state: MaterialsScreenState.Success,
+    onEvent: (MaterialEvent) -> Unit
+) {
     Scaffold(
         topBar = {
             BackTopBarTitle(
@@ -172,44 +206,44 @@ fun BrowseMaterialsScreen(
             )
         }
     ) { paddingValues ->
-            Column(
-                Modifier
-                    .padding(paddingValues)
-                    .padding(25.dp)
-                    .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
-                    .fillMaxSize()
-            ) {
-                SearchAndFilterSection(state, onEvent)
+        Column(
+            Modifier
+                .padding(paddingValues)
+                .padding(25.dp)
+                .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
+                .fillMaxSize()
+        ) {
+            SearchAndFilterSection(state, onEvent)
 
-                CustomSpacer()
+            CustomSpacer()
 
-                MaterialsListSection(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    state = state,
-                    onEvent = onEvent)
+            MaterialsListSection(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                state = state,
+                onEvent = onEvent)
 
-                BottomButtonsSection(
-                    state = state,
-                    onEvent = onEvent,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+            BottomButtonsSection(
+                state = state,
+                onEvent = onEvent,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            if (state.isFindSimilarMaterialsDialogShown) {
+                FindSimilarMaterialsDialog(
+                    onDismissRequest = { onEvent(MaterialEvent.DismissFindSimilarMaterialsDialog) },
+                    onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterial())) },
+                    onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterial())) }
                 )
-
-                if (state.isFindSimilarMaterialsDialogShown) {
-                    FindSimilarMaterialsDialog(
-                        onDismissRequest = { onEvent(MaterialEvent.DismissFindSimilarMaterialsDialog) },
-                        onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterial())) },
-                        onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterial())) }
-                    )
-                }
             }
+        }
     }
 }
 
 @Composable
 fun SearchAndFilterSection(
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit
 ) {
     Row(
@@ -233,7 +267,7 @@ fun SearchAndFilterSection(
 
 @Composable
 fun MaterialsSearchBar(
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier
 ) {
@@ -250,7 +284,7 @@ fun MaterialsSearchBar(
 
 @Composable
 fun CategoriesDropdownMenu(
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier
 ) {
@@ -274,7 +308,7 @@ fun CategoriesDropdownMenu(
 
 @Composable
 fun MaterialsListSection(
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier
 ) {
@@ -312,7 +346,7 @@ fun MaterialsListSection(
 @Composable
 fun MaterialListRow(
     material: MaterialSummary,
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit
 ) {
     val imageSize = 96.dp
@@ -371,7 +405,7 @@ fun MaterialListRow(
 
 @Composable
 fun BottomButtonsSection(
-    state: MaterialsScreenState,
+    state: MaterialsScreenState.Success,
     onEvent: (MaterialEvent) -> Unit,
     modifier: Modifier) {
         Button(

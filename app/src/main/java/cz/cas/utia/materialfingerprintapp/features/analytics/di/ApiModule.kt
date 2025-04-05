@@ -1,12 +1,16 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.di
 
+import android.content.Context
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialApiService
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.helper.NetworkConnectionChecker
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.interceptor.NetworkConnectionInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,10 +37,21 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideNetworkConnectionChecker(
+        @ApplicationContext appContext: Context // even though this is a singleton, the most recent context will be always provided to this single instance
+    ): NetworkConnectionChecker {
+        return NetworkConnectionChecker(appContext)
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
+        networkConnectionInterceptor: NetworkConnectionInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(60, TimeUnit.SECONDS) // sometimes it takes some time to analyse the image at the server
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(networkConnectionInterceptor)
             .build()
     }
 

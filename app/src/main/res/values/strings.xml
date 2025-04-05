@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MaterialFingerprintApp</string>
+
+    <string name="no_internet_exception">Your device is not connected to the internet.\nPlease connect to the internet and then try again.</string>
+    <string name="io_exception">There seems to be a problem with the server. Please try again later.</string>
+    <string name="unknown_exception">An unexpected error occurred.</string>
 </resources>

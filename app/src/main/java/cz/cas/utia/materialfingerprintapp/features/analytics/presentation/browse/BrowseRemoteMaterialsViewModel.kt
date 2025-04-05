@@ -10,7 +10,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,21 +29,23 @@ class BrowseRemoteMaterialsViewModel @Inject constructor(
         _searchBarText
             .debounce(700L)
             .onEach {
-                    _state.update { it.copy(isSearching = true) }
+                    //_state.update { it.copy(isSearching = true) }
+                    updateSuccessState { it.copy(isSearching = true) }
                 //todo add isSearching changes for LocalViewModel too? probably not, for local materials it should load instantly..
                     filterMaterials()
-                    _state.update { it.copy(isSearching = false) }
+                   // _state.update { it.copy(isSearching = false) }
+                    updateSuccessState { it.copy(isSearching = false) }
                 }.launchIn(viewModelScope)
 
     }
 
     override fun closeDropdownMenu() {
-        _state.update { it.copy(isDropdownMenuExpanded = false) }
+        updateSuccessState { it.copy(isDropdownMenuExpanded = false) }
         //get fresh materials after closing the dropdown menu
         viewModelScope.launch { //todo maybe try catch if the API service will be offline or no internet?
-            _state.update { it.copy(isSearching = true) }
+            updateSuccessState { it.copy(isSearching = true) }
             filterMaterials()
-            _state.update { it.copy(isSearching = false) }
+            updateSuccessState { it.copy(isSearching = false) }
         }
     }
 
