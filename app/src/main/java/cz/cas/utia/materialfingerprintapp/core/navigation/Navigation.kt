@@ -48,11 +48,10 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                   saveState = true
                                 }
                                 launchSingleTop = true
-                                restoreState = true //todo toto je super ze kdyz jdu z analytics do camera a pak zpet do analytics, tak v analytics zustane state
-                                                    // ale kdyz jdu z camera section do analytics a predtim jsem aspon jednou byl v photosummary, tak me to pak namisto do camera hazi do photosummary
+                                restoreState = true
                             }
                         },
                         label = {
@@ -62,8 +61,7 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
                             Icon(painter =
                             if (isSelected) painterResource(screen.iconSelectedId)
                             else painterResource(id = screen.iconUnselectedId),
-                                //todo toto lze predelat podle oficialniho tutorial na bottom bar navigaci (ted kdyz clovek byl v camera a jde do settings a da na mobilni spodni liste "back" tak ho to hodi zpatky d ocamera, ale v bottom navbaru stale sviti settings)
-                                contentDescription = screen.label //todo zmenit na nejaky sofistikovanejsi popis?
+                                contentDescription = screen.label
                             )
 
                         }
@@ -72,6 +70,9 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
             }
         }
     )
-    { innerPadding -> MainGraph(navController = navController)
-    } //todo scaffold content?
+    { innerPadding -> MainGraph(
+        navController = navController
+        //  modifier = Modifier.padding(innerPadding)
+    )
+    }
 }

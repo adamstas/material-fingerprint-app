@@ -1,6 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary
 
 import android.graphics.Bitmap
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +55,10 @@ fun PhotosSummaryScreenRoot(
     navigateToPolarPlotVisualisationScreen: (Long, String) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+
+    BackHandler {
+        navigateBack() // override default Android device back button so when pressing it user does not lose state
+    }
 
     //during each recomposition reload the images
     LaunchedEffect(Unit) {

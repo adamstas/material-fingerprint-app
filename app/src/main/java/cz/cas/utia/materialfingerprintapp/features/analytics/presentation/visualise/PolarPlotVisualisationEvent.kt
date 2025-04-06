@@ -9,7 +9,7 @@ sealed interface PolarPlotVisualisationEvent {
 
     data object ApplyFilter: PolarPlotVisualisationEvent
 
-    data object GoBackToBrowseMaterialsScreen: PolarPlotVisualisationEvent
+    data object GoBack: PolarPlotVisualisationEvent
 
     data object ShowOrHideAxesLabels: PolarPlotVisualisationEvent
     data class SetPlotDisplayMode(val plotDisplayMode: PlotDisplayMode): PolarPlotVisualisationEvent
@@ -18,7 +18,7 @@ sealed interface PolarPlotVisualisationEvent {
 }
 
 sealed interface PolarPlotVisualisationNavigationEvent {
-    data object BackToBrowseMaterialsScreen: PolarPlotVisualisationNavigationEvent
+    data object Back: PolarPlotVisualisationNavigationEvent
     data class ToBrowseSimilarLocalMaterialsScreen(val materialId: Long): PolarPlotVisualisationNavigationEvent
     data class ToBrowseSimilarRemoteMaterialsScreen(val materialId: Long): PolarPlotVisualisationNavigationEvent
     data object ToApplyFilterScreen: PolarPlotVisualisationNavigationEvent

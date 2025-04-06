@@ -45,7 +45,6 @@ import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.FindSimilarMaterialsDialog
 import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.commoncomponents.PolarPlotCanvas
-import kotlinx.coroutines.flow.SharedFlow
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_IMAGE_URL_APPEND
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.MATERIALS_URL
 import cz.cas.utia.materialfingerprintapp.core.ui.components.ErrorScreen
@@ -53,10 +52,10 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialImag
 
 @Composable
 fun BrowseMaterialsScreenRoot(
+    navigateBack: () -> Unit,
     navigateToBrowseSimilarLocalMaterialsScreen: (Long) -> Unit,
     navigateToBrowseSimilarRemoteMaterialsScreen: (Long) -> Unit,
     navigateToPolarPlotVisualisationScreen: (Boolean, Long, String, Boolean?, Long?, String?) -> Unit,
-    navigateToAnalyticsHomeScreen: () -> Unit,
     viewModel: BrowseMaterialsViewModel,
     title: String
 ) {
@@ -76,7 +75,7 @@ fun BrowseMaterialsScreenRoot(
                     event.secondMaterialId,
                     event.secondMaterialName
                 )
-                MaterialNavigationEvent.ToAnalyticsHomeScreen -> navigateToAnalyticsHomeScreen()
+                MaterialNavigationEvent.Back -> navigateBack()
             }
         }
     )
@@ -90,8 +89,8 @@ fun BrowseMaterialsScreenRoot(
 
         is MaterialsScreenState.Error -> ErrorScreen(
             message = stringResource(id = screenState.messageResId),
-            onAction = { viewModel.onEvent(MaterialEvent.GoToAnalyticsHomeScreen) },
-            buttonText = "Go to Analytics Home Screen",
+            onAction = { viewModel.onEvent(MaterialEvent.GoBack) },
+            buttonText = "Go back",
             exception = screenState.exception
         )
     }
@@ -107,7 +106,7 @@ fun BrowseMaterialsScreen(
         topBar = {
             BackTopBarTitle(
                 title = title,
-                navigateBack = {} //todo later add navigation logic
+                navigateBack = { onEvent(MaterialEvent.GoBack) }
             )
         }
     ) { paddingValues ->

@@ -44,7 +44,7 @@ fun PolarPlotVisualisationScreenRoot(
         navigationEventFlow = viewModel.navigationEvents,
         navigate = { event ->
             when (event) {
-                PolarPlotVisualisationNavigationEvent.BackToBrowseMaterialsScreen -> navigateBack()
+                PolarPlotVisualisationNavigationEvent.Back -> navigateBack()
                 PolarPlotVisualisationNavigationEvent.ToApplyFilterScreen -> navigateToApplyFilterScreen()
                 is PolarPlotVisualisationNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialId)
                 is PolarPlotVisualisationNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen(event.materialId)
@@ -70,7 +70,7 @@ fun PolarPlotVisualisationScreen(
         topBar = {
             BackTopBarTitle(
                 title = "Polar plot visualisation",
-                navigateBack = { onEvent(PolarPlotVisualisationEvent.GoBackToBrowseMaterialsScreen) }
+                navigateBack = { onEvent(PolarPlotVisualisationEvent.GoBack) }
             )
         },
         content = { paddingValues ->

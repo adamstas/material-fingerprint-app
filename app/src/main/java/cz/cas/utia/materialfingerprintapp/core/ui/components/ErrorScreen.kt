@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.core.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -18,8 +19,13 @@ fun ErrorScreen(
     message: String,
     exception: Throwable,
     onAction: () -> Unit,
-    buttonText: String
+    buttonText: String,
 ) {
+
+    BackHandler {
+        onAction() // override default Android device back button so when pressing it user does not lose state
+    }
+
     Scaffold(
         topBar = {
             TopBarTitle(

@@ -21,6 +21,7 @@ import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings
 fun MainGraph(
     navController: NavHostController,
     viewModel: MainGraphViewModel = hiltViewModel()
+   // modifier: Modifier
 ) {
     val defaultStartDestination by viewModel.defaultStartDestination.collectAsState()
 
@@ -58,15 +59,12 @@ fun MainGraph(
         )
     }
 
-    val navigateToAnalyticsHomeScreen: () -> Unit = {
-        navController.navigate(Screen.AnalyticsHome)
-    }
-
     val startDestination = defaultStartDestination
     if (startDestination != null) { // start destination is null just for a really short while so user does not notice at all
         NavHost(
             navController = navController,
             startDestination = startDestination
+           // modifier = modifier
         ) {
 
             composable<Screen.Settings> {
@@ -80,11 +78,6 @@ fun MainGraph(
                     navigateToPhotosSummaryScreen = {
                         navController.navigate(Screen.PhotosSummary)
                         {
-                            //todo remove later when navigation is clear to me
-                            // popUpTo(Screen.PhotosSummary) { //if PhotosSummary is in backstack then it will pop up everything except this PhotosSummary; otherwise nothing is popped up
-                            // saveState = true
-                            //  }
-                            // launchSingleTop = true
                             restoreState = true
                         }
                     }
@@ -107,10 +100,10 @@ fun MainGraph(
                 and title and all navigation functions were still passed which was lots of boiler plate code */
 
                 BrowseMaterialsScreenRoot(
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
                     navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
                     navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-                    navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
                     viewModel = screenViewModel,
                     title = "Browse local materials"
                 )
@@ -120,10 +113,10 @@ fun MainGraph(
                 val screenViewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 
                 BrowseMaterialsScreenRoot(
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
                     navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
                     navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-                    navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
                     viewModel = screenViewModel,
                     title = "Browse remote materials"
                 )
@@ -131,7 +124,7 @@ fun MainGraph(
 
             composable<Screen.ApplyFilter> {
                 ApplyFilterScreenRoot(
-                    navigateBack = { /* todo */ },
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = { navController.navigate(Screen.BrowseSimilarLocalMaterials(materialId = -1L)) },
                     navigateToBrowseSimilarRemoteMaterialsScreen = { navController.navigate(Screen.BrowseSimilarRemoteMaterials(materialId = -1L)) }
                 )
@@ -141,10 +134,10 @@ fun MainGraph(
                 val screenViewModel: BrowseLocalMaterialsViewModel = hiltViewModel()
 
                 BrowseMaterialsScreenRoot(
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
                     navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
                     navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-                    navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
                     viewModel = screenViewModel,
                     title = "Browse similar local materials"
                 )
@@ -154,10 +147,10 @@ fun MainGraph(
                 val screenViewModel: BrowseRemoteMaterialsViewModel = hiltViewModel()
 
                 BrowseMaterialsScreenRoot(
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
                     navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
                     navigateToPolarPlotVisualisationScreen = navigateToPolarPlotVisualisationScreen,
-                    navigateToAnalyticsHomeScreen = navigateToAnalyticsHomeScreen,
                     viewModel = screenViewModel,
                     title = "Browse similar remote materials"
                 )
@@ -165,7 +158,7 @@ fun MainGraph(
 
             composable<Screen.PolarPlotVisualisation> {
                 PolarPlotVisualisationScreenRoot(
-                    navigateBack = { /*TODO*/ },
+                    navigateBack = { navController.popBackStack() },
                     navigateToBrowseSimilarLocalMaterialsScreen = navigateToBrowseSimilarLocalMaterialsScreen,
                     navigateToBrowseSimilarRemoteMaterialsScreen = navigateToBrowseSimilarRemoteMaterialsScreen,
                     navigateToApplyFilterScreen = { navController.navigate(Screen.ApplyFilter(loadCharacteristicsFromStorage = true)) }
@@ -174,9 +167,19 @@ fun MainGraph(
 
             composable<Screen.PhotosSummary> {
                 PhotosSummaryScreenRoot(
-                    //pop current (PhotoSummary) screen from the backstack but save its state
-                    navigateBack = { navController.popBackStack<Screen.Camera>(inclusive = false, saveState = true) },
-                    //todo kdyz uzivatel zmackne back na spodni liste, tak to udela obycejny popUp a cely state se smaze.. mozna teda vymazat cely backstack a nechat jen ulozeny state?
+                   navigateBack =  {
+                       val popped = navController.popBackStack(
+                           route = Screen.Camera,
+                           inclusive = false,
+                           saveState = true
+                       )
+                       if (!popped) { // prevents bug when Camera screen is not in nav back stack
+                           navController.navigate(Screen.Camera) {
+                               launchSingleTop = true
+                               restoreState = true
+                           }
+                       }
+                   },
 
                     navigateToPolarPlotVisualisationScreen = {
                             firstMaterialId: Long,

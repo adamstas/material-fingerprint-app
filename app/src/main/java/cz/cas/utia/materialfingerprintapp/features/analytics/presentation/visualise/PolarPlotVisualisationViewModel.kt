@@ -65,7 +65,7 @@ class PolarPlotVisualisationViewModel @Inject constructor(
         when (event) {
             PolarPlotVisualisationEvent.ApplyFilter -> applyFilter()
             PolarPlotVisualisationEvent.FindSimilarMaterial -> findSimilarMaterial()
-            PolarPlotVisualisationEvent.GoBackToBrowseMaterialsScreen -> goBackToBrowseMaterialsScreen()
+            PolarPlotVisualisationEvent.GoBack -> goBack()
             PolarPlotVisualisationEvent.ShowOrHideAxesLabels -> showOrHideAxesLabels()
             is PolarPlotVisualisationEvent.SetPlotDisplayMode -> setPolarPlotDisplayMode(event)
             PolarPlotVisualisationEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
@@ -92,8 +92,10 @@ class PolarPlotVisualisationViewModel @Inject constructor(
         }
     }
 
-    private fun goBackToBrowseMaterialsScreen() {
-
+    private fun goBack() {
+        viewModelScope.launch {
+            _navigationEvents.emit(PolarPlotVisualisationNavigationEvent.Back)
+        }
     }
 
     private fun showOrHideAxesLabels() {

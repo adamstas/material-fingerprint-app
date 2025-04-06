@@ -64,7 +64,7 @@ fun ApplyFilterScreen(
         topBar = {
             BackTopBarTitle(
                 title = "Apply filter",
-                navigateBack = {} //todo
+                navigateBack = { onEvent(ApplyFilterEvent.GoBackToAnalyticsHomeScreen) }
             )
         }, // todo udelat do columnu at neni tolik mista nahore mezi ikonkou icka a polar plotem? viz obrazovka PolarPlotVisualisationScreen
         content = { paddingValues ->

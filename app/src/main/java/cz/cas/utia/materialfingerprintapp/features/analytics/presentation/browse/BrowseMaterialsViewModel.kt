@@ -156,7 +156,7 @@ abstract class BrowseMaterialsViewModel(
             MaterialEvent.CreatePolarPlot -> createPolarPlot()
             MaterialEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
             MaterialEvent.FindSimilarMaterial -> findSimilarMaterials()
-            MaterialEvent.GoToAnalyticsHomeScreen -> goToAnalyticsHomeScreen()
+            MaterialEvent.GoBack -> goBack()
         }
     }
 
@@ -206,9 +206,9 @@ abstract class BrowseMaterialsViewModel(
         updateSuccessState { it.copy(isFindSimilarMaterialsDialogShown = true) }
     }
 
-    private fun goToAnalyticsHomeScreen() {
+    private fun goBack() {
         viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.ToAnalyticsHomeScreen)
+            _navigationEvents.emit(MaterialNavigationEvent.Back)
         }
     }
 }
