@@ -7,6 +7,7 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.e
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class PhotosSummaryViewModel @Inject constructor(
     private val imageStorageService: ImageStorageService,
     private val remoteMaterialRepository: RemoteMaterialRepository,
-    private val localMaterialRepository: LocalMaterialRepository
+    private val localMaterialRepository: LocalMaterialRepository,
+    private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
     private val _state = MutableStateFlow<PhotosSummaryScreenState>(PhotosSummaryScreenState.Success())
@@ -135,10 +137,13 @@ class PhotosSummaryViewModel @Inject constructor(
 
             viewModelScope.launch {
                 try {
+                    val storeInDb = settingsRepository.getSendDataToServerChoice()
+
                     val material = remoteMaterialRepository.analyseMaterial(
                         firstImageLightDirection = successState.lightDirectionSlot1,
                         name = successState.materialName,
-                        category = successState.selectedCategory
+                        category = successState.selectedCategory,
+                        storeInDb = storeInDb
                     )
 
                     val materialId = localMaterialRepository.insertMaterial(material)

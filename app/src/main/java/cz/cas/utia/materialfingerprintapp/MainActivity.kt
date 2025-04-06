@@ -18,9 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.opencv.android.OpenCVLoader
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
+
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //todo nechat? je to tu automaticky - asi nechat, je to kvuli roztahovani UI spravne
 

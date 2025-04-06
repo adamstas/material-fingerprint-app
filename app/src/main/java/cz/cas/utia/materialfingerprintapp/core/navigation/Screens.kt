@@ -3,17 +3,11 @@ package cz.cas.utia.materialfingerprintapp.core.navigation
 import cz.cas.utia.materialfingerprintapp.R
 import kotlinx.serialization.Serializable
 
-//fun capitalizeFirstLetter(input: String): String { //todo move this function to some helper functions section
-//    if (input.isEmpty())
-//        return input
-//    return input.substring(0, 1).uppercase() + input.substring(1)
-//}
-
-@Serializable
-object CameraScreen
-
-@Serializable
-object SettingsScreen
+enum class ScreenGroup {
+    CAMERA,
+    ANALYTICS,
+    SETTINGS
+}
 
 val mainScreens = listOf(
     Screen.MainScreen.Camera,
@@ -23,49 +17,96 @@ val mainScreens = listOf(
 
 sealed class Screen {
 
-    @Serializable
-    sealed class MainScreen<T>(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: T) {
-        @Serializable
-        data object Camera: MainScreen<CameraScreen>(
-            label = "Camera",
-            iconSelectedId = R.drawable.photo_camera_filled,
-            iconUnselectedId = R.drawable.photo_camera,
-            route = CameraScreen
-        )
+    abstract val group: ScreenGroup
 
-        @Serializable
-        data object Analytics: MainScreen<AnalyticsHomeScreen>(
-            label = "Analytics",
-            iconSelectedId = R.drawable.analytics_filled,
-            iconUnselectedId = R.drawable.analytics,
-            route = AnalyticsHomeScreen
-        )
-
-        @Serializable
-        data object Settings: MainScreen<SettingsScreen>(
-            label = "Settings",
-            iconSelectedId = R.drawable.settings_filled,
-            iconUnselectedId = R.drawable.settings,
-            route = SettingsScreen
-        )
+    // for proper bottom bar icons highlighting
+    companion object {
+        fun getGroupByClassName(className: String?): ScreenGroup? {
+            return when (className) {
+                Camera::class.qualifiedName -> ScreenGroup.CAMERA
+                PhotosSummary::class.qualifiedName -> ScreenGroup.CAMERA
+                AnalyticsHome::class.qualifiedName -> ScreenGroup.ANALYTICS
+                BrowseLocalMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
+                BrowseRemoteMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
+                BrowseSimilarLocalMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
+                BrowseSimilarRemoteMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
+                PolarPlotVisualisation::class.qualifiedName -> ScreenGroup.ANALYTICS
+                ApplyFilter::class.qualifiedName -> ScreenGroup.ANALYTICS
+                Settings::class.qualifiedName -> ScreenGroup.SETTINGS
+                else -> null
+            }
+        }
     }
 
     @Serializable
-    data object PhotosSummary: Screen()
+    sealed class MainScreen<T>(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: T): Screen() {
+        @Serializable
+        data object Camera: MainScreen<Screen.Camera>(
+            label = "Camera",
+            iconSelectedId = R.drawable.photo_camera_filled,
+            iconUnselectedId = R.drawable.photo_camera,
+            route = Screen.Camera
+        ) {
+            override val group = ScreenGroup.CAMERA
+        }
+
+        @Serializable
+        data object Analytics: MainScreen<AnalyticsHome>(
+            label = "Analytics",
+            iconSelectedId = R.drawable.analytics_filled,
+            iconUnselectedId = R.drawable.analytics,
+            route = AnalyticsHome
+        ) {
+            override val group = ScreenGroup.ANALYTICS
+        }
+
+        @Serializable
+        data object Settings: MainScreen<Screen.Settings>(
+            label = "Settings",
+            iconSelectedId = R.drawable.settings_filled,
+            iconUnselectedId = R.drawable.settings,
+            route = Screen.Settings
+        ) {
+            override val group = ScreenGroup.SETTINGS
+        }
+    }
 
     @Serializable
-    data object AnalyticsHomeScreen: Screen()
+    data object Camera: Screen() {
+        override val group = ScreenGroup.CAMERA
+    }
 
     @Serializable
-    data object BrowseLocalMaterials: Screen()
+    data object Settings: Screen() {
+        override val group = ScreenGroup.SETTINGS
+    }
 
     @Serializable
-    data object BrowseRemoteMaterials: Screen()
+    data object AnalyticsHome: Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
+
+    @Serializable
+    data object PhotosSummary: Screen() {
+        override val group = ScreenGroup.CAMERA
+    }
+
+    @Serializable
+    data object BrowseLocalMaterials: Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
+
+    @Serializable
+    data object BrowseRemoteMaterials: Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
 
     @Serializable
     data class ApplyFilter(
         val loadCharacteristicsFromStorage: Boolean
-    ): Screen()
+    ): Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
 
     @Serializable
     data class PolarPlotVisualisation(
@@ -75,13 +116,19 @@ sealed class Screen {
         val isSecondMaterialSourceLocal: Boolean?,
         val secondMaterialId: Long?,
         val secondMaterialName: String?
-    ): Screen()
+    ): Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
 
     @Serializable
-    data class BrowseSimilarLocalMaterials(val materialId: Long): Screen()
+    data class BrowseSimilarLocalMaterials(val materialId: Long): Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
 
     @Serializable
-    data class BrowseSimilarRemoteMaterials(val materialId: Long): Screen()
+    data class BrowseSimilarRemoteMaterials(val materialId: Long): Screen() {
+        override val group = ScreenGroup.ANALYTICS
+    }
 }
 
 

@@ -109,7 +109,8 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
     override suspend fun analyseMaterial(
         firstImageLightDirection: LightDirection,
         name: String,
-        category: MaterialCategory
+        category: MaterialCategory,
+        storeInDb: Boolean
     ): Material {
     // todo ted predpokladam ze SPECULAR = svetlo zleva // todo "slot1" a "slot2" dát asi do configu
 
@@ -124,7 +125,7 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         val responseMaterial = materialApiService.analyseMaterial(
             name = name,
             category = category.toString(),
-            storeInDb = true, // todo pak tahat odnekud z nastaveni
+            storeInDb = storeInDb,
             specular_image = specularImage,
             non_specular_image = nonSpecularImage
         )

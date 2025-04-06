@@ -1,22 +1,17 @@
 package cz.cas.utia.materialfingerprintapp.core.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -27,16 +22,11 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination //todo je to potreba?
+    val currentDestination = navBackStackEntry?.destination
 
-    var selectedScreenIndex by rememberSaveable { //todo toto tu zustane?
-        mutableStateOf(0)
-    }
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-
+    // for matching route with type safe Class of which the route is instance of
+    fun String.extractClassNameFromRoute(): String {
+        return this.substringBefore('/')
     }
 
     Scaffold(
@@ -44,11 +34,18 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
             NavigationBar(
                 modifier = Modifier.height(112.dp)
             ) {
-                mainScreens.forEachIndexed { index, screen ->
+
+                mainScreens.forEach { screen ->
+
+                    val isSelected = currentDestination?.hierarchy?.any { destination ->
+                        val className = destination.route?.extractClassNameFromRoute()
+                        className == screen.route::class.qualifiedName || // for main screens
+                                (Screen.getGroupByClassName(className) == screen.group) // for other screens
+                    } ?: false
+
                     NavigationBarItem(
-                        selected = selectedScreenIndex == index,
+                        selected = isSelected,
                         onClick = {
-                            selectedScreenIndex = index
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
@@ -62,8 +59,9 @@ fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
                             Text(text = screen.label)
                         },
                         icon = {
-                            Icon(
-                                painter = if (selectedScreenIndex == index) painterResource(screen.iconSelectedId) else painterResource(id = screen.iconUnselectedId),
+                            Icon(painter =
+                            if (isSelected) painterResource(screen.iconSelectedId)
+                            else painterResource(id = screen.iconUnselectedId),
                                 //todo toto lze predelat podle oficialniho tutorial na bottom bar navigaci (ted kdyz clovek byl v camera a jde do settings a da na mobilni spodni liste "back" tak ho to hodi zpatky d ocamera, ale v bottom navbaru stale sviti settings)
                                 contentDescription = screen.label //todo zmenit na nejaky sofistikovanejsi popis?
                             )

@@ -5,5 +5,10 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCate
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.LightDirection
 
 interface RemoteMaterialRepository: MaterialRepository {
-    suspend fun analyseMaterial(firstImageLightDirection: LightDirection, name: String, category: MaterialCategory): Material
+    suspend fun analyseMaterial(
+        firstImageLightDirection: LightDirection,
+        name: String,
+        category: MaterialCategory,
+        storeInDb: Boolean
+    ): Material
 }
