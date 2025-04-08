@@ -1,18 +1,24 @@
 package cz.cas.utia.materialfingerprintapp.core.launch.presentation
 
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.presentation.permission.requiredPermissions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class LaunchViewModel @Inject constructor(
-    //private val context: Context, // todo applicatin context
+    @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
@@ -37,16 +43,9 @@ class LaunchViewModel @Inject constructor(
     }
 
     private fun checkPermissions(): Boolean {
-        // todo replace
-        return true
-//        val permissions = listOf(
-//            Manifest.permission.CAMERA,
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        )
-//
-//        return permissions.all { permission ->
-//            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-//        }
+        return requiredPermissions.all { permission ->
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     fun onEvent(event: LaunchEvent) {

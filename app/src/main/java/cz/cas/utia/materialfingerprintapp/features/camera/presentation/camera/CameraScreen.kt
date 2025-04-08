@@ -45,16 +45,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import cz.cas.utia.materialfingerprintapp.CustomCameraView
 import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.ForwardTopBarTitle
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreenRoot(
     viewModel: CameraViewModel = hiltViewModel(),
@@ -66,7 +62,6 @@ fun CameraScreenRoot(
         viewModel.onEvent(CameraEvent.LoadImages)
     }
 
-    //todo nebuguje to pak s temi permissions?
     //observe navigation events and perform the navigation
     NavigationHandler(
         navigationEventFlow = viewModel.navigationEvents,
@@ -77,19 +72,10 @@ fun CameraScreenRoot(
         }
     )
 
-    val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-
-    //todo later move to permissions screen
-    if (cameraPermissionState.status.isGranted) {
-        CameraScreen(
-            state = state,
-            onEvent = viewModel::onEvent
-        )
-    } else {
-        LaunchedEffect(Unit) {
-            cameraPermissionState.launchPermissionRequest()
-        }
-    }
+    CameraScreen(
+        state = state,
+        onEvent = viewModel::onEvent
+    )
 }
 
 //inspired by https://stackoverflow.com/questions/74780546/android-handle-lifecycle-event-on-jetpack-compose-screen
@@ -130,7 +116,7 @@ fun CameraScreen(
         val camView = parent.findViewById<CustomCameraView>(R.id.customCameraView).apply {
             setOnImageCapturedListener(imageCapturedListener)
             setImageReadyToBeCapturedListener(imageReadyToBeCapturedListener)
-            setCameraPermissionGranted() //TODO toto tu bude i pozdeji az budu nastavovat permissions separatne? asi jo..
+            setCameraPermissionGranted()
         }
 
         parent to camView
