@@ -166,7 +166,7 @@ fun CameraScreen(
                 title = "Camera",
                 navigateToNextScreen = { onEvent(CameraEvent.GoToPhotosSummaryScreen) }
             )
-                 },
+        },
         content = { paddingValues ->
             Column(
                Modifier

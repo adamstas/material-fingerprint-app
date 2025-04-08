@@ -92,7 +92,7 @@ dependencies {
 
     implementation(libs.accompanist.permissions)
 
-    implementation(libs.androidx.datastore.preferences) // todo if not used this basic data store, remove it
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.javalite)
 

@@ -16,12 +16,14 @@ class SettingsDataStore @Inject constructor(
 
     private object DefaultValues {
         const val SEND_DATA_TO_SERVER_CHOICE = false
-        val DEFAULT_SCREEN = DefaultScreen.CAMERA
+        val DEFAULT_SCREEN = DefaultScreen.SETTINGS
+        const val TUTORIAL_COMPLETED = false
     }
 
     private object PreferencesKeys {
         val SEND_DATA_TO_SERVER_KEY = booleanPreferencesKey("send_data_to_server_choice")
         val DEFAULT_SCREEN_KEY = stringPreferencesKey("default_screen")
+        val TUTORIAL_COMPLETED = booleanPreferencesKey("tutorial_completed")
     }
 
     private fun stringToDefaultScreen(text: String): DefaultScreen {
@@ -52,5 +54,18 @@ class SettingsDataStore @Inject constructor(
             preferences[PreferencesKeys.DEFAULT_SCREEN_KEY] ?: DefaultValues.DEFAULT_SCREEN.name
         }
         return stringToDefaultScreen(flow.first())
+    }
+
+    override suspend fun saveTutorialCompleted(completed: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.TUTORIAL_COMPLETED] = completed
+        }
+    }
+
+    override suspend fun getTutorialCompleted(): Boolean {
+        val flow = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.TUTORIAL_COMPLETED] ?: DefaultValues.TUTORIAL_COMPLETED
+        }
+        return flow.first()
     }
 }

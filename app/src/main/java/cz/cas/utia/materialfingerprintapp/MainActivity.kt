@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import cz.cas.utia.materialfingerprintapp.core.navigation.MainNavigation
+import cz.cas.utia.materialfingerprintapp.core.launch.presentation.LaunchScreenRoot
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
 import cz.cas.utia.materialfingerprintapp.core.ui.theme.original.MaterialFingerprintAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +34,8 @@ class MainActivity: ComponentActivity() {
 //      startActivity(intent)
         setContent {
             CustomAppTheme {
-                MainNavigation()
+               // MainNavigation()
+                LaunchScreenRoot()
                // PermissionsScreen()
             }
         }

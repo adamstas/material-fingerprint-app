@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 data class SettingsScreenState(
     val isSendDataToServerSwitchChecked: Boolean = false,
-    val selectedDefaultScreen: DefaultScreen = DefaultScreen.CAMERA,
+    val selectedDefaultScreen: DefaultScreen = DefaultScreen.SETTINGS,
 
     val isDefaultScreenDropdownMenuExpanded: Boolean = false
 )

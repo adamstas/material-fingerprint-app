@@ -16,6 +16,7 @@ import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.visual
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.PhotosSummaryScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings.SettingsScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.setting.presentation.tutorial.TutorialScreenRoot
 
 @Composable
 fun MainGraph(
@@ -69,7 +70,7 @@ fun MainGraph(
 
             composable<Screen.Settings> {
                 SettingsScreenRoot(
-                    navigateToTutorialScreen = {/*todo*/}
+                    navigateToTutorialScreen = { navController.navigate(Screen.Tutorial) }
                 )
             }
 
@@ -192,6 +193,12 @@ fun MainGraph(
                         secondMaterialName = null
                     ))
                     }
+                )
+            }
+
+            composable<Screen.Tutorial> {
+                TutorialScreenRoot(
+                    onTutorialCompleted = { navController.popBackStack() }
                 )
             }
         }

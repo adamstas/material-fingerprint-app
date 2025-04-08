@@ -8,4 +8,7 @@ interface SettingsRepository {
 
     suspend fun saveDefaultScreen(screen: DefaultScreen)
     suspend fun getDefaultScreen(): DefaultScreen
+
+    suspend fun saveTutorialCompleted(completed: Boolean)
+    suspend fun getTutorialCompleted(): Boolean
 }

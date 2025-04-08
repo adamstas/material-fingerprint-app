@@ -25,6 +25,7 @@ sealed class Screen {
             return when (className) {
                 Camera::class.qualifiedName -> ScreenGroup.CAMERA
                 PhotosSummary::class.qualifiedName -> ScreenGroup.CAMERA
+
                 AnalyticsHome::class.qualifiedName -> ScreenGroup.ANALYTICS
                 BrowseLocalMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
                 BrowseRemoteMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
@@ -32,7 +33,10 @@ sealed class Screen {
                 BrowseSimilarRemoteMaterials::class.qualifiedName -> ScreenGroup.ANALYTICS
                 PolarPlotVisualisation::class.qualifiedName -> ScreenGroup.ANALYTICS
                 ApplyFilter::class.qualifiedName -> ScreenGroup.ANALYTICS
+
                 Settings::class.qualifiedName -> ScreenGroup.SETTINGS
+                Tutorial::class.qualifiedName -> ScreenGroup.SETTINGS
+
                 else -> null
             }
         }
@@ -129,58 +133,9 @@ sealed class Screen {
     data class BrowseSimilarRemoteMaterials(val materialId: Long): Screen() {
         override val group = ScreenGroup.ANALYTICS
     }
+
+    @Serializable
+    data object Tutorial: Screen() {
+        override val group = ScreenGroup.SETTINGS
+    }
 }
-
-
-//TODO smazat pokud budu pouzivat novou navigaci
-//@Serializable
-//sealed class Screen() {
-//    //here screens that are not from main navigation
-//
-//    @Serializable
-//    sealed class MainNavigationScreen(
-//        val route: Screen,
-//        val title: String,
-//        val iconSelectedId: Int,
-//        val iconUnselectedId: Int
-//    ): Screen() {
-//
-//
-//        @Serializable
-//        data object CameraScreen: MainNavigationScreen(
-//            route = CameraScreen,
-//            title = "Camera",
-//            iconSelectedId = R.drawable.photo_camera_filled,
-//            iconUnselectedId = R.drawable.photo_camera
-//        )
-//
-//        @Serializable
-//        data object AnalyticsScreen: MainNavigationScreen(
-//            route = AnalyticsScreen,
-//            title = "analytics",
-//            iconSelectedId = R.drawable.analytics_filled,
-//            iconUnselectedId = R.drawable.analytics
-//        )
-//
-//        @Serializable
-//        data object SettingsScreen: MainNavigationScreen(
-//            route = SettingsScreen,
-//            title = "settings",
-//            iconSelectedId = R.drawable.settings_filled,
-//            iconUnselectedId = R.drawable.settings
-//        )
-//    }
-//}
-
-//enum class BottomNavigation(val label: String, val iconSelectedId: Int, val iconUnselectedId: Int, val route: Screen) {
-//    CAMERA("Camera", R.drawable.photo_camera_filled, R.drawable.photo_camera, Screen.MainNavigationScreen.CameraScreen),
-//    ANALYTICS("Analytics", R.drawable.analytics_filled, R.drawable.analytics, Screen.MainNavigationScreen.AnalyticsScreen),
-//    SETTINGS("Settings", R.drawable.settings_filled, R.drawable.settings, Screen.MainNavigationScreen.SettingsScreen)
-//}
-
-//val mainNavigationScreens: List<Screen.MainNavigationScreen> =
-//    listOf(
-//        Screen.MainNavigationScreen.CameraScreen,
-//        Screen.MainNavigationScreen.AnalyticsScreen,
-//        Screen.MainNavigationScreen.SettingsScreen
-//    )
