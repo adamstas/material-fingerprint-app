@@ -62,6 +62,29 @@ class PhotosSummaryViewModel @Inject constructor(
         _state.value = _lastState
     }
 
+    private fun validateMaterialName(name: String): Pair<Boolean, String> {
+        return when {
+            name.isEmpty() -> {
+                Pair(false, "Name cannot be empty")
+            }
+            name.length < 3 -> {
+                Pair(false, "Name must be at least 3 characters long")
+            }
+            name.length > 20 -> {
+                Pair(false, "Name length cannot exceed 20 characters")
+            }
+            name.contains(" ") -> {
+                Pair(false, "Spaces are not allowed, use underscores")
+            }
+            !name.matches(Regex("^[a-zA-Z0-9_]*$")) -> {
+                Pair(false, "Only letters, numbers and underscores allowed")
+            }
+            else -> {
+                Pair(true, "")
+            }
+        }
+    }
+
     fun onEvent(event: PhotosSummaryEvent) {
         when (event) {
             PhotosSummaryEvent.GoBackToCameraScreen -> goBackToCameraScreen()
@@ -87,7 +110,15 @@ class PhotosSummaryViewModel @Inject constructor(
     }
 
     private fun setName(event: PhotosSummaryEvent.SetName) {
-        updateSuccessState { it.copy(materialName = event.name) }
+        val validationResult = validateMaterialName(event.name)
+
+        updateSuccessState {
+            it.copy(
+                materialName = event.name,
+                isNameValid = validationResult.first,
+                nameErrorMessage = validationResult.second
+            )
+        }
     }
 
     private fun swapLightDirections() {

@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -156,21 +157,41 @@ fun MaterialNameRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = "Material name:")
+        Text(
+            text = "Material name:",
+            modifier = Modifier.padding(top = 16.dp)
+        )
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        TextField(
-            value = state.materialName,
-            onValueChange = { name: String ->
-                onEvent(PhotosSummaryEvent.SetName(name))
-            },
-            placeholder = { Text(text = "Enter material name") },
-            singleLine = true //todo testnout a dat i jinam?
-        )
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            TextField(
+                value = state.materialName,
+                onValueChange = { name: String ->
+                    onEvent(PhotosSummaryEvent.SetName(name))
+                },
+                placeholder = { Text(text = "Enter material name") },
+                singleLine = true, //todo testnout a dat i jinam?
+                isError = !state.isNameValid
+            )
+
+            Box(modifier = Modifier.height(24.dp)) {
+                Text(
+                    text = state.nameErrorMessage,
+                    color = if (!state.isNameValid)
+                        MaterialTheme.colorScheme.error
+                    else
+                        Color.Transparent,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
     }
 }
 

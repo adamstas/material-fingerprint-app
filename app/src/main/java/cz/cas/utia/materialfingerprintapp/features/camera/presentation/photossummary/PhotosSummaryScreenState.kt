@@ -17,11 +17,16 @@ sealed interface PhotosSummaryScreenState {
 
         val isDropdownMenuExpanded: Boolean = false,
 
-        val isLoadingDialogShown: Boolean = false
+        val isLoadingDialogShown: Boolean = false,
+
+        val isNameValid: Boolean = false,
+        val nameErrorMessage: String = "Name cannot be empty"
     ): PhotosSummaryScreenState
     {
         fun isReadyToAnalyse(): Boolean {
-            return capturedImageSlot1 != null && capturedImageSlot2 != null && materialName != "" //todo ted to uzivatele pusti i kdyz napise jen mezeru -> udělat to chytreji a mozna zakazat i nejake specialni znaky
+            return capturedImageSlot1 != null &&
+                    capturedImageSlot2 != null &&
+                    isNameValid
         }
     }
 
