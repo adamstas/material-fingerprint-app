@@ -21,8 +21,8 @@ class MainGraphViewModel @Inject constructor(
 
     private fun mapDefaultScreenToScreen(defaultScreen: DefaultScreen): Screen {
         return when (defaultScreen) {
-            DefaultScreen.CAMERA -> Screen.Camera
-            DefaultScreen.ANALYTICS -> Screen.AnalyticsHome
+            DefaultScreen.CAPTURING -> Screen.Capturing
+            DefaultScreen.ANALYSIS -> Screen.AnalysisHome
             DefaultScreen.SETTINGS -> Screen.Settings
         }
     }

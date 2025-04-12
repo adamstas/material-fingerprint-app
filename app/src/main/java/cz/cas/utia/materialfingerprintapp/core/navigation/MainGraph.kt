@@ -7,14 +7,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseLocalMaterialsViewModel
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseMaterialsScreenRoot
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.browse.BrowseRemoteMaterialsViewModel
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.filter.ApplyFilterScreenRoot
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.home.AnalyticsHomeScreenRoot
-import cz.cas.utia.materialfingerprintapp.features.analytics.presentation.visualise.PolarPlotVisualisationScreenRoot
-import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.CameraScreenRoot
-import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossummary.PhotosSummaryScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.browse.BrowseLocalMaterialsViewModel
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.browse.BrowseMaterialsScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.browse.BrowseRemoteMaterialsViewModel
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.filter.ApplyFilterScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.home.AnalysisHomeScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.visualise.PolarPlotVisualisationScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing.CapturingScreenRoot
+import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.photossummary.PhotosSummaryScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings.SettingsScreenRoot
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.tutorial.TutorialScreenRoot
 
@@ -74,8 +74,8 @@ fun MainGraph(
                 )
             }
 
-            composable<Screen.Camera> {
-                CameraScreenRoot(
+            composable<Screen.Capturing> {
+                CapturingScreenRoot(
                     navigateToPhotosSummaryScreen = {
                         navController.navigate(Screen.PhotosSummary)
                         {
@@ -86,8 +86,8 @@ fun MainGraph(
                 )
             }
 
-            composable<Screen.AnalyticsHome> {
-                AnalyticsHomeScreenRoot(
+            composable<Screen.AnalysisHome> {
+                AnalysisHomeScreenRoot(
                     navigateToBrowseLocalMaterialsScreen = { navController.navigate(Screen.BrowseLocalMaterials) },
                     navigateToBrowseRemoteMaterialsScreen = { navController.navigate(Screen.BrowseRemoteMaterials) },
                     navigateToApplyFilterScreen = { navController.navigate(Screen.ApplyFilter(loadCharacteristicsFromStorage = false)) }
@@ -170,12 +170,12 @@ fun MainGraph(
                 PhotosSummaryScreenRoot(
                    navigateBack =  {
                        val popped = navController.popBackStack(
-                           route = Screen.Camera,
+                           route = Screen.Capturing,
                            inclusive = false,
                            saveState = true
                        )
                        if (!popped) { // prevents bug when Camera screen is not in nav back stack
-                           navController.navigate(Screen.Camera) {
+                           navController.navigate(Screen.Capturing) {
                                launchSingleTop = true
                                restoreState = true
                            }

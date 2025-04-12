@@ -10,8 +10,8 @@ data class SettingsScreenState(
 )
 
 enum class DefaultScreen {
-    CAMERA,
-    ANALYTICS,
+    CAPTURING,
+    ANALYSIS,
     SETTINGS
 }
 

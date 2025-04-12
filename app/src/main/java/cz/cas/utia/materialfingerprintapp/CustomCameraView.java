@@ -19,8 +19,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
-import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.ImageCapturedListener;
-import cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera.ImageReadyToBeCapturedListener;
+import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing.ImageCapturedListener;
+import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing.ImageReadyToBeCapturedListener;
 
 public class CustomCameraView extends JavaCameraView implements CameraBridgeViewBase.CvCameraViewListener2 {
 
