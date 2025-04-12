@@ -79,7 +79,7 @@ fun PermissionScreen(
         Column(
             Modifier
                 .padding(paddingValues)
-                .padding(25.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

@@ -3,6 +3,7 @@ package cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossu
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.R
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.exception.NoInternetException
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
@@ -111,8 +112,8 @@ class PhotosSummaryViewModel @Inject constructor(
 
     private fun loadImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageSlot1 = imageStorageService.loadImage("slot1")
-            val imageSlot2 = imageStorageService.loadImage("slot2")
+            val imageSlot1 = imageStorageService.loadImage("slot1$IMAGE_SUFFIX")
+            val imageSlot2 = imageStorageService.loadImage("slot2$IMAGE_SUFFIX")
 
             withContext(Dispatchers.Main) {
                 updateSuccessState { it.copy(
@@ -151,10 +152,10 @@ class PhotosSummaryViewModel @Inject constructor(
                     // todo ted ukladam specular (coz je zatim ten, na ktery se sviti zleva), pak se lze dohodnout, jaky budeme ukladat
                     val imageToStore = if (successState.lightDirectionSlot1 == LightDirection.FROM_LEFT)
                         successState.capturedImageSlot1 else successState.capturedImageSlot2
-                    imageStorageService.storeImage(imageToStore!!, materialId.toString())
+                    imageStorageService.storeImage(imageToStore!!, "$materialId$IMAGE_SUFFIX")
 
-                    imageStorageService.deleteImage("slot1")
-                    imageStorageService.deleteImage("slot2")
+                    imageStorageService.deleteImage("slot1$IMAGE_SUFFIX")
+                    imageStorageService.deleteImage("slot2$IMAGE_SUFFIX")
 
                     _state.update { successState.copy(
                         capturedImageSlot1 = null,

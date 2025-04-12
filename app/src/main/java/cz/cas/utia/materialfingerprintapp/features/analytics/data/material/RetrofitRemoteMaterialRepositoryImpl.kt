@@ -1,7 +1,9 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialApiService
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialCharacteristicsRequestResponse
+import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.SimilarMaterialsRequest
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analytics.domain.MaterialCategory
@@ -12,6 +14,7 @@ import cz.cas.utia.materialfingerprintapp.features.camera.presentation.photossum
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
@@ -42,27 +45,29 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
     }
 
     private fun createImagePart(filename: String, partName: String): MultipartBody.Part {
-        val file = imageStorageService.loadImageAsFile(filename)
+        val file = imageStorageService.loadImageAsFile(filename + IMAGE_SUFFIX)
         val requestBody = file.asRequestBody("image/png".toMediaTypeOrNull())
 
         return MultipartBody.Part.createFormData(name = partName, filename = filename, body = requestBody)
     }
 
     override suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary> {
-        val responseMaterials = materialApiService.getAllMaterialsOrderedByName() // todo furt se to vola dvakrat pri initu nejaky get materialu? zkusit kdyztak fixnout
+        val responseMaterials = materialApiService.getMaterialsOrderedByName()
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
     override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
-        val responseMaterials = materialApiService.getAllSimilarMaterialsOrderedByName(materialId)
+        val responseMaterials = materialApiService.getSimilarMaterialsOrderedByName(materialId)
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
     // todo tyhle metody se similar prejmenovat protoze ted to vypada ze to vraci podle jmena ale ony to vraci podle similarity
     override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
-        val responseMaterials = materialApiService.getAllSimilarMaterialsOrderedByName(
+        val body = SimilarMaterialsRequest(
             characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics)
         )
+        val responseMaterials = materialApiService.getSimilarMaterialsByCharacteristicsOrderedByName(body)
+
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
@@ -94,11 +99,13 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
     ): List<MaterialSummary> {
-        val responseMaterials = materialApiService.getSimilarMaterialsOrderedByName(
+        val body = SimilarMaterialsRequest(
             characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics),
             name = nameSearch,
             categories = categories.map { it.toString() }
         )
+        val responseMaterials = materialApiService.getSimilarMaterialsByCharacteristicsOrderedByName(body)
+
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
@@ -122,10 +129,14 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         val specularImage = createImagePart(filename = specularFilename, partName = "specular_image")
         val nonSpecularImage = createImagePart(filename = nonSpecularFilename, partName = "non_specular_image")
 
+        val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val categoryBody = category.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val storeInDbBody = storeInDb.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
         val responseMaterial = materialApiService.analyseMaterial(
-            name = name,
-            category = category.toString(),
-            storeInDb = storeInDb,
+            name = nameBody,
+            category = categoryBody,
+            storeInDb = storeInDbBody,
             specular_image = specularImage,
             non_specular_image = nonSpecularImage
         )

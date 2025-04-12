@@ -205,7 +205,7 @@ fun CategoriesDropdownMenu(
             onEvent(PhotosSummaryEvent.SelectCategory(category)) },
         options = MaterialCategory.entries,
         selectedOption = state.selectedCategory,
-        modifier = Modifier.width(215.dp) //todo keep fixed?
+        modifier = Modifier.width(216.dp) //todo keep fixed?
     )
 }
 
@@ -300,7 +300,7 @@ fun MaterialBeingAnalysedDialog() {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(50.dp)
+                        modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(text = "Please wait...")

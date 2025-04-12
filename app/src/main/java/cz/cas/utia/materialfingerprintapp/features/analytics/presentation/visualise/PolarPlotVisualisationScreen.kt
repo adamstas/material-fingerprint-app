@@ -157,7 +157,7 @@ fun PolarPlotVisualisationScreen(
                             axisLabels = axisLabels,
                             firstPlotColor = primaryPlotColor,
                             secondPlotColor = secondaryPlotColor,
-                            maxPlotSize = 250.dp,
+                            maxPlotSize = 250.dp, // not multiple of 4 but for consistent UI had to be kept
                         )
                         NonInteractivePolarPlot(
                             firstAxisValues = state.axisValuesSecond!!,

@@ -60,7 +60,7 @@ fun ErrorScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 250.dp)
+                        .heightIn(max = 248.dp)
                         .verticalScroll(rememberScrollState())
                         .padding(bottom = 16.dp)
                         .padding(horizontal = 16.dp)

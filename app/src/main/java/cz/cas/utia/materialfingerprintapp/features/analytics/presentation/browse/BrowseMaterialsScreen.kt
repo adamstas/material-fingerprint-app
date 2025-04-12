@@ -113,7 +113,7 @@ fun BrowseMaterialsScreen(
         Column(
             Modifier
                 .padding(paddingValues)
-                .padding(25.dp)
+                .padding(24.dp)
                 .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
                 .fillMaxSize()
         ) {
@@ -159,7 +159,7 @@ fun SearchAndFilterSection(
             onEvent,
             Modifier.weight(0.8f)
         )
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(8.dp))
 
         CategoriesDropdownMenu(
             state,

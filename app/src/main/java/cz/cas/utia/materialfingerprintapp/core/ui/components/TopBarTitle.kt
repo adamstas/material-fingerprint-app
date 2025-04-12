@@ -6,23 +6,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import cz.cas.utia.materialfingerprintapp.core.ui.theme.custom.CustomAppTheme
-
-class TopBarParameterProvider: PreviewParameterProvider<String> {
-    override val values = sequenceOf(
-        "Settings",
-        "Camera",
-        "Analytics"
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarTitle(title: String) {
-
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -36,13 +23,4 @@ fun TopBarTitle(title: String) {
             titleContentColor = MaterialTheme.colorScheme.primary //TODO nechat cernou nebo pouzivat tu primarni svetle modrou? (aby to pak ladilo s tou hlavni spodni navigaci)
         )
     )
-}
-
-
-@Preview
-@Composable
-fun TopBarTitlePreview(@PreviewParameter(TopBarParameterProvider::class) title: String) {
-    CustomAppTheme {
-        TopBarTitle(title)
-    }
 }

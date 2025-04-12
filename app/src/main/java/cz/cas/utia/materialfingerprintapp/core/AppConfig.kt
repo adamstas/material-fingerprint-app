@@ -4,10 +4,14 @@ import cz.cas.utia.materialfingerprintapp.R
 
 object AppConfig {
 
+    object ImageStoring {
+        const val IMAGE_SUFFIX = ".png"
+    }
+
     object Server {
         const val URL: String = "http://127.0.0.1:8000"
         const val MATERIALS_URL: String = "$URL/materials/"
-        const val GET_MATERIAL_IMAGE_URL_APPEND: String = "/image"
+        const val GET_MATERIAL_IMAGE_URL_APPEND: String = "/image/specular"
     }
 
     object Colors {
