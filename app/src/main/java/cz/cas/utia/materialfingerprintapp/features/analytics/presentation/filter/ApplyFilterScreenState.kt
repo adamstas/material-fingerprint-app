@@ -44,21 +44,21 @@ fun scaleToDrawingFloats(
 // todo osetrit zda je velikost presne axesAMount, jinak hodit exception..?
 fun fromListForDrawingToMaterialCharacteristics(list: List<Float>): MaterialCharacteristics {
     return MaterialCharacteristics(
-        brightness = scaleToCharacteristics(list[0]),
-        colorVibrancy = scaleToCharacteristics(list[1]),
-        hardness = scaleToCharacteristics(list[2]),
-        checkeredPattern = scaleToCharacteristics(list[3]),
-        movementEffect = scaleToCharacteristics(list[4]),
-        multicolored = scaleToCharacteristics(list[5]),
+        checkeredPattern = scaleToCharacteristics(list[0]),
+        surfaceRoughness = scaleToCharacteristics(list[1]),
+        scaleOfPattern = scaleToCharacteristics(list[2]),
+        multicolored = scaleToCharacteristics(list[3]),
+        colorVibrancy = scaleToCharacteristics(list[4]),
+        brightness = scaleToCharacteristics(list[5]),
         naturalness = scaleToCharacteristics(list[6]),
-        patternComplexity = scaleToCharacteristics(list[7]),
-        scaleOfPattern = scaleToCharacteristics(list[8]),
-        shininess = scaleToCharacteristics(list[9]),
-        sparkle = scaleToCharacteristics(list[10]),
-        stripedPattern = scaleToCharacteristics(list[11]),
-        surfaceRoughness = scaleToCharacteristics(list[12]),
-        thickness = scaleToCharacteristics(list[13]),
-        value = scaleToCharacteristics(list[14]),
-        warmth = scaleToCharacteristics(list[15])
+        value = scaleToCharacteristics(list[7]),
+        warmth = scaleToCharacteristics(list[8]),
+        thickness = scaleToCharacteristics(list[9]),
+        hardness = scaleToCharacteristics(list[10]),
+        movementEffect = scaleToCharacteristics(list[11]),
+        shininess = scaleToCharacteristics(list[12]),
+        sparkle = scaleToCharacteristics(list[13]),
+        patternComplexity = scaleToCharacteristics(list[14]),
+        stripedPattern = scaleToCharacteristics(list[15])
     )
 }

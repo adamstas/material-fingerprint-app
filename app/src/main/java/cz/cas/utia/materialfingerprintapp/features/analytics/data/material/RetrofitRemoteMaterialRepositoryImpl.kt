@@ -1,6 +1,8 @@
 package cz.cas.utia.materialfingerprintapp.features.analytics.data.material
 
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAGE_NAME
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialApiService
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.MaterialCharacteristicsRequestResponse
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.SimilarMaterialsRequest
@@ -56,13 +58,13 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
-    override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
+    override suspend fun getAllSimilarMaterials(materialId: Long): List<MaterialSummary> {
         val responseMaterials = materialApiService.getSimilarMaterialsOrderedByName(materialId)
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
     // todo tyhle metody se similar prejmenovat protoze ted to vypada ze to vraci podle jmena ale ony to vraci podle similarity
-    override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
+    override suspend fun getAllSimilarMaterials(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
         val body = SimilarMaterialsRequest(
             characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics)
         )
@@ -82,7 +84,7 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
-    override suspend fun getSimilarMaterialsOrderedByName(
+    override suspend fun getSimilarMaterials(
         categories: List<MaterialCategory>,
         nameSearch: String,
         materialId: Long
@@ -94,7 +96,7 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
-    override suspend fun getSimilarMaterialsOrderedByName(
+    override suspend fun getSimilarMaterials(
         categories: List<MaterialCategory>,
         nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
@@ -122,8 +124,8 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
     // todo ted predpokladam ze SPECULAR = svetlo zleva // todo "slot1" a "slot2" dát asi do configu
 
         val (specularFilename, nonSpecularFilename) = when (firstImageLightDirection) {
-            LightDirection.FROM_LEFT -> "slot1" to "slot2"
-            LightDirection.FROM_ABOVE -> "slot2" to "slot1"
+            LightDirection.FROM_ABOVE -> SLOT1_IMAGE_NAME to SLOT2_IMAGE_NAME
+            LightDirection.FROM_LEFT -> SLOT2_IMAGE_NAME to SLOT1_IMAGE_NAME
         }
 
         val specularImage = createImagePart(filename = specularFilename, partName = "specular_image")

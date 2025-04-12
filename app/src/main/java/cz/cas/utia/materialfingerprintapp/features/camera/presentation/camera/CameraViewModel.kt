@@ -3,7 +3,8 @@ package cz.cas.utia.materialfingerprintapp.features.camera.presentation.camera
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME_WITH_SUFFIX
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.camera.domain.image.ImageStorageService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +54,8 @@ class CameraViewModel @Inject constructor(
 
     private fun storeImage(slot: ImageSlotPosition, image: Bitmap) {
         when (slot) {
-            ImageSlotPosition.FIRST -> imageStorageService.storeImage(image = image, filename = "slot1$IMAGE_SUFFIX")
-            ImageSlotPosition.SECOND -> imageStorageService.storeImage(image = image, filename = "slot2$IMAGE_SUFFIX")
+            ImageSlotPosition.FIRST -> imageStorageService.storeImage(image = image, filename = SLOT1_IMAGE_NAME_WITH_SUFFIX)
+            ImageSlotPosition.SECOND -> imageStorageService.storeImage(image = image, filename = SLOT2_IMAGE_NAME_WITH_SUFFIX)
         }
     }
 
@@ -129,8 +130,8 @@ class CameraViewModel @Inject constructor(
 
     private fun loadImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageSlot1 = imageStorageService.loadImage("slot1$IMAGE_SUFFIX")
-            val imageSlot2 = imageStorageService.loadImage("slot2$IMAGE_SUFFIX")
+            val imageSlot1 = imageStorageService.loadImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
+            val imageSlot2 = imageStorageService.loadImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
 
             withContext(Dispatchers.Main) {
                 _state.update { it.copy(

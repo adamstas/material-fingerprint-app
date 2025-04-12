@@ -6,6 +6,11 @@ object AppConfig {
 
     object ImageStoring {
         const val IMAGE_SUFFIX = ".png"
+        const val SLOT1_IMAGE_NAME = "slot1"
+        const val SLOT2_IMAGE_NAME = "slot2"
+
+        const val SLOT1_IMAGE_NAME_WITH_SUFFIX = "$SLOT1_IMAGE_NAME$IMAGE_SUFFIX"
+        const val SLOT2_IMAGE_NAME_WITH_SUFFIX = "$SLOT2_IMAGE_NAME$IMAGE_SUFFIX"
     }
 
     object Server {
@@ -24,22 +29,22 @@ object AppConfig {
         const val CHARACTERISTICS_MAX = 2.75
 
         val axisLabels = listOf( // todo nechat tady nebo hodit do nejakeho Core UI pro analytics?
-            "Brightness",
-            "Color vibrancy",
-            "Hardness",
             "Checkered pattern",
-            "Movement effect",
-            "Multicolored",
-            "Naturalness",
-            "Pattern complexity",
+            "Surface roughness",
             "Scale of pattern",
+            "Multicolored",
+            "Color vibrancy",
+            "Brightness",
+            "Naturalness",
+            "Value",
+            "Warmth",
+            "Thickness",
+            "Hardness",
+            "Movement effect",
             "Shininess",
             "Sparkle",
-            "Striped pattern",
-            "Surface roughness",
-            "Thickness",
-            "Value",
-            "Warmth"
+            "Pattern complexity",
+            "Striped pattern"
         )
     }
 }

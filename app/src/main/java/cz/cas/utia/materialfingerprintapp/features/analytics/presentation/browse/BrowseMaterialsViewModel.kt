@@ -99,12 +99,12 @@ abstract class BrowseMaterialsViewModel(
                 -1L -> {
                     val characteristics = materialCharacteristicsRepository
                         .loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN)
-                    _materials.value = materialRepository.getSimilarMaterialsOrderedByName(
+                    _materials.value = materialRepository.getSimilarMaterials(
                         materialCharacteristics = characteristics,
                         categories = MaterialCategory.fromIDs(_selectedCategoryIDs.value),
                         nameSearch = _searchBarText.value)
                 }
-                else -> _materials.value = materialRepository.getSimilarMaterialsOrderedByName(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value, _similarMaterialId)
+                else -> _materials.value = materialRepository.getSimilarMaterials(MaterialCategory.fromIDs(_selectedCategoryIDs.value), _searchBarText.value, _similarMaterialId)
             }
         }
 

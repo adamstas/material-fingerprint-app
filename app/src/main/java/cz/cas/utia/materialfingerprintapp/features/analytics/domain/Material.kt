@@ -59,22 +59,22 @@ data class MaterialCharacteristics(
 
     fun toListForDrawing(): List<Float> {
         return listOf(
-            scaleToDrawingFloats(brightness),
-            scaleToDrawingFloats(colorVibrancy),
-            scaleToDrawingFloats(hardness),
             scaleToDrawingFloats(checkeredPattern),
-            scaleToDrawingFloats(movementEffect),
-            scaleToDrawingFloats(multicolored),
-            scaleToDrawingFloats(naturalness),
-            scaleToDrawingFloats(patternComplexity),
+            scaleToDrawingFloats(surfaceRoughness),
             scaleToDrawingFloats(scaleOfPattern),
+            scaleToDrawingFloats(multicolored),
+            scaleToDrawingFloats(colorVibrancy),
+            scaleToDrawingFloats(brightness),
+            scaleToDrawingFloats(naturalness),
+            scaleToDrawingFloats(value),
+            scaleToDrawingFloats(warmth),
+            scaleToDrawingFloats(thickness),
+            scaleToDrawingFloats(hardness),
+            scaleToDrawingFloats(movementEffect),
             scaleToDrawingFloats(shininess),
             scaleToDrawingFloats(sparkle),
-            scaleToDrawingFloats(stripedPattern),
-            scaleToDrawingFloats(surfaceRoughness),
-            scaleToDrawingFloats(thickness),
-            scaleToDrawingFloats(value),
-            scaleToDrawingFloats(warmth)
+            scaleToDrawingFloats(patternComplexity),
+            scaleToDrawingFloats(stripedPattern)
         )
     }
 }

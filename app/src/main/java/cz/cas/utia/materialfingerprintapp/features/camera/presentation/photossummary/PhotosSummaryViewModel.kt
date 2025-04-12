@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.R
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME_WITH_SUFFIX
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.material.api.exception.NoInternetException
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analytics.data.repository.RemoteMaterialRepository
@@ -143,8 +145,8 @@ class PhotosSummaryViewModel @Inject constructor(
 
     private fun loadImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageSlot1 = imageStorageService.loadImage("slot1$IMAGE_SUFFIX")
-            val imageSlot2 = imageStorageService.loadImage("slot2$IMAGE_SUFFIX")
+            val imageSlot1 = imageStorageService.loadImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
+            val imageSlot2 = imageStorageService.loadImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
 
             withContext(Dispatchers.Main) {
                 updateSuccessState { it.copy(
@@ -180,13 +182,12 @@ class PhotosSummaryViewModel @Inject constructor(
 
                     val materialId = localMaterialRepository.insertMaterial(material)
 
-                    // todo ted ukladam specular (coz je zatim ten, na ktery se sviti zleva), pak se lze dohodnout, jaky budeme ukladat
-                    val imageToStore = if (successState.lightDirectionSlot1 == LightDirection.FROM_LEFT)
+                    val imageToStore = if (successState.lightDirectionSlot1 == LightDirection.FROM_ABOVE)
                         successState.capturedImageSlot1 else successState.capturedImageSlot2
                     imageStorageService.storeImage(imageToStore!!, "$materialId$IMAGE_SUFFIX")
 
-                    imageStorageService.deleteImage("slot1$IMAGE_SUFFIX")
-                    imageStorageService.deleteImage("slot2$IMAGE_SUFFIX")
+                    imageStorageService.deleteImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
+                    imageStorageService.deleteImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
 
                     _state.update { successState.copy(
                         capturedImageSlot1 = null,

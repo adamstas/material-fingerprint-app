@@ -25,7 +25,7 @@ interface MaterialDao {
     @Query("SELECT * FROM material " +
             "WHERE category in (:categories) " +
             "AND name LIKE '%' || :searchText || '%'" +
-            "ORDER BY name ASC")
+            "ORDER BY LOWER(name) ASC")
     suspend fun getMaterialsOrderedByName(categories: List<MaterialCategory>, searchText: String): List<Material>
 
     @Query("SELECT * FROM material ORDER BY name ASC")

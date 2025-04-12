@@ -27,7 +27,7 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 
-    override suspend fun getAllSimilarMaterialsOrderedByName(materialId: Long): List<MaterialSummary> {
+    override suspend fun getAllSimilarMaterials(materialId: Long): List<MaterialSummary> {
         val targetMaterial = materialDao.getMaterial(materialId) // todo lze pak volat rovnou metodu getMaterial toho repozitáře a ne toho dao (pokud to tu zustane)
         val targetMaterialSummary = materialSummaryMapper.map(targetMaterial)
 
@@ -37,7 +37,7 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getAllSimilarMaterialsOrderedByName(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
+    override suspend fun getAllSimilarMaterials(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
         val materials = getAllMaterialsOrderedByName()
         return calculateSimilarityUseCase.calculateSimilarity(materials, materialCharacteristics)
     }
@@ -52,7 +52,7 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 
-    override suspend fun getSimilarMaterialsOrderedByName(
+    override suspend fun getSimilarMaterials(
         categories: List<MaterialCategory>,
         nameSearch: String,
         materialId: Long
@@ -64,7 +64,7 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         return calculateSimilarityUseCase.calculateSimilarity(materials, targetMaterialSummary, nameSearch, categories)
     }
 
-    override suspend fun getSimilarMaterialsOrderedByName(
+    override suspend fun getSimilarMaterials(
         categories: List<MaterialCategory>,
         nameSearch: String,
         materialCharacteristics: MaterialCharacteristics
