@@ -3,10 +3,15 @@ package cz.cas.utia.materialfingerprintapp.features.setting.presentation.setting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -113,6 +118,10 @@ fun SettingsScreen(
                 text = "Settings on this screen are saved automatically.",
                 fontWeight = FontWeight.Bold
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AboutSection()
         }
     }
 }
@@ -129,5 +138,69 @@ fun SettingsScreenItem(
     ) {
         Text(text = text)
         content()
+    }
+}
+
+@Composable
+fun AboutSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "About",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "MatTag - App for Material Fingerprinting",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = "Created in 2025",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "Developed by Adam Stas in cooperation with Veronika Vilimovska and Daniel Pilar",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "Institute of Information Theory and Automation of the CAS",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "This application was created as a diploma thesis at the Czech Technical University in Prague, Faculty of Information Technology",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Version: 0.7.0",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
