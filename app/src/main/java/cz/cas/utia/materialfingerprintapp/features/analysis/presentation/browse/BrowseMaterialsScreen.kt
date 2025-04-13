@@ -41,7 +41,7 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCategory
 import coil3.compose.AsyncImage
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.commoncomponents.FindSimilarMaterialsDialog
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.commoncomponents.PolarPlotCanvas

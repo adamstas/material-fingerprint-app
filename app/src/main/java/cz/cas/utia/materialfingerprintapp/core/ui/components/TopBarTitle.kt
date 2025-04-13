@@ -15,12 +15,12 @@ fun TopBarTitle(title: String) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge
-            ) //todo jeste nejaky style apod?
+            )
         },
 
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary //TODO nechat cernou nebo pouzivat tu primarni svetle modrou? (aby to pak ladilo s tou hlavni spodni navigaci)
+            titleContentColor = MaterialTheme.colorScheme.primary
         )
     )
 }

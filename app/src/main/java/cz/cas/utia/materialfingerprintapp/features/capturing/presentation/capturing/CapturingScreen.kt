@@ -46,7 +46,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import cz.cas.utia.materialfingerprintapp.R
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
 import cz.cas.utia.materialfingerprintapp.core.ui.components.ForwardTopBarTitle
 

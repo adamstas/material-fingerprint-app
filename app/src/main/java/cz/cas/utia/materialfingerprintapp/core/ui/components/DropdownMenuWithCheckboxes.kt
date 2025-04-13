@@ -17,14 +17,12 @@ data class DropDownMenuWithCheckboxesItem(
     val id: Int
 )
 
-//inspired by https://stackoverflow.com/questions/75397960/jetpack-compose-combo-box-with-dropdown //todo nechat? zminit?
+//inspired by https://stackoverflow.com/questions/75397960/jetpack-compose-combo-box-with-dropdown
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuWithCheckboxes(
     label: String,
     options: List<DropDownMenuWithCheckboxesItem>,
-    //onOptionsChosen: (List<ComboOption>) -> Unit,
-    modifier: Modifier = Modifier, //todo nechat?
     selectedIDs: List<Int> = emptyList(),
     selectedText: String,
     checkOrUncheckItem: (Int) -> Unit,
@@ -35,13 +33,6 @@ fun DropdownMenuWithCheckboxes(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = onDropdownMenuClick
-        //  if (!expanded) {
-        // onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
-        //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
-        //todo sem dat logiku ze se do noveho listu ulozi selectovana idcka a teprv na zaklade nej se updatuje _materials list atd.
-        //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
-        // }
-        ,
     ) {
         TextField(
             modifier = Modifier.menuAnchor(),
@@ -55,13 +46,6 @@ fun DropdownMenuWithCheckboxes(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = onDropdownMenuClosed
-            //{
-            //expanded = false
-            //onOptionsChosen(options.filter { it.id in selectedOptionsList }.toList())
-            //todo jakmile zavre menu, tato logika se provede s temi zaskrtnutymi (predat funkci teto composable, at je to znovupouzitelne)
-            //ale mozna tahle logika staci jen výš, otestovat
-            //zaskrtnute ziskat nejak takto: options.filter { it.id in selectedOptionsList }.toList()
-            //},
         ) {
             for (option in options) {
                 val checked = option.id in selectedIDs

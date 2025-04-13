@@ -9,7 +9,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-//todo pak pouzit i na settings screeně
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> BasicDropdownMenu(

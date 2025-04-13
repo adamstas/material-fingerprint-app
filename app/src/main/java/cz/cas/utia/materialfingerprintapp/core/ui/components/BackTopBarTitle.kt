@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,8 +23,8 @@ fun BackTopBarTitle(
                 navigateBack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, //todo udelat ji nejakou barvou z Theme?
-                    contentDescription = "Go back" //todo zmenit?
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Go back"
                 )
             }
         },
@@ -34,12 +33,12 @@ fun BackTopBarTitle(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge
-            ) //todo jeste nejaky style apod?
+            )
         },
 
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary //TODO nechat cernou nebo pouzivat tu primarni svetle modrou? (aby to pak ladilo s tou hlavni spodni navigaci)
+            titleContentColor = MaterialTheme.colorScheme.primary
         )
     )
 }

@@ -100,7 +100,6 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.converter.moshi)
-    implementation(libs.logging.interceptor) // todo remove if logging not used in final build
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)

@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.core.navigation
+package cz.cas.utia.materialfingerprintapp.core.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

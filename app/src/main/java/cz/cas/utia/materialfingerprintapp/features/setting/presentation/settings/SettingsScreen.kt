@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BasicDropdownMenu
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle

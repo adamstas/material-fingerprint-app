@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
 
 @Composable

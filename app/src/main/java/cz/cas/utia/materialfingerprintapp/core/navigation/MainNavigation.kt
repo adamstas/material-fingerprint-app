@@ -17,7 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MainNavigation() { //todo rename this WHOLE file to MainNavigation?
+fun MainNavigation() {
 
     val navController = rememberNavController()
 

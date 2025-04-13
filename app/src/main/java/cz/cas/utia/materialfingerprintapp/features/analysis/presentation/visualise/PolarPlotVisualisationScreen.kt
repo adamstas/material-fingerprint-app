@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.SingleChoiceSegmentedButton
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.commoncomponents.FindSimilarMaterialsDialog

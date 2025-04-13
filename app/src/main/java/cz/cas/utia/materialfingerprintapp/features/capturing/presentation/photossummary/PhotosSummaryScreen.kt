@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import cz.cas.utia.materialfingerprintapp.R
-import cz.cas.utia.materialfingerprintapp.core.navigation.NavigationHandler
+import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BasicDropdownMenu
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer

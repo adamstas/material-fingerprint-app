@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomHorizontalDivider() {
     HorizontalDivider(
-        thickness = 1.5.dp, //todo thickness upravit? 1.5 asi OK
+        thickness = 1.5.dp,
         modifier = Modifier.padding(vertical = 20.dp)
     )
 }

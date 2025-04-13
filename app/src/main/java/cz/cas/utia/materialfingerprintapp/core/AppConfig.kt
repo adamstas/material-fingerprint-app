@@ -28,7 +28,7 @@ object AppConfig {
         const val CHARACTERISTICS_MIN = -2.75
         const val CHARACTERISTICS_MAX = 2.75
 
-        val axisLabels = listOf( // todo nechat tady nebo hodit do nejakeho Core UI pro analytics?
+        val axisLabels = listOf(
             "Checkered pattern",
             "Surface roughness",
             "Scale of pattern",
