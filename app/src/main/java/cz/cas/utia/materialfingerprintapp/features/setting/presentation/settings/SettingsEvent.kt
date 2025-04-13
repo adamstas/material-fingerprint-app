@@ -1,7 +1,7 @@
 package cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings
 
 sealed interface SettingsEvent {
-    data class SwitchSendDataToServerSwitch(val newSwitchValue: Boolean): SettingsEvent
+    data class SwitchStoreDataOnServerSwitch(val newSwitchValue: Boolean): SettingsEvent
     data class SelectDefaultScreen(val selected: DefaultScreen): SettingsEvent
 
     data object ShowDropdownMenu: SettingsEvent

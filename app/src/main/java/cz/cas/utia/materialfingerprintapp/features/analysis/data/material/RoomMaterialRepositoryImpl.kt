@@ -48,7 +48,9 @@ class RoomMaterialRepositoryImpl @Inject constructor(
     ): List<MaterialSummary> {
         //delay(1000) //todo remove later
 
-        val materials = materialDao.getMaterialsOrderedByName(categories, nameSearch)
+        val effectiveCategories = categories.ifEmpty { MaterialCategory.entries } // if categories are not empty, returns categories
+
+        val materials = materialDao.getMaterialsOrderedByName(effectiveCategories, nameSearch)
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 

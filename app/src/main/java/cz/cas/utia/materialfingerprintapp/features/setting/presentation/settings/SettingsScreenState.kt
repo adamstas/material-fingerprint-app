@@ -3,7 +3,7 @@ package cz.cas.utia.materialfingerprintapp.features.setting.presentation.setting
 import androidx.compose.runtime.Composable
 
 data class SettingsScreenState(
-    val isSendDataToServerSwitchChecked: Boolean = false,
+    val isStoreDataOnServerSwitchChecked: Boolean = false,
     val selectedDefaultScreen: DefaultScreen = DefaultScreen.SETTINGS,
 
     val isDefaultScreenDropdownMenuExpanded: Boolean = false

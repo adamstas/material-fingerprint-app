@@ -15,13 +15,13 @@ class SettingsDataStore @Inject constructor(
 ): SettingsRepository {
 
     private object DefaultValues {
-        const val SEND_DATA_TO_SERVER_CHOICE = false
+        const val STORE_DATA_ON_SERVER_CHOICE = false
         val DEFAULT_SCREEN = DefaultScreen.SETTINGS
         const val TUTORIAL_COMPLETED = false
     }
 
     private object PreferencesKeys {
-        val SEND_DATA_TO_SERVER_KEY = booleanPreferencesKey("send_data_to_server_choice")
+        val STORE_DATA_ON_SERVER_KEY = booleanPreferencesKey("store_data_on_server_choice")
         val DEFAULT_SCREEN_KEY = stringPreferencesKey("default_screen")
         val TUTORIAL_COMPLETED = booleanPreferencesKey("tutorial_completed")
     }
@@ -30,15 +30,15 @@ class SettingsDataStore @Inject constructor(
         return DefaultScreen.valueOf(text.uppercase())
     }
 
-    override suspend fun saveSendDataToServerChoice(value: Boolean) {
+    override suspend fun saveStoreDataOnServerChoice(value: Boolean) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SEND_DATA_TO_SERVER_KEY] = value
+            preferences[PreferencesKeys.STORE_DATA_ON_SERVER_KEY] = value
         }
     }
 
-    override suspend fun getSendDataToServerChoice(): Boolean {
+    override suspend fun getStoreDataOnServerChoice(): Boolean {
         val flow = dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.SEND_DATA_TO_SERVER_KEY] ?: DefaultValues.SEND_DATA_TO_SERVER_CHOICE
+            preferences[PreferencesKeys.STORE_DATA_ON_SERVER_KEY] ?: DefaultValues.STORE_DATA_ON_SERVER_CHOICE
         }
         return flow.first()
     }

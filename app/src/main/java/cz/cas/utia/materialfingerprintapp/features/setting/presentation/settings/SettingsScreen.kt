@@ -57,13 +57,13 @@ fun SettingsScreen(
 ) {
     val settingScreenItems = listOf(
         SettingsItemData(
-            text = "Send data to the server\n" +
+            text = "Store data on the server\n" +
                     "(anonymously)",
             content = {
                 Switch(
-                    checked = state.isSendDataToServerSwitchChecked,
+                    checked = state.isStoreDataOnServerSwitchChecked,
                     onCheckedChange = { newSwitchValue ->
-                        onEvent(SettingsEvent.SwitchSendDataToServerSwitch(newSwitchValue = newSwitchValue)) })
+                        onEvent(SettingsEvent.SwitchStoreDataOnServerSwitch(newSwitchValue = newSwitchValue)) })
             }),
 
         SettingsItemData(

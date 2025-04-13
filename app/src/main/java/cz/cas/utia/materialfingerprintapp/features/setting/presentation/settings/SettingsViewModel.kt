@@ -25,12 +25,12 @@ class SettingsViewModel @Inject constructor(
     private fun loadSettings(){
         viewModelScope.launch {
             val defaultScreen = settingsRepository.getDefaultScreen()
-            val sendDataToServerChoice = settingsRepository.getSendDataToServerChoice()
+            val storeDataOnServerChoice = settingsRepository.getStoreDataOnServerChoice()
 
             _state.update {
                 it.copy(
                     selectedDefaultScreen = defaultScreen,
-                    isSendDataToServerSwitchChecked = sendDataToServerChoice
+                    isStoreDataOnServerSwitchChecked = storeDataOnServerChoice
                 )
             }
         }
@@ -45,7 +45,7 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.CloseDropdownMenu -> closeDropdownMenu()
             SettingsEvent.ShowDropdownMenu -> showDropdownMenu()
             is SettingsEvent.SelectDefaultScreen -> selectDefaultScreen(event)
-            is SettingsEvent.SwitchSendDataToServerSwitch -> switchSendDataToServerSwitch(event)
+            is SettingsEvent.SwitchStoreDataOnServerSwitch -> switchStoreDataOnServerSwitch(event)
             SettingsEvent.ReplayTutorial -> replayTutorial()
         }
     }
@@ -78,14 +78,14 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun switchSendDataToServerSwitch(event: SettingsEvent.SwitchSendDataToServerSwitch) {
+    private fun switchStoreDataOnServerSwitch(event: SettingsEvent.SwitchStoreDataOnServerSwitch) {
         viewModelScope.launch {
-            settingsRepository.saveSendDataToServerChoice(event.newSwitchValue)
+            settingsRepository.saveStoreDataOnServerChoice(event.newSwitchValue)
         }
 
         _state.update {
             it.copy(
-                isSendDataToServerSwitchChecked = event.newSwitchValue
+                isStoreDataOnServerSwitchChecked = event.newSwitchValue
             )
         }
     }

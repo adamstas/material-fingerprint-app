@@ -157,7 +157,7 @@ fun SearchAndFilterSection(
         MaterialsSearchBar(
             state,
             onEvent,
-            Modifier.weight(0.8f)
+            Modifier.weight(0.7f)
         )
         Spacer(modifier = Modifier.size(8.dp))
 
@@ -291,6 +291,13 @@ fun MaterialListRow(
                 modifier = Modifier.fillMaxSize()
             )
         }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(
+            text = material.category.toString(),
+            style = MaterialTheme.typography.bodySmall
+        )
 
         Checkbox(
             checked = state.isMaterialChecked(material),

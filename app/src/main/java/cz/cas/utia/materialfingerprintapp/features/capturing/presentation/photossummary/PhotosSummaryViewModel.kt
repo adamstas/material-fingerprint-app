@@ -171,7 +171,7 @@ class PhotosSummaryViewModel @Inject constructor(
 
             viewModelScope.launch {
                 try {
-                    val storeInDb = settingsRepository.getSendDataToServerChoice()
+                    val storeInDb = settingsRepository.getStoreDataOnServerChoice()
 
                     val material = remoteMaterialRepository.analyseMaterial(
                         firstImageLightDirection = successState.lightDirectionSlot1,
