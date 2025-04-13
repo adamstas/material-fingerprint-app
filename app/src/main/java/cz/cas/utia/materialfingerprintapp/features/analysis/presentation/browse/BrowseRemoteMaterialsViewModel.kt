@@ -2,9 +2,9 @@ package cz.cas.utia.materialfingerprintapp.features.analysis.presentation.browse
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsStorageSlot
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RemoteMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsStorageSlot
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.RemoteMaterialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce

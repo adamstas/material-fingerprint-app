@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.first
 import cz.cas.utia.materialfingerprintapp.application.proto.ProtoMaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.application.proto.ProtoMaterialCharacteristics.getDefaultInstance
 import cz.cas.utia.materialfingerprintapp.application.proto.ProtoMaterialCharacteristics.parseFrom
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsStorageSlot
 
 fun ProtoMaterialCharacteristics.toMaterialCharacteristics(): MaterialCharacteristics {
     return MaterialCharacteristics(

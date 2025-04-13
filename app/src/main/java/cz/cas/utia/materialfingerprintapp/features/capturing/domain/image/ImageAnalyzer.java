@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp;
+package cz.cas.utia.materialfingerprintapp.features.capturing.domain.image;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -10,6 +10,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
+// code by Daniel Pilar
 public class ImageAnalyzer {
     public static List<MatOfPoint> findRects(Mat segmentedImg, double minContourArea, double maxRelativeAreaDiff) {
         List<MatOfPoint> contours = new ArrayList<>();

@@ -1,11 +1,14 @@
-package cz.cas.utia.materialfingerprintapp.features.analysis.data.material
+package cz.cas.utia.materialfingerprintapp.features.analysis.data.repository
 
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.MaterialDao
+import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.initialData
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.CalculateSimilarityUseCase
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSummary
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.MaterialSummaryMapper
 import javax.inject.Inject
 
 //todo rename to RoomLocalMaterialRepositoryImpl ?

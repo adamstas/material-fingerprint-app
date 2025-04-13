@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.analysis.data.material
+package cz.cas.utia.materialfingerprintapp.features.analysis.presentation
 
 import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap

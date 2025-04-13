@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp;
+package cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,9 +19,9 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
-import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing.ImageCapturedListener;
-import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.capturing.ImageReadyToBeCapturedListener;
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageAnalyzer;
 
+// code by Daniel Pilar with some my modifications
 public class CustomCameraView extends JavaCameraView implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     public static final String TAG = "cameratag";

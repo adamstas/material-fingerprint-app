@@ -2,7 +2,7 @@ package cz.cas.utia.materialfingerprintapp.core.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings.DefaultScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

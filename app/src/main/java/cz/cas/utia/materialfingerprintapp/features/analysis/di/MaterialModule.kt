@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.MaterialDao
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.MaterialDatabase
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.MaterialSummaryMapper
+import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.MaterialSummaryMapper
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
 import dagger.Module
 import dagger.Provides

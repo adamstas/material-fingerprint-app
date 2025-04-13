@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import cz.cas.utia.materialfingerprintapp.core.navigation.Screen
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsStorageSlot
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsStorageSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

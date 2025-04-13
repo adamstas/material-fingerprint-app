@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.setting.data
+package cz.cas.utia.materialfingerprintapp.features.setting.domain
 
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings.DefaultScreen
 

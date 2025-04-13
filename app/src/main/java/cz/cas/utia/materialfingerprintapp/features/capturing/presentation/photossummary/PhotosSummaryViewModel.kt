@@ -7,10 +7,10 @@ import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFF
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.exception.NoInternetException
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.LocalMaterialRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RemoteMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
-import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

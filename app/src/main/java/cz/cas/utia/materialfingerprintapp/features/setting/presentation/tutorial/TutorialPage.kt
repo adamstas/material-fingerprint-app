@@ -28,5 +28,5 @@ val tutorialPages: List<TutorialPage> = listOf(
         "Here you can learn about features.",
         R.drawable.ic_launcher_foreground
     ),
-    TutorialPage("Get Started", "Let's get started with the app.", R.drawable.latka4)
+    TutorialPage("Get Started", "Let's get started with the app.", R.drawable.sun)
 )

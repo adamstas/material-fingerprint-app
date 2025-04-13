@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings.DefaultScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

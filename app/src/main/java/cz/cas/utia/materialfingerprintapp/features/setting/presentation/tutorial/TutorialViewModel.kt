@@ -2,7 +2,7 @@ package cz.cas.utia.materialfingerprintapp.features.setting.presentation.tutoria
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.analysis.data.repository
+package cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository
 
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
 

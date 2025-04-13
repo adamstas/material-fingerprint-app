@@ -18,9 +18,9 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() //todo nechat? je to tu automaticky - asi nechat, je to kvuli roztahovani UI spravne
+        enableEdgeToEdge()
 
-        if (!OpenCVLoader.initLocal()) { //todo toto bylo v Camera.java - nechat to tady nebo tam? nebo úplně pryč?
+        if (!OpenCVLoader.initLocal()) {
             Log.e("OpenCV", "Initialization failed")
         }
 

@@ -1,11 +1,11 @@
 package cz.cas.utia.materialfingerprintapp.features.analysis.di
 
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.RetrofitRemoteMaterialRepositoryImpl
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.RoomMaterialRepositoryImpl
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RetrofitRemoteMaterialRepositoryImpl
+import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RoomMaterialRepositoryImpl
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsProtoDataStore
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RemoteMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.RemoteMaterialRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

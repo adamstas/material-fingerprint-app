@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import cz.cas.utia.materialfingerprintapp.core.navigation.Screen
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.LocalMaterialRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsRepository
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.MaterialCharacteristicsStorageSlot
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.MaterialCharacteristicsStorageSlot
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.filter.fromListForDrawingToMaterialCharacteristics
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,14 +39,16 @@ class PolarPlotVisualisationViewModel @Inject constructor(
             val firstMaterial: MaterialCharacteristics = if (_args.isFirstMaterialSourceLocal) {
                 localMaterialRepository.getMaterial(_args.firstMaterialId).characteristics
             } else {
-                materialCharacteristicsRepository.loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.REMOTE_FIRST)
+                materialCharacteristicsRepository.loadMaterialCharacteristics(
+                    MaterialCharacteristicsStorageSlot.REMOTE_FIRST)
             }
 
             val secondMaterial = if (_args.isSecondMaterialSourceLocal != null) {
               if (_args.isSecondMaterialSourceLocal) {
                    localMaterialRepository.getMaterial(_args.secondMaterialId!!).characteristics
                } else {
-                   materialCharacteristicsRepository.loadMaterialCharacteristics(MaterialCharacteristicsStorageSlot.REMOTE_SECOND)
+                   materialCharacteristicsRepository.loadMaterialCharacteristics(
+                       MaterialCharacteristicsStorageSlot.REMOTE_SECOND)
               }
             } else null
 

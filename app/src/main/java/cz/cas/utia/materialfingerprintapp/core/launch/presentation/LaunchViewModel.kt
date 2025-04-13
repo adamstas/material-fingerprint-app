@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import cz.cas.utia.materialfingerprintapp.features.setting.presentation.permission.requiredPermissions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class LaunchViewModel @Inject constructor(

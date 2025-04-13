@@ -1,4 +1,4 @@
-package cz.cas.utia.materialfingerprintapp.features.analysis.data.material
+package cz.cas.utia.materialfingerprintapp.features.analysis.data.repository
 
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.IMAGE_SUFFIX
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME
@@ -6,7 +6,7 @@ import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAG
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.MaterialApiService
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.MaterialCharacteristicsRequestResponse
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.SimilarMaterialsRequest
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.repository.RemoteMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.Material
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
