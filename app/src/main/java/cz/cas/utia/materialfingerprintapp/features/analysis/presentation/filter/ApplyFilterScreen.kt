@@ -68,18 +68,20 @@ fun ApplyFilterScreen(
             )
         }, // todo udelat do columnu at neni tolik mista nahore mezi ikonkou icka a polar plotem? viz obrazovka PolarPlotVisualisationScreen
         content = { paddingValues ->
-            Box( // so the content can be horizontally centered
+
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    //.windowInsetsPadding(WindowInsets.navigationBars)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
+                        .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 8.dp),
                     horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { onEvent(ApplyFilterEvent.ShowOrHideAxesLabels) }) {
                         Icon(
@@ -98,32 +100,43 @@ fun ApplyFilterScreen(
                     }
                 }
 
+                CustomSpacer()
+
                 Column(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .weight(1f, fill = true)
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    CustomSpacer()
-
                     PolarPlotWithSliders(
                         state = state,
                         onEvent = onEvent
                     )
+                }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { onEvent(ApplyFilterEvent.ApplyOnLocalData) },
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Button(
-                            onClick = { onEvent(ApplyFilterEvent.ApplyOnLocalData) }) {
-                            Text(text = "Apply on local data")
-                        }
+                        Text(text = "Apply on local data")
+                    }
 
-                        Button(
-                            onClick = { onEvent(ApplyFilterEvent.ApplyOnServerData) }) {
-                            Text(text = "Apply on server data")
-                        }
+                    Button(
+                        onClick = { onEvent(ApplyFilterEvent.ApplyOnServerData) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = "Apply on server data")
                     }
                 }
+
+                Spacer(modifier = Modifier.size(20.dp))
             }
         }
     )
@@ -237,48 +250,50 @@ fun PolarPlotWithSliders(
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center
     ) {
-
-        // just to set max size of the polar plot so it does not take whole screen on tablets // todo takhle to nefunguje..
-        Box(
+        Column(
             modifier = Modifier
-                .sizeIn(
-                    maxWidth = 400.dp,
-                    maxHeight = 400.dp
-                )
-                .aspectRatio(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // just to set max size of the polar plot so it does not take whole screen on tablets // todo takhle to nefunguje..
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .heightIn(max = 370.dp)
+                    .aspectRatio(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
 
-            val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
+                PolarPlotCanvas(
+                    axisValues = state.axisValues,
+                    axisLabels = axisLabels,
+                    circleColor = circleColor,
+                    backgroundColor = backgroundColor,
+                    firstPlotColor = plotColor,
+                    isInteractive = true,
+                    activeAxis = activeAxis,
+                    pointRadius = 15f,
+                    canvasSizeState = canvasSizeState,
+                    modifier = pointerInputModifier
+                )
+            }
 
-            PolarPlotCanvas(
-                axisValues = state.axisValues,
-                axisLabels = axisLabels,
-                circleColor = circleColor,
-                backgroundColor = backgroundColor,
-                firstPlotColor = plotColor,
-                isInteractive = true,
-                activeAxis = activeAxis,
-                pointRadius = 15f,
-                canvasSizeState = canvasSizeState,
-                modifier = pointerInputModifier
+            Text(
+                text = "Value: ${"%.2f".format(scaleToCharacteristics(state.selectedAxisValue))}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = circleColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Value: ${"%.2f".format(scaleToCharacteristics(state.selectedAxisValue))}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = circleColor,
-            textAlign = TextAlign.Center
-        )
     }
 }
 

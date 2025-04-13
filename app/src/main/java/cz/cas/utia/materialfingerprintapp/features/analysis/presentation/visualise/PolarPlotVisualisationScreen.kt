@@ -1,13 +1,22 @@
 package cz.cas.utia.materialfingerprintapp.features.analysis.presentation.visualise
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,125 +83,173 @@ fun PolarPlotVisualisationScreen(
             )
         },
         content = { paddingValues ->
-            Column(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(paddingValues)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        PolarPlotLegendRow(
-                            rectangleColor = primaryPlotColor,
-                            text = state.firstMaterialName
-                        )
+                val availableHeight = maxHeight
 
-                        if (state.axisValuesSecond != null) {
-                            Spacer(modifier = Modifier.width(8.dp))
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
                             PolarPlotLegendRow(
-                                rectangleColor = secondaryPlotColor,
-                                text = state.secondMaterialName!!
+                                rectangleColor = primaryPlotColor,
+                                text = state.firstMaterialName
+                            )
+
+                            if (state.axisValuesSecond != null) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                PolarPlotLegendRow(
+                                    rectangleColor = secondaryPlotColor,
+                                    text = state.secondMaterialName!!
+                                )
+                            }
+                        }
+
+                        IconButton(onClick = { onEvent(PolarPlotVisualisationEvent.ShowOrHideAxesLabels) }) {
+                            Icon(
+                                painter = painterResource(android.R.drawable.ic_dialog_info),
+                                contentDescription = "Show axes labels"
                             )
                         }
                     }
 
-                    IconButton(onClick = { onEvent(PolarPlotVisualisationEvent.ShowOrHideAxesLabels) }) {
-                        Icon(
-                            painter = painterResource(android.R.drawable.ic_dialog_info),
-                            contentDescription = "Show axes labels"
-                        )
-                    }
-                }
+                    val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
 
-                val axisLabels = AppConfig.PolarPlot.axisLabels.takeIf { state.showAxisLabels }
-
-                when (state.plotDisplayMode) {
-                    PlotDisplayMode.SINGLE_PLOT -> {
-                        NonInteractivePolarPlot(
-                            firstAxisValues = state.axisValuesFirst,
-                            axisLabels = axisLabels,
-                            secondAxisValues = state.axisValuesSecond,
-                            firstPlotColor = primaryPlotColor,
-                            secondPlotColor = secondaryPlotColor
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-
+                    Box(
+                        modifier = Modifier
+                            .weight(1f, fill = false) // stretch to rest of the screen
+                            // but if the content is already at maximum of its size determined inside the Box then do not stretch
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Button(
-                                onClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarMaterial) },
-                                enabled = state.areBottomButtonsEnabled()
-                            ) {
-                                Text(text = "Find similar materials")
-                            }
+                            when (state.plotDisplayMode) {
+                                PlotDisplayMode.SINGLE_PLOT -> {
+                                    NonInteractivePolarPlot(
+                                        firstAxisValues = state.axisValuesFirst,
+                                        axisLabels = axisLabels,
+                                        secondAxisValues = state.axisValuesSecond,
+                                        firstPlotColor = primaryPlotColor,
+                                        secondPlotColor = secondaryPlotColor,
+                                        maxPlotSize = (availableHeight * 0.6f).coerceAtMost(400.dp)
+                                    )
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.height(16.dp))
 
-                            Button(
-                                onClick = { onEvent(PolarPlotVisualisationEvent.ApplyFilter) },
-                                enabled = state.areBottomButtonsEnabled()
-                            ) {
-                                Text(text = "Apply filter")
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    ) {
+                                        Button(
+                                            onClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarMaterial) },
+                                            enabled = state.areBottomButtonsEnabled(),
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(text = "Find similar materials")
+                                        }
+
+                                        Button(
+                                            onClick = { onEvent(PolarPlotVisualisationEvent.ApplyFilter) },
+                                            enabled = state.areBottomButtonsEnabled(),
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(text = "Apply filter")
+                                        }
+                                    }
+                                }
+
+                                PlotDisplayMode.TWO_PLOTS -> {
+                                    val plotSize = (availableHeight * 0.45f).coerceAtMost(300.dp)
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(plotSize)
+                                            .aspectRatio(1f),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NonInteractivePolarPlot(
+                                            firstAxisValues = state.axisValuesFirst,
+                                            axisLabels = axisLabels,
+                                            firstPlotColor = primaryPlotColor,
+                                            secondPlotColor = secondaryPlotColor,
+                                            maxPlotSize = plotSize
+                                        )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(plotSize)
+                                            .aspectRatio(1f),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NonInteractivePolarPlot(
+                                            firstAxisValues = state.axisValuesSecond!!,
+                                            axisLabels = axisLabels,
+                                            firstPlotColor = secondaryPlotColor,
+                                            secondPlotColor = secondaryPlotColor,
+                                            maxPlotSize = plotSize
+                                        )
+                                    }
+                                }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp)) // todo celkove na teto obrazovce ty Spacery udelat mensi (a konzistentni!) a resit sizovani tech plotů pomoci weight()
                     }
 
-                    PlotDisplayMode.TWO_PLOTS -> {
-                        NonInteractivePolarPlot(
-                            firstAxisValues = state.axisValuesFirst,
-                            axisLabels = axisLabels,
-                            firstPlotColor = primaryPlotColor,
-                            secondPlotColor = secondaryPlotColor,
-                            maxPlotSize = 250.dp, // not multiple of 4 but for consistent UI had to be kept
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(bottom = 24.dp)
+                            .height(IntrinsicSize.Min) // set height to the minimum needed
+                    // to properly display the content of this column
+                    ) {
+                        Text(text = "Plot amount:")
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        SingleChoiceSegmentedButton(
+                            selectedOption = state.plotDisplayMode,
+                            options = PlotDisplayMode.entries,
+                            onSelectionChange = { newMode ->
+                                onEvent(PolarPlotVisualisationEvent.SetPlotDisplayMode(newMode))
+                            },
+                            enabled = state.isSegmentedButtonEnabled(),
+                            label = { mode ->
+                                when (mode) {
+                                    PlotDisplayMode.SINGLE_PLOT -> "Single"
+                                    PlotDisplayMode.TWO_PLOTS -> "Two"
+                                }
+                            }
                         )
-                        NonInteractivePolarPlot(
-                            firstAxisValues = state.axisValuesSecond!!,
-                            axisLabels = axisLabels,
-                            firstPlotColor = secondaryPlotColor,
-                            secondPlotColor = secondaryPlotColor,
-                            maxPlotSize = 250.dp,
-                        )
                     }
-                }
-
-                Text(text = "Plot amount:")
-
-                SingleChoiceSegmentedButton(
-                    selectedOption = state.plotDisplayMode,
-                    options = PlotDisplayMode.entries,
-                    onSelectionChange = { newMode ->
-                        onEvent(PolarPlotVisualisationEvent.SetPlotDisplayMode(newMode))
-                    },
-                    enabled = state.isSegmentedButtonEnabled(),
-                    label = { mode ->
-                        when (mode) {
-                            PlotDisplayMode.SINGLE_PLOT -> "Single"
-                            PlotDisplayMode.TWO_PLOTS -> "Two"
-                        }
-                    }
-                )
-
-                if (state.isFindSimilarMaterialsDialogShown) {
-                    FindSimilarMaterialsDialog(
-                        onDismissRequest = { onEvent(PolarPlotVisualisationEvent.DismissFindSimilarMaterialsDialog) },
-                        onLocalDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarLocalMaterial) },
-                        onRemoteDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarRemoteMaterial) }
-                    )
                 }
             }
-        })
+
+            if (state.isFindSimilarMaterialsDialogShown) {
+                FindSimilarMaterialsDialog(
+                    onDismissRequest = { onEvent(PolarPlotVisualisationEvent.DismissFindSimilarMaterialsDialog) },
+                    onLocalDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarLocalMaterial) },
+                    onRemoteDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarRemoteMaterial) }
+                )
+            }
+        }
+    )
 }

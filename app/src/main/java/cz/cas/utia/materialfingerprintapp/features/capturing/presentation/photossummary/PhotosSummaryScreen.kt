@@ -130,21 +130,37 @@ fun PhotosSummaryScreen(
                 CustomSpacer()
                 CustomSpacer()
 
-                CenteredImage(
-                    image = state.capturedImageSlot1,
-                    lightDirection = state.lightDirectionSlot1,
-                    onArrowIconClick = { onEvent(PhotosSummaryEvent.SwitchLightDirections) })
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CenteredImage(
+                        image = state.capturedImageSlot1,
+                        lightDirection = state.lightDirectionSlot1,
+                        onArrowIconClick = { onEvent(PhotosSummaryEvent.SwitchLightDirections) })
+                }
 
                 CustomSpacer()
 
-                CenteredImage(
-                    image = state.capturedImageSlot2,
-                    lightDirection = state.lightDirectionSlot2,
-                    onArrowIconClick = { onEvent(PhotosSummaryEvent.SwitchLightDirections) })
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CenteredImage(
+                        image = state.capturedImageSlot2,
+                        lightDirection = state.lightDirectionSlot2,
+                        onArrowIconClick = { onEvent(PhotosSummaryEvent.SwitchLightDirections) })
+                }
 
                 CustomSpacer()
 
                 AnalyseButton(state, onEvent)
+
+                Spacer(modifier = Modifier.size(8.dp))
             }
         }
     )
