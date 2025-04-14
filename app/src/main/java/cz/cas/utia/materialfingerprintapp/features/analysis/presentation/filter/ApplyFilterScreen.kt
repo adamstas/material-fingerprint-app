@@ -66,7 +66,7 @@ fun ApplyFilterScreen(
                 title = "Apply filter",
                 navigateBack = { onEvent(ApplyFilterEvent.GoBackToAnalyticsHomeScreen) }
             )
-        }, // todo udelat do columnu at neni tolik mista nahore mezi ikonkou icka a polar plotem? viz obrazovka PolarPlotVisualisationScreen
+        },
         content = { paddingValues ->
 
             Column(
@@ -262,7 +262,6 @@ fun PolarPlotWithSliders(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // just to set max size of the polar plot so it does not take whole screen on tablets // todo takhle to nefunguje..
             Box(
                 modifier = Modifier
                     .fillMaxWidth(1f)

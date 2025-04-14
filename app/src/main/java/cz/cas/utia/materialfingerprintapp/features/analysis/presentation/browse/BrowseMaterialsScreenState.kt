@@ -4,11 +4,9 @@ import androidx.annotation.StringRes
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCategory
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSummary
 
-sealed interface MaterialsScreenState {
-    //todo rename to BrowseMaterialsScreenState? if new material screens are added...
+sealed interface BrowseMaterialsScreenState {
     data class Success(
         val materials: List<MaterialSummary> = emptyList(),
-        //todo keep these initial values? or introduce Loaded state etc.?
         val checkedMaterials: Set<MaterialSummary> = emptySet(),
 
         val selectedCategoryIDs: List<Int> = (0..<MaterialCategory.entries.size).toList(), //default all categories selected
@@ -22,7 +20,7 @@ sealed interface MaterialsScreenState {
         val isCreatePolarPlotButtonEnabled: Boolean = false,
 
         val isFindSimilarMaterialsDialogShown: Boolean = false
-    ): MaterialsScreenState
+    ): BrowseMaterialsScreenState
     {
         fun isMaterialChecked(material: MaterialSummary): Boolean {
             return checkedMaterials.contains(material)
@@ -40,7 +38,7 @@ sealed interface MaterialsScreenState {
     data class Error(
         @StringRes val messageResId: Int,
         val exception: Throwable
-    ): MaterialsScreenState
+    ): BrowseMaterialsScreenState
 }
 
 

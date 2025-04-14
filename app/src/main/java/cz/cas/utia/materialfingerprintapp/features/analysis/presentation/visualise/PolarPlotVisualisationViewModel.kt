@@ -66,13 +66,13 @@ class PolarPlotVisualisationViewModel @Inject constructor(
     fun onEvent(event: PolarPlotVisualisationEvent) {
         when (event) {
             PolarPlotVisualisationEvent.ApplyFilter -> applyFilter()
-            PolarPlotVisualisationEvent.FindSimilarMaterial -> findSimilarMaterial()
+            PolarPlotVisualisationEvent.FindSimilarMaterials -> findSimilarMaterial()
             PolarPlotVisualisationEvent.GoBack -> goBack()
             PolarPlotVisualisationEvent.ShowOrHideAxesLabels -> showOrHideAxesLabels()
             is PolarPlotVisualisationEvent.SetPlotDisplayMode -> setPolarPlotDisplayMode(event)
             PolarPlotVisualisationEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
-            PolarPlotVisualisationEvent.FindSimilarLocalMaterial -> findSimilarLocalMaterial()
-            PolarPlotVisualisationEvent.FindSimilarRemoteMaterial -> findSimilarRemoteMaterial()
+            PolarPlotVisualisationEvent.FindSimilarLocalMaterials -> findSimilarLocalMaterial()
+            PolarPlotVisualisationEvent.FindSimilarRemoteMaterials -> findSimilarRemoteMaterial()
         }
     }
 

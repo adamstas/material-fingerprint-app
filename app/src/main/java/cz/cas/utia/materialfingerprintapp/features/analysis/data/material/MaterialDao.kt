@@ -9,15 +9,11 @@ import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCateg
 
 @Dao
 interface MaterialDao {
-    //todo maybe set UNIQUE to serverId attribute
     @Insert
     suspend fun insertMaterial(material: Material): Long
 
-    @Insert
-    suspend fun insertMaterials(materials: List<Material>) //now just for DB seeding
-
     @Delete
-    suspend fun deleteMaterial(material: Material) //todo will be used?
+    suspend fun deleteMaterial(material: Material) // currently unused
 
     @Query("SELECT * FROM material " +
             "WHERE category in (:categories) " +
@@ -28,12 +24,6 @@ interface MaterialDao {
     @Query("SELECT * FROM material ORDER BY name ASC")
     suspend fun getAllMaterialsOrderedByName(): List<Material>
 
-    @Query("SELECT COUNT(*) FROM material")
-    suspend fun getMaterialsCount(): Long //delete later, now used just for DB init
-
-    @Query("DELETE FROM material") //just for testing, delete later
-    suspend fun deleteAllMaterials()
-
-    @Query("SELECT * FROM material WHERE id = :id") //todo nebo dat equals?
+    @Query("SELECT * FROM material WHERE id = :id")
     suspend fun getMaterial(id: Long): Material
 }

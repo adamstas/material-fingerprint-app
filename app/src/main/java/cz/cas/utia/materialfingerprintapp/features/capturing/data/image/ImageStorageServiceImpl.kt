@@ -25,20 +25,16 @@ class ImageStorageServiceImpl @Inject constructor(
         return imagesDirectory
     }
 
-    override fun storeImage(image: Bitmap, filename: String): String? {
+    override fun storeImage(image: Bitmap, filename: String) {
         val imageFile = File(getImagesDirectory(), filename)
 
-        return try {
+        try {
             FileOutputStream(imageFile).use { outputStream ->
                 image.compress(Bitmap.CompressFormat.PNG, 100, outputStream) //quality is ignored since PNG is lossless
             }
 
-            imageFile.absolutePath // todo - vracet neco? zatim je ta navratova hodnota nepouzita
-        } catch (e: IOException) { //todo nejak to handlovat? zobrazit v composablech ze nastala chyba?
-                                    // asi si udělat nejakou composablu Error(string errorText) a dát ji do core a pak ji volat na obrazovkach, kde nastala chyba (mit ve state promennou na to)
-
+        } catch (e: IOException) {
             e.printStackTrace()
-            null
         }
     }
 
@@ -49,16 +45,15 @@ class ImageStorageServiceImpl @Inject constructor(
             BitmapFactory.decodeFile(imagePath)
 
         } catch (e: Exception) {
-            //e.printStackTrace() //todo neprintit stack trace protoze to, ze se vraci prazdny image, je OK v pripade ukladani tech 2 fotek
-            null
+            null // do not throw exception because in CapturingViewModel it may be OK that images are not found
         }
     }
 
     override fun loadImageAsFile(filename: String): File {
-        return File(getImagesDirectory(), filename) // todo tady to nezarve kdyz image chybi?
+        return File(getImagesDirectory(), filename)
     }
 
-    override fun deleteImage(filename: String): Boolean { //todo vracet neco?
+    override fun deleteImage(filename: String): Boolean {
         val imagePath = getImagesDirectory().absolutePath + "/" + filename
 
         val imageFile = File(imagePath)

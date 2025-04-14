@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//todo umistit jinam nez do presentation? ..treba rozdelit packagem na local a remote, jinak to nechat v prezentacni vrstve
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class BrowseRemoteMaterialsViewModel @Inject constructor(
@@ -29,11 +28,8 @@ class BrowseRemoteMaterialsViewModel @Inject constructor(
         _searchBarText
             .debounce(700L)
             .onEach {
-                    //_state.update { it.copy(isSearching = true) }
                     updateSuccessState { it.copy(isSearching = true) }
-                //todo add isSearching changes for LocalViewModel too? probably not, for local materials it should load instantly..
                     filterMaterials()
-                   // _state.update { it.copy(isSearching = false) }
                     updateSuccessState { it.copy(isSearching = false) }
                 }.launchIn(viewModelScope)
 
@@ -42,7 +38,7 @@ class BrowseRemoteMaterialsViewModel @Inject constructor(
     override fun closeDropdownMenu() {
         updateSuccessState { it.copy(isDropdownMenuExpanded = false) }
         //get fresh materials after closing the dropdown menu
-        viewModelScope.launch { //todo maybe try catch if the API service will be offline or no internet?
+        viewModelScope.launch {
             updateSuccessState { it.copy(isSearching = true) }
             filterMaterials()
             updateSuccessState { it.copy(isSearching = false) }
@@ -67,7 +63,7 @@ class BrowseRemoteMaterialsViewModel @Inject constructor(
                 )
             }
 
-            _navigationEvents.emit(MaterialNavigationEvent.ToPolarPlotVisualisationScreen(
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToPolarPlotVisualisationScreen(
                 isFirstMaterialSourceLocal = false,
                 firstMaterialId = firstCheckedMaterial.id,
                 firstMaterialName = firstCheckedMaterial.name,
@@ -78,20 +74,20 @@ class BrowseRemoteMaterialsViewModel @Inject constructor(
         }
     }
 
-    override fun findSimilarLocalMaterials(event: MaterialEvent.FindSimilarLocalMaterials) {
+    override fun findSimilarLocalMaterials(event: BrowseMaterialsEvent.FindSimilarLocalMaterials) {
         viewModelScope.launch {
             materialCharacteristicsRepository.saveMaterialCharacteristics(
                 materialCharacteristics = event.material.characteristics,
                 slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN
             )
 
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(-1L))
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(-1L))
         }
     }
 
-    override fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials) {
+    override fun findSimilarRemoteMaterials(event: BrowseMaterialsEvent.FindSimilarRemoteMaterials) {
         viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(event.material.id))
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(event.material.id))
         }
     }
 }

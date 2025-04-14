@@ -63,7 +63,6 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
-    // todo tyhle metody se similar prejmenovat protoze ted to vypada ze to vraci podle jmena ale ony to vraci podle similarity
     override suspend fun getAllSimilarMaterials(materialCharacteristics: MaterialCharacteristics): List<MaterialSummary> {
         val body = SimilarMaterialsRequest(
             characteristics = fromMaterialCharacteristicsToRequestResponse(materialCharacteristics)
@@ -111,18 +110,12 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         return responseMaterials.map { it.toMaterialSummary() }
     }
 
-    override suspend fun getMaterialsCount(): Long {
-        return 0L // todo probably will be removed
-    }
-
     override suspend fun analyseMaterial(
         firstImageLightDirection: LightDirection,
         name: String,
         category: MaterialCategory,
         storeInDb: Boolean
     ): Material {
-    // todo ted predpokladam ze SPECULAR = svetlo zleva // todo "slot1" a "slot2" dát asi do configu
-
         val (specularFilename, nonSpecularFilename) = when (firstImageLightDirection) {
             LightDirection.FROM_ABOVE -> SLOT1_IMAGE_NAME to SLOT2_IMAGE_NAME
             LightDirection.FROM_LEFT -> SLOT2_IMAGE_NAME to SLOT1_IMAGE_NAME
@@ -144,15 +137,5 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
         )
 
         return responseMaterial.toMaterial()
-    }
-
-    // todo probably will be deleted
-    override suspend fun getMaterial(id: Long): Material {
-        return Material(
-            name = "karelTest", serverId = 25, category = MaterialCategory.METAL,
-            characteristics = MaterialCharacteristics(
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-        )
     }
 }

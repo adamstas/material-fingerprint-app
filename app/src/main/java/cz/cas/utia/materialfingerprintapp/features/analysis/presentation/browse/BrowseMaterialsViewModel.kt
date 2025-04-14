@@ -26,23 +26,19 @@ abstract class BrowseMaterialsViewModel(
     private val materialRepository: MaterialRepository,
     protected val materialCharacteristicsRepository: MaterialCharacteristicsRepository
 ): ViewModel() {
-    //private atributy jsou to proto, ze je pri jejich zmene potreba udelat nejakou reakci (napr. pri zmene _materials je potreba updatovat tlacitka
-    //napr. _checkedMaterials by se mohlo brat z public statu, ale pak by neslo reagovat na zmenu toho _checkedMaterials
-    //_searchBarText tu taky musi byt jako private, protoze je na nej v reakce v BrowseLocalMaterialsViewModelu, totez pro _selectedCategoryIDs
-    //ty private atributy musim updatovat primo a ne z _state protoze ten _state je ma neaktualni a ty spravne se tam davaji az v volani combine, kde vznika state pro UI
     protected val _selectedCategoryIDs = MutableStateFlow((0..<MaterialCategory.entries.size).toList())
     protected val _checkedMaterials = MutableStateFlow<Set<MaterialSummary>>(emptySet()) //mutable set wont notify compose so it wont render the UI after change in the mutable set
-    protected val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList()) //todo defaultne by mely byt vsechny materialy..
+    protected val _materials = MutableStateFlow<List<MaterialSummary>>(emptyList())
     protected val _searchBarText = MutableStateFlow("")
 
     private val _similarMaterialId = savedStateHandle.get<Long?>("materialId") // cannot use toRoute since the ViewModel can be in 2 routes (BrowseSimilarMaterials and BrowseMaterials)
 
-    protected val _state = MutableStateFlow<MaterialsScreenState>(MaterialsScreenState.Success())
+    protected val _state = MutableStateFlow<BrowseMaterialsScreenState>(BrowseMaterialsScreenState.Success())
     val state = combine(_state, _selectedCategoryIDs, _materials, _checkedMaterials, _searchBarText)
     { state, selectedCategoryIDs, materials, checkedMaterials, searchBarText ->
 
         when (state) {
-            is MaterialsScreenState.Success -> {
+            is BrowseMaterialsScreenState.Success -> {
                 state.copy(
                     selectedCategoryIDs = selectedCategoryIDs,
                     materials = materials,
@@ -51,17 +47,17 @@ abstract class BrowseMaterialsViewModel(
                 )
             }
 
-            is MaterialsScreenState.Error -> state
+            is BrowseMaterialsScreenState.Error -> state
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaterialsScreenState.Success())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BrowseMaterialsScreenState.Success())
 
-    protected val _navigationEvents = MutableSharedFlow<MaterialNavigationEvent>()
+    protected val _navigationEvents = MutableSharedFlow<BrowseMaterialsNavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
 
     // helper for less boiler plate code
-    protected fun updateSuccessState(update: (MaterialsScreenState.Success) -> MaterialsScreenState) {
+    protected fun updateSuccessState(update: (BrowseMaterialsScreenState.Success) -> BrowseMaterialsScreenState) {
         val currentState = _state.value
-        if (currentState is MaterialsScreenState.Success) {
+        if (currentState is BrowseMaterialsScreenState.Success) {
             _state.value = update(currentState)
         }
     }
@@ -109,19 +105,19 @@ abstract class BrowseMaterialsViewModel(
         }
 
         catch (e: NoInternetException) {
-            _state.value = MaterialsScreenState.Error(
+            _state.value = BrowseMaterialsScreenState.Error(
                 messageResId = R.string.no_internet_exception,
                 exception = e
             )
         }
         catch (e: IOException) {
-            _state.value = MaterialsScreenState.Error(
+            _state.value = BrowseMaterialsScreenState.Error(
                 messageResId = R.string.io_exception,
                 exception = e
             )
         }
         catch (e: Exception) {
-            _state.value = MaterialsScreenState.Error(
+            _state.value = BrowseMaterialsScreenState.Error(
                 messageResId = R.string.unknown_exception,
                 exception = e
             )
@@ -139,36 +135,32 @@ abstract class BrowseMaterialsViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun onEvent(event: MaterialEvent) {
+    fun onEvent(event: BrowseMaterialsEvent) {
         when (event) {
-            is MaterialEvent.CheckMaterial -> checkMaterial(event)
-            is MaterialEvent.UncheckMaterial -> uncheckMaterial(event)
-
-            is MaterialEvent.SetName -> TODO()
-            is MaterialEvent.SetServerId -> TODO()
-
-            is MaterialEvent.CheckOrUncheckCategory -> checkOrUncheckCategory(event)
-            MaterialEvent.ShowDropdownMenu -> showDropdownMenu()
-            MaterialEvent.CloseDropdownMenu -> closeDropdownMenu()
-            is MaterialEvent.SearchMaterials -> searchMaterials(event)
-            is MaterialEvent.FindSimilarLocalMaterials -> findSimilarLocalMaterials(event)
-            is MaterialEvent.FindSimilarRemoteMaterials -> findSimilarRemoteMaterials(event)
-            MaterialEvent.CreatePolarPlot -> createPolarPlot()
-            MaterialEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
-            MaterialEvent.FindSimilarMaterial -> findSimilarMaterials()
-            MaterialEvent.GoBack -> goBack()
+            is BrowseMaterialsEvent.CheckMaterial -> checkMaterial(event)
+            is BrowseMaterialsEvent.UncheckMaterial -> uncheckMaterial(event)
+            is BrowseMaterialsEvent.CheckOrUncheckCategory -> checkOrUncheckCategory(event)
+            BrowseMaterialsEvent.ShowDropdownMenu -> showDropdownMenu()
+            BrowseMaterialsEvent.CloseDropdownMenu -> closeDropdownMenu()
+            is BrowseMaterialsEvent.SearchMaterials -> searchMaterials(event)
+            is BrowseMaterialsEvent.FindSimilarLocalMaterials -> findSimilarLocalMaterials(event)
+            is BrowseMaterialsEvent.FindSimilarRemoteMaterials -> findSimilarRemoteMaterials(event)
+            BrowseMaterialsEvent.CreatePolarPlot -> createPolarPlot()
+            BrowseMaterialsEvent.DismissFindSimilarMaterialsDialog -> dismissFindSimilarMaterialsDialog()
+            BrowseMaterialsEvent.FindSimilarMaterial -> findSimilarMaterials()
+            BrowseMaterialsEvent.GoBack -> goBack()
         }
     }
 
-    private fun checkMaterial(event: MaterialEvent.CheckMaterial) {
+    private fun checkMaterial(event: BrowseMaterialsEvent.CheckMaterial) {
         _checkedMaterials.value += event.material
     }
 
-    private fun uncheckMaterial(event: MaterialEvent.UncheckMaterial) {
+    private fun uncheckMaterial(event: BrowseMaterialsEvent.UncheckMaterial) {
         _checkedMaterials.value -= event.material
     }
 
-    private fun checkOrUncheckCategory(event: MaterialEvent.CheckOrUncheckCategory) {
+    private fun checkOrUncheckCategory(event: BrowseMaterialsEvent.CheckOrUncheckCategory) {
         val updatedList = if (event.categoryID in _selectedCategoryIDs.value) {
             //unchecked the category
             _selectedCategoryIDs.value - event.categoryID
@@ -186,15 +178,15 @@ abstract class BrowseMaterialsViewModel(
         updateSuccessState { it.copy(isDropdownMenuExpanded = true) }
     }
 
-    private fun searchMaterials(event: MaterialEvent.SearchMaterials) {
+    private fun searchMaterials(event: BrowseMaterialsEvent.SearchMaterials) {
         _searchBarText.value = event.searchedText
     }
 
     protected abstract fun closeDropdownMenu()
 
-    protected abstract fun findSimilarLocalMaterials(event: MaterialEvent.FindSimilarLocalMaterials)
+    protected abstract fun findSimilarLocalMaterials(event: BrowseMaterialsEvent.FindSimilarLocalMaterials)
 
-    protected abstract fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials)
+    protected abstract fun findSimilarRemoteMaterials(event: BrowseMaterialsEvent.FindSimilarRemoteMaterials)
 
     protected abstract fun createPolarPlot()
 
@@ -208,7 +200,7 @@ abstract class BrowseMaterialsViewModel(
 
     private fun goBack() {
         viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.Back)
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.Back)
         }
     }
 }

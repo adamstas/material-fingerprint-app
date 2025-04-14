@@ -14,7 +14,8 @@ interface MaterialApiService {
     @GET("/materials")
     suspend fun getMaterialsOrderedByName(
         @Query("name") name: String? = null,
-        @Query("categories") categories: List<String>? = null // Retrofit can’t handle custom data types, therefore it is needed to convert list of MaterialCategory to list of String
+        @Query("categories") categories: List<String>? = null
+    // Retrofit can’t handle custom data types, therefore it is needed to convert list of MaterialCategory to list of String
     ): List<MaterialResponse>
 
     @GET("/materials/{material_id}/similar")

@@ -1,7 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.analysis.data.repository
 
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.MaterialDao
-import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.initialData
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.CalculateSimilarityUseCase
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.Material
@@ -11,8 +10,7 @@ import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSumma
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.MaterialSummaryMapper
 import javax.inject.Inject
 
-//todo rename to RoomLocalMaterialRepositoryImpl ?
-class RoomMaterialRepositoryImpl @Inject constructor(
+class RoomLocalMaterialRepositoryImpl @Inject constructor(
     private val materialDao: MaterialDao,
     private val materialSummaryMapper: MaterialSummaryMapper,
     private val calculateSimilarityUseCase: CalculateSimilarityUseCase
@@ -23,15 +21,12 @@ class RoomMaterialRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllMaterialsOrderedByName(): List<MaterialSummary> {
-        if (getMaterialsCount() == 0L) //todo remove later, now just for seeding the database
-            materialDao.insertMaterials(initialData())
-
         val materials = materialDao.getAllMaterialsOrderedByName()
         return materials.map { material -> materialSummaryMapper.map(material) }
     }
 
     override suspend fun getAllSimilarMaterials(materialId: Long): List<MaterialSummary> {
-        val targetMaterial = materialDao.getMaterial(materialId) // todo lze pak volat rovnou metodu getMaterial toho repozitáře a ne toho dao (pokud to tu zustane)
+        val targetMaterial = getMaterial(materialId)
         val targetMaterialSummary = materialSummaryMapper.map(targetMaterial)
 
         val materials = getAllMaterialsOrderedByName()
@@ -49,8 +44,6 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         categories: List<MaterialCategory>,
         nameSearch: String
     ): List<MaterialSummary> {
-        //delay(1000) //todo remove later
-
         val effectiveCategories = categories.ifEmpty { MaterialCategory.entries } // if categories are not empty, returns categories
 
         val materials = materialDao.getMaterialsOrderedByName(effectiveCategories, nameSearch)
@@ -62,7 +55,7 @@ class RoomMaterialRepositoryImpl @Inject constructor(
         nameSearch: String,
         materialId: Long
     ): List<MaterialSummary> {
-        val targetMaterial = materialDao.getMaterial(materialId)  // todo lze pak volat rovnou metodu getMaterial toho repozitáře a ne toho dao (pokud to tu zustane)
+        val targetMaterial = getMaterial(materialId)
         val targetMaterialSummary = materialSummaryMapper.map(targetMaterial)
 
         val materials = getAllMaterialsOrderedByName()
@@ -76,10 +69,6 @@ class RoomMaterialRepositoryImpl @Inject constructor(
     ): List<MaterialSummary> {
         val materials = getAllMaterialsOrderedByName()
         return calculateSimilarityUseCase.calculateSimilarity(materials, materialCharacteristics, nameSearch, categories)
-    }
-
-    override suspend fun getMaterialsCount(): Long {
-        return materialDao.getMaterialsCount()
     }
 
     override suspend fun getMaterial(id: Long): Material {

@@ -85,7 +85,10 @@ class MaterialCharacteristicsProtoDataStore @Inject constructor(
             createDataStore(getSlotFilename(slot))
         }
 
-    override suspend fun saveMaterialCharacteristics(materialCharacteristics: MaterialCharacteristics, slot: MaterialCharacteristicsStorageSlot) {
+    override suspend fun saveMaterialCharacteristics(
+        materialCharacteristics: MaterialCharacteristics,
+        slot: MaterialCharacteristicsStorageSlot
+    ) {
         val dataStore = dataStores[slot]
 
         val protoMaterialCharacteristics = ProtoMaterialCharacteristics.newBuilder()
@@ -118,7 +121,8 @@ class MaterialCharacteristicsProtoDataStore @Inject constructor(
         return dataStore!!.data
             .catch { exception ->
                 if (exception is CorruptionException) {
-                    emit(getDefaultInstance()) // if no data, returns default instance (all 16 doubles are set to 0.0); should not happen in this app
+                    emit(getDefaultInstance())
+                // if no data, returns default instance (all 16 doubles are set to 0.0); should not happen in this app
                 } else {
                     throw exception
                 }

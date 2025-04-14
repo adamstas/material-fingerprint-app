@@ -3,7 +3,7 @@ package cz.cas.utia.materialfingerprintapp.features.capturing.presentation.captu
 import android.graphics.Bitmap
 
 data class CapturingScreenState(
-    val capturedImageSlot1: Bitmap? = null, //todo zmenit na neco co nemuze byt null? kdyztak si udelat nejaky EmptyBitmap a ten tam cpat
+    val capturedImageSlot1: Bitmap? = null,
     val capturedImageSlot2: Bitmap? = null,
     val currentlyCapturedImage: Bitmap? = null, //just captured, not saved in any slot
     val selectedImageSlot: ImageSlotPosition = ImageSlotPosition.FIRST,

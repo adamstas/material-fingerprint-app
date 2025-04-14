@@ -86,21 +86,18 @@ fun CapturingScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    //todo nechat pres remember?
     val imageCapturedListener = remember {
         ImageCapturedListener { imageBitmap ->
             onEvent(CapturingEvent.CaptureImage(imageBitmap))
         }
     }
 
-    //todo nechat pres remember?
     val imageReadyToBeCapturedListener = remember {
         ImageReadyToBeCapturedListener { isReady ->
             onEvent(CapturingEvent.EnableOrDisableCaptureImageButton(isReady))
         }
     }
 
-    //todo nechat pres remember?
     val (parent, camView) = remember {
         val parent = FrameLayout(context).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -120,8 +117,6 @@ fun CapturingScreen(
 
         parent to camView
     }
-
-    //todo rozhodnout se zda bude v topbaru kromě šipky doprava na dalsi screen (Photo Summary) i přehled 2 fotek anebo jestli to bude v liště hned pod top barem (nejdriv to asi zkusit narvat nahoru protoze tam nebude ani nazev screeny)
 
     //camView's lifecycle is managed using DisposableEffect
     DisposableEffect(lifecycleOwner) {
@@ -215,14 +210,14 @@ fun CapturedImageDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Captured Image", //todo add number of slot to which the image was taken?
+                    text = "Captured Image",
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 CustomSpacer()
 
-                Image( //todo check if this image looks the same as the image that will be sent to server
-                    bitmap = state.currentlyCapturedImage!!.asImageBitmap(),//todo if issues with images this may be a problem (description of the asImageBitmap method)
+                Image(
+                    bitmap = state.currentlyCapturedImage!!.asImageBitmap(),
                     contentDescription = "Captured image",
                     modifier = Modifier.aspectRatio(1f),
                     contentScale = ContentScale.Crop //fits the image inside the 1:1 ratio so it does not take just the middle of the image
@@ -315,7 +310,7 @@ fun TopImageBarSlot(
             if (image != null) {
                 Image(
                     bitmap = image.asImageBitmap(),
-                    contentDescription = "Captured image", //todo psat sem i slot?
+                    contentDescription = "Captured image",
                     contentScale = ContentScale.Crop
                 )
             } else {

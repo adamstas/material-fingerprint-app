@@ -1,11 +1,9 @@
 package cz.cas.utia.materialfingerprintapp.features.analysis.presentation.visualise
 
-// todo byt konzistentni a vsude pouzivat "Materials" (browse similar materials atd.)
-
 sealed interface PolarPlotVisualisationEvent {
-    data object FindSimilarMaterial: PolarPlotVisualisationEvent
-    data object FindSimilarLocalMaterial: PolarPlotVisualisationEvent
-    data object FindSimilarRemoteMaterial: PolarPlotVisualisationEvent
+    data object FindSimilarMaterials: PolarPlotVisualisationEvent
+    data object FindSimilarLocalMaterials: PolarPlotVisualisationEvent
+    data object FindSimilarRemoteMaterials: PolarPlotVisualisationEvent
 
     data object ApplyFilter: PolarPlotVisualisationEvent
 

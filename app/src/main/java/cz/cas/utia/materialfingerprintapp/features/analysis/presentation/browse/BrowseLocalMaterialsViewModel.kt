@@ -23,7 +23,8 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
     savedStateHandle = savedStateHandle,
     materialCharacteristicsRepository = dataStore) {
 
-    // state flow has a default value so when this _selectedCategoryIDs.onEach { ... } is set in init block, it has to immediately call filterMaterials()
+    // state flow has a default value so when this _selectedCategoryIDs.onEach { ... }
+    // is set in init block, it has to immediately call filterMaterials()
     // because there is a value to be emitted already
     init {
         combine( // combine those flows so filterMaterials() is not called twice when ViewModel is created
@@ -51,7 +52,7 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
             val isSecondMaterialChecked = _checkedMaterials.value.size > 1
             val secondCheckedMaterial = if (isSecondMaterialChecked) _checkedMaterials.value.elementAt(1) else null
 
-            _navigationEvents.emit(MaterialNavigationEvent.ToPolarPlotVisualisationScreen(
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToPolarPlotVisualisationScreen(
                 isFirstMaterialSourceLocal = true,
                 firstMaterialId = firstCheckedMaterial.id,
                 firstMaterialName = firstCheckedMaterial.name,
@@ -62,20 +63,20 @@ class BrowseLocalMaterialsViewModel @Inject constructor(
         }
     }
 
-    override fun findSimilarLocalMaterials(event: MaterialEvent.FindSimilarLocalMaterials) {
+    override fun findSimilarLocalMaterials(event: BrowseMaterialsEvent.FindSimilarLocalMaterials) {
         viewModelScope.launch {
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(event.material.id))
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToBrowseSimilarLocalMaterialsScreen(event.material.id))
         }
     }
 
-    override fun findSimilarRemoteMaterials(event: MaterialEvent.FindSimilarRemoteMaterials) {
+    override fun findSimilarRemoteMaterials(event: BrowseMaterialsEvent.FindSimilarRemoteMaterials) {
         viewModelScope.launch {
             materialCharacteristicsRepository.saveMaterialCharacteristics(
                 materialCharacteristics = event.material.characteristics,
                 slot = MaterialCharacteristicsStorageSlot.APPLY_FILTER_SCREEN
             )
 
-            _navigationEvents.emit(MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(-1L))
+            _navigationEvents.emit(BrowseMaterialsNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen(-1L))
         }
     }
 }

@@ -35,7 +35,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideNetworkConnectionChecker(
-        @ApplicationContext appContext: Context // even though this is a singleton, the most recent context will be always provided to this single instance
+        // even though this is a singleton, the most recent context will be always provided to this single instance
+        @ApplicationContext appContext: Context
     ): NetworkConnectionChecker {
         return NetworkConnectionChecker(appContext)
     }
@@ -46,7 +47,8 @@ object ApiModule {
         networkConnectionInterceptor: NetworkConnectionInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .readTimeout(60, TimeUnit.SECONDS) // sometimes it takes some time to analyse the image at the server
+            // sometimes it takes some time to analyse the image at the server
+            .readTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(networkConnectionInterceptor)
             .build()
     }

@@ -19,18 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CapturingViewModel @Inject constructor(
-    //todo add service for calling server API for uploading images
     private val imageStorageService: ImageStorageService
 ): ViewModel()
 {
-    //todo typ "Bitmap?" jsem chtel obalit do State ale byl by to jen empty/available takze budu prote rovnou hceckovat jestli image je nebo neni null
-
     private val _state = MutableStateFlow(CapturingScreenState())
     val state = _state.asStateFlow()
 
     //for navigation events
     private val _navigationEvents = MutableSharedFlow<CapturingNavigationEvent>()
-    //todo if there are some navigation bugs when app is in the background then add replay = 10 or something (https://www.youtube.com/watch?v=BFhVvAzC52w&ab_channel=PhilippLackner 8:00)
     val navigationEvents = _navigationEvents.asSharedFlow()
 
     //always select the next empty slot and if no other empty slot exists return the current one

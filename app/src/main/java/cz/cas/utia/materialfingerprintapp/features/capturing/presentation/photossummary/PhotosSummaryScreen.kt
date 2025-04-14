@@ -192,7 +192,7 @@ fun MaterialNameRow(
                     onEvent(PhotosSummaryEvent.SetName(name))
                 },
                 placeholder = { Text(text = "Enter material name") },
-                singleLine = true, //todo testnout a dat i jinam?
+                singleLine = true,
                 isError = !state.isNameValid
             )
 
@@ -242,7 +242,7 @@ fun CategoriesDropdownMenu(
             onEvent(PhotosSummaryEvent.SelectCategory(category)) },
         options = MaterialCategory.entries,
         selectedOption = state.selectedCategory,
-        modifier = Modifier.width(216.dp) //todo keep fixed?
+        modifier = Modifier.width(216.dp)
     )
 }
 

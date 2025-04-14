@@ -65,9 +65,9 @@ fun BrowseMaterialsScreenRoot(
         navigationEventFlow = viewModel.navigationEvents,
         navigate = { event ->
             when (event) {
-                is MaterialNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialID)
-                is MaterialNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen(event.materialID)
-                is MaterialNavigationEvent.ToPolarPlotVisualisationScreen -> navigateToPolarPlotVisualisationScreen(
+                is BrowseMaterialsNavigationEvent.ToBrowseSimilarLocalMaterialsScreen -> navigateToBrowseSimilarLocalMaterialsScreen(event.materialID)
+                is BrowseMaterialsNavigationEvent.ToBrowseSimilarRemoteMaterialsScreen -> navigateToBrowseSimilarRemoteMaterialsScreen(event.materialID)
+                is BrowseMaterialsNavigationEvent.ToPolarPlotVisualisationScreen -> navigateToPolarPlotVisualisationScreen(
                     event.isFirstMaterialSourceLocal,
                     event.firstMaterialId,
                     event.firstMaterialName,
@@ -75,21 +75,21 @@ fun BrowseMaterialsScreenRoot(
                     event.secondMaterialId,
                     event.secondMaterialName
                 )
-                MaterialNavigationEvent.Back -> navigateBack()
+                BrowseMaterialsNavigationEvent.Back -> navigateBack()
             }
         }
     )
 
     when (val screenState = state) {
-        is MaterialsScreenState.Success -> BrowseMaterialsScreen(
+        is BrowseMaterialsScreenState.Success -> BrowseMaterialsScreen(
             title = title,
             state = screenState,
             onEvent = viewModel::onEvent
         )
 
-        is MaterialsScreenState.Error -> ErrorScreen(
+        is BrowseMaterialsScreenState.Error -> ErrorScreen(
             message = stringResource(id = screenState.messageResId),
-            onAction = { viewModel.onEvent(MaterialEvent.GoBack) },
+            onAction = { viewModel.onEvent(BrowseMaterialsEvent.GoBack) },
             buttonText = "Go back",
             exception = screenState.exception
         )
@@ -99,14 +99,14 @@ fun BrowseMaterialsScreenRoot(
 @Composable
 fun BrowseMaterialsScreen(
     title: String,
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit
 ) {
     Scaffold(
         topBar = {
             BackTopBarTitle(
                 title = title,
-                navigateBack = { onEvent(MaterialEvent.GoBack) }
+                navigateBack = { onEvent(BrowseMaterialsEvent.GoBack) }
             )
         }
     ) { paddingValues ->
@@ -114,7 +114,7 @@ fun BrowseMaterialsScreen(
             Modifier
                 .padding(paddingValues)
                 .padding(24.dp)
-                .windowInsetsPadding(WindowInsets.navigationBars) //todo pozor ze kdyz se mobil otoci tak spodní tlacitko zajede pod navigacni listu (ocividne to tenhle typ paddingu neotoci spolecne s obrazovkou)
+                .windowInsetsPadding(WindowInsets.navigationBars)
                 .fillMaxSize()
         ) {
             SearchAndFilterSection(state, onEvent)
@@ -136,9 +136,9 @@ fun BrowseMaterialsScreen(
 
             if (state.isFindSimilarMaterialsDialogShown) {
                 FindSimilarMaterialsDialog(
-                    onDismissRequest = { onEvent(MaterialEvent.DismissFindSimilarMaterialsDialog) },
-                    onLocalDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterial())) },
-                    onRemoteDatabaseButtonClick = { onEvent(MaterialEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterial())) }
+                    onDismissRequest = { onEvent(BrowseMaterialsEvent.DismissFindSimilarMaterialsDialog) },
+                    onLocalDatabaseButtonClick = { onEvent(BrowseMaterialsEvent.FindSimilarLocalMaterials(state.getFirstCheckedMaterial())) },
+                    onRemoteDatabaseButtonClick = { onEvent(BrowseMaterialsEvent.FindSimilarRemoteMaterials(state.getFirstCheckedMaterial())) }
                 )
             }
         }
@@ -147,8 +147,8 @@ fun BrowseMaterialsScreen(
 
 @Composable
 fun SearchAndFilterSection(
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -171,16 +171,17 @@ fun SearchAndFilterSection(
 
 @Composable
 fun MaterialsSearchBar(
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit,
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit,
     modifier: Modifier
 ) {
     TextField(
         value = state.searchBarText,
         onValueChange = { searchText: String ->
-            onEvent(MaterialEvent.SearchMaterials(searchText))
+            onEvent(BrowseMaterialsEvent.SearchMaterials(searchText))
             },
         placeholder = { Text(text = "Search for name...") },
+        singleLine = true,
         modifier = modifier
     )
     //maybe put the search bar up the categories top down menu in case the top down menu is too wide
@@ -188,8 +189,8 @@ fun MaterialsSearchBar(
 
 @Composable
 fun CategoriesDropdownMenu(
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit,
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit,
     modifier: Modifier
 ) {
     Box(modifier = modifier) {
@@ -201,19 +202,19 @@ fun CategoriesDropdownMenu(
             selectedIDs = state.selectedCategoryIDs,
             selectedText = state.selectedCategoriesText,
             checkOrUncheckItem = { id: Int ->
-                onEvent(MaterialEvent.CheckOrUncheckCategory(id))
+                onEvent(BrowseMaterialsEvent.CheckOrUncheckCategory(id))
             },
             expanded = state.isDropdownMenuExpanded,
-            onDropdownMenuClick = { onEvent(MaterialEvent.ShowDropdownMenu) },
-            onDropdownMenuClosed = { onEvent(MaterialEvent.CloseDropdownMenu) }
+            onDropdownMenuClick = { onEvent(BrowseMaterialsEvent.ShowDropdownMenu) },
+            onDropdownMenuClosed = { onEvent(BrowseMaterialsEvent.CloseDropdownMenu) }
         )
     }
 }
 
 @Composable
 fun MaterialsListSection(
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit,
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit,
     modifier: Modifier
 ) {
     if (state.isSearching) {
@@ -250,12 +251,12 @@ fun MaterialsListSection(
 @Composable
 fun MaterialListRow(
     material: MaterialSummary,
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit
 ) {
     val imageSize = 96.dp
 
-    Text(text = material.name) //todo styling
+    Text(text = material.name)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -266,8 +267,8 @@ fun MaterialListRow(
                 Image(
                     bitmap = material.photoThumbnail.imageBitmap,
                     contentDescription = "Material specular image",
-                    contentScale = ContentScale.Crop, //todo nechat?
-                    modifier = Modifier.size(imageSize) // todo adjust size so the polar plot is somehow readable
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(imageSize)
                 )
 
             MaterialImage.UrlImage ->
@@ -303,9 +304,9 @@ fun MaterialListRow(
             checked = state.isMaterialChecked(material),
             onCheckedChange = { checked ->
                 if (checked) {
-                    onEvent(MaterialEvent.CheckMaterial(material))
+                    onEvent(BrowseMaterialsEvent.CheckMaterial(material))
                 } else {
-                    onEvent(MaterialEvent.UncheckMaterial(material))
+                    onEvent(BrowseMaterialsEvent.UncheckMaterial(material))
                 }
             },
             modifier = Modifier
@@ -316,20 +317,20 @@ fun MaterialListRow(
 
 @Composable
 fun BottomButtonsSection(
-    state: MaterialsScreenState.Success,
-    onEvent: (MaterialEvent) -> Unit,
+    state: BrowseMaterialsScreenState.Success,
+    onEvent: (BrowseMaterialsEvent) -> Unit,
     modifier: Modifier) {
         Button(
             modifier = modifier,
             enabled = state.isFindSimilarMaterialButtonEnabled,
-            onClick = { onEvent(MaterialEvent.FindSimilarMaterial) }) {
-                Text(text = "Find similar material")
+            onClick = { onEvent(BrowseMaterialsEvent.FindSimilarMaterial) }) {
+                Text(text = "Find similar materials")
         }
 
         Button(
             modifier = modifier,
             enabled = state.isCreatePolarPlotButtonEnabled,
-            onClick = { onEvent(MaterialEvent.CreatePolarPlot) }) {
+            onClick = { onEvent(BrowseMaterialsEvent.CreatePolarPlot) }) {
                 Text(text = "Create polar plot")
         }
 }

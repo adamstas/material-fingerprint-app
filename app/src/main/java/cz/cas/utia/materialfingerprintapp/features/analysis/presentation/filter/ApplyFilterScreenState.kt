@@ -3,15 +3,15 @@ package cz.cas.utia.materialfingerprintapp.features.analysis.presentation.filter
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
 
-data class ApplyFilterScreenState( //todo fakt jsou materialy od zhruba -2,75 do +2,75 ?
-    val materialCharacteristics: MaterialCharacteristics = MaterialCharacteristics( //todo az budu mit realne hodnoty, tak vytvorit par defaultnich (drevo, latka, ...) a jeden z nich tady nastavit a ve state mit jen ten list<float> axisValues
+data class ApplyFilterScreenState(
+    val materialCharacteristics: MaterialCharacteristics = MaterialCharacteristics(
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0
     ),
 
-    val axisValues: List<Float> = materialCharacteristics.toListForDrawing(), //todo pozdeji ten list udelat z objektu co ziskam v data store a pracovat uz jen s tim listem
+    val axisValues: List<Float> = materialCharacteristics.toListForDrawing(),
     val drawingStateStack: List<List<Float>> = listOf(axisValues),
-    val selectedAxisValue: Float = 0f, //todo pak vymyslet co tam zobrazit na zacatku, asi to dat nullable..
+    val selectedAxisValue: Float = 150f,
     val showAxisLabels: Boolean = false
 ) {
 
@@ -41,7 +41,6 @@ fun scaleToDrawingFloats(
     return ((value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin).toFloat()
 }
 
-// todo osetrit zda je velikost presne axesAMount, jinak hodit exception..?
 fun fromListForDrawingToMaterialCharacteristics(list: List<Float>): MaterialCharacteristics {
     return MaterialCharacteristics(
         checkeredPattern = scaleToCharacteristics(list[0]),

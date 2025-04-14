@@ -13,10 +13,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-//todo maybe move to core? and rename to MaterialDatabase module or something like that?
 @Module
 @InstallIn(SingletonComponent::class)
-object MaterialModule {
+object MaterialDatabaseModule {
 
     @Provides
     @Singleton
@@ -26,7 +25,6 @@ object MaterialModule {
             MaterialDatabase::class.java,
             "materials.db"
         ).build()
-        //db.materialDao.insertMaterials(initialData()) //todo remove later - if needed to seed database, put it somewhere else in some init block or something
     }
 
     @Provides

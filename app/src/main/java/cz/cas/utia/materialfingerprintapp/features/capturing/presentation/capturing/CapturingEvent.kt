@@ -2,7 +2,6 @@ package cz.cas.utia.materialfingerprintapp.features.capturing.presentation.captu
 
 import android.graphics.Bitmap
 
-//todo keep naming convention so this is CameraEvent and in material screen there is MaterialEvent?
 sealed interface CapturingEvent {
     data class CaptureImage(val imageBitmap: Bitmap): CapturingEvent
     data object RetakeImage: CapturingEvent

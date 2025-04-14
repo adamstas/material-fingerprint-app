@@ -47,7 +47,7 @@ fun FindSimilarMaterialsDialog(
                     Button(
                         onClick = { onLocalDatabaseButtonClick() },
                         modifier = Modifier.weight(1f)) {
-                        Text("Local database") // todo pouzivat database?
+                        Text("Local database")
                     }
 
                     CustomSpacer()

@@ -108,8 +108,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         Bitmap materialBitmap = Bitmap.createBitmap(materialImage.cols(), materialImage.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(materialImage, materialBitmap);
 
-        //todo add check if listener not null?
-        imageCapturedListener.onImageCaptured(materialBitmap);
+        if (imageCapturedListener != null)
+            imageCapturedListener.onImageCaptured(materialBitmap);
     }
 
     private Mat getInnerImagePart() {
@@ -181,7 +181,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
                 color = new Scalar(0, 255, 0);
                 targetImageLocked = true;
 
-                imageReadyToBeCapturedListener.onImageReadyToBeCaptured(true);
+                if (imageCapturedListener != null)
+                    imageReadyToBeCapturedListener.onImageReadyToBeCaptured(true);
 
                 targetImage.setCont(rectCont);
                 targetImage.setPhoto(imageMat);
@@ -189,7 +190,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
                 color = new Scalar(255, 0, 0);
                 targetImageLocked = false;
 
-                imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
+                if (imageCapturedListener != null)
+                    imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
 
             }
             Imgproc.drawContours(imageMat, contours, -1, color, 5);
@@ -202,7 +204,8 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
         } else {
             targetImageLocked = false;
 
-            imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
+            if (imageCapturedListener != null)
+                imageReadyToBeCapturedListener.onImageReadyToBeCaptured(false);
         }
 
 

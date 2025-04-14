@@ -160,7 +160,7 @@ fun PolarPlotVisualisationScreen(
                                         modifier = Modifier.padding(horizontal = 16.dp)
                                     ) {
                                         Button(
-                                            onClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarMaterial) },
+                                            onClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarMaterials) },
                                             enabled = state.areBottomButtonsEnabled(),
                                             modifier = Modifier.weight(1f)
                                         ) {
@@ -246,8 +246,8 @@ fun PolarPlotVisualisationScreen(
             if (state.isFindSimilarMaterialsDialogShown) {
                 FindSimilarMaterialsDialog(
                     onDismissRequest = { onEvent(PolarPlotVisualisationEvent.DismissFindSimilarMaterialsDialog) },
-                    onLocalDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarLocalMaterial) },
-                    onRemoteDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarRemoteMaterial) }
+                    onLocalDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarLocalMaterials) },
+                    onRemoteDatabaseButtonClick = { onEvent(PolarPlotVisualisationEvent.FindSimilarRemoteMaterials) }
                 )
             }
         }
