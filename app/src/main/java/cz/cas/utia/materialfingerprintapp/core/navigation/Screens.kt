@@ -57,7 +57,7 @@ sealed class Screen {
         @Serializable
         data object Analysis: MainScreen<AnalysisHome>(
             label = "Analysis",
-            iconSelectedId = R.drawable.analytics_filled,
+            iconSelectedId = R.drawable.analysis_filled,
             iconUnselectedId = R.drawable.analytics,
             route = AnalysisHome
         ) {

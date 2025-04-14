@@ -4,6 +4,10 @@ import cz.cas.utia.materialfingerprintapp.R
 
 object AppConfig {
 
+    object Tutorial {
+        const val PHOTO_CAPTURING_TEMPLATE_LINK = "https://google.com" // todo link
+    }
+
     object ImageStoring {
         const val IMAGE_SUFFIX = ".png"
         const val SLOT1_IMAGE_NAME = "slot1"
