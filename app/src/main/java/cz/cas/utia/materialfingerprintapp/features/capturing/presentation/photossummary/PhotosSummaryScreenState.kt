@@ -9,8 +9,8 @@ sealed interface PhotosSummaryScreenState {
         val capturedImageSlot1: Bitmap? = null,
         val capturedImageSlot2: Bitmap? = null,
 
-        val lightDirectionSlot1: LightDirection = LightDirection.FROM_ABOVE,
-        val lightDirectionSlot2: LightDirection = LightDirection.FROM_LEFT,
+        val lightDirectionSlot1: LightDirection = LightDirection.FROM_LEFT,
+        val lightDirectionSlot2: LightDirection = LightDirection.FROM_ABOVE,
 
         val materialName: String = "",
         val selectedCategory: MaterialCategory = MaterialCategory.UNCATEGORIZED,

@@ -271,10 +271,15 @@ fun TopImageBar(
             isSelected = state.isSlotSelected(ImageSlotPosition.SECOND),
             onClick = { onEvent(CapturingEvent.SelectImageSlot(ImageSlotPosition.SECOND)) }
         )
-        
+
+        val text = if (state.isSlotSelected(ImageSlotPosition.FIRST))
+            "Take a photo with light coming from the left side, at a 45° elevation."
+        else "Take a photo with light from top/opposite side, at a 45° elevation. " +
+                "The light reflection should appear in the center of the sample."
+
         Text(
-            text = "Take one picture with light from side and one picture with light from above",
-            style = MaterialTheme.typography.bodyMedium
+            text = text,
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
