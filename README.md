@@ -1,6 +1,7 @@
 # MatTag
 
 **Visual Material Analysis for Android**  
+
 Discover the unique visual identity of materials through their perceptual fingerprints.
 
 ![MatTag Splash Screen](app/src/main/res/drawable/splash.png)
@@ -17,7 +18,7 @@ Capture material appearances, analyze key visual attributes, and search your dat
   Communicates with a remote server to perform material analysis, retrieve stored materials and compute material similarities.
 
 - **Interactive Polar Graphs**  
-  Visualizes material characteristics via polar graphs — compare one or two materials using dual-curve or side-by-side graphs.
+  Visualizes material characteristics via polar graphs — compare one or two materials using two curves in single plot or side-by-side graphs.
 
 - **Anonymous Cloud Sync (Opt-In)**  
   Users can choose whether to anonymously sync analyzed data to the server or keep it local.
