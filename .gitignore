@@ -17,3 +17,7 @@
 local.properties
 /opencv/build
 /opencv/.cxx
+.idea/*
+!.idea/inspectionProfiles/
+!.idea/codeStyles/
+!.idea/vcs.xml
