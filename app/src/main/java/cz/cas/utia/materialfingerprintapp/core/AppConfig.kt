@@ -5,7 +5,7 @@ import cz.cas.utia.materialfingerprintapp.R
 object AppConfig {
 
     object Tutorial {
-        const val PHOTO_CAPTURING_TEMPLATE_LINK = "https://google.com" // todo link
+        const val PHOTO_CAPTURING_TEMPLATE_LINK = "https://raw.githubusercontent.com/adamstas/material-fingerprint-app/refs/heads/master/template/capturing_template.svg"
     }
 
     object ImageStoring {
