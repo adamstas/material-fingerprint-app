@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
+        <!-- for local server for testing purposes -->
         <domain includeSubdomains="true">127.0.0.1</domain>
+        <!-- for remote production server -->
+        <domain includeSubdomains="true">stimuly.utia.cas.cz</domain>
     </domain-config>
 </network-security-config>

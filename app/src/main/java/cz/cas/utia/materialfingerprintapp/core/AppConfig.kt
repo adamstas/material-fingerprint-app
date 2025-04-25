@@ -18,7 +18,7 @@ object AppConfig {
     }
 
     object Server {
-        const val URL: String = "http://127.0.0.1:8000"
+        const val URL: String = "http://stimuly.utia.cas.cz:8000"
         const val MATERIALS_URL: String = "$URL/materials/"
         const val GET_MATERIAL_IMAGE_URL_APPEND: String = "/image/specular"
     }
