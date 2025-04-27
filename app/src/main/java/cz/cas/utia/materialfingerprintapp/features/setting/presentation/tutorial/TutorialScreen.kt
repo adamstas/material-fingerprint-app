@@ -159,7 +159,7 @@ fun TutorialPageContent(
 
         Text(
             text = page.description,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
 

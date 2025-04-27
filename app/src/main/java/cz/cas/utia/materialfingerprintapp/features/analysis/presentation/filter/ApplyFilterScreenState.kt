@@ -12,7 +12,7 @@ data class ApplyFilterScreenState(
     val axisValues: List<Float> = materialCharacteristics.toListForDrawing(),
     val drawingStateStack: List<List<Float>> = listOf(axisValues),
     val selectedAxisValue: Float = 150f,
-    val showAxisLabels: Boolean = false
+    val showAxisLabels: Boolean = true
 ) {
 
     fun isUndoButtonEnabled(): Boolean {

@@ -6,7 +6,7 @@ data class PolarPlotVisualisationScreenState(
     val axisValuesFirst: List<Float> = List(16) { 150f },
     val axisValuesSecond: List<Float>? = null,
 
-    val showAxisLabels: Boolean = false,
+    val showAxisLabels: Boolean = true,
 
     val isFindSimilarMaterialsDialogShown: Boolean = false,
 
