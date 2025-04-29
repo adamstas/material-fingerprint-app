@@ -49,7 +49,7 @@ Capture material appearances, analyze key visual attributes, and search your dat
 
 ## Installation
 
-1. **Download** the APK from the TODO section.
+1. **Download** the APK from the Releases section of this GitHub project.
 2. **Enable** installation from unknown sources in your device settings.
 3. **Open** the APK file to begin installation.
 4. **Grant** camera permission when prompted.
