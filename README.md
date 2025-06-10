@@ -53,3 +53,9 @@ Capture material appearances, analyze key visual attributes, and search your dat
 2. **Enable** installation from unknown sources in your device settings.
 3. **Open** the APK file to begin installation.
 4. **Grant** camera permission when prompted.
+
+## Acknowledgements
+
+This software was created with the support of the Faculty of Information Technology, Czech Technical University in Prague (FIT CTU) – fit.cvut.cz
+
+![FIT CTU logo](fit_logo.jpg)
