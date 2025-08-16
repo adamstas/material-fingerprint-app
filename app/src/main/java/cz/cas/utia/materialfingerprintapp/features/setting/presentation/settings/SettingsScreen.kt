@@ -1,5 +1,8 @@
 package cz.cas.utia.materialfingerprintapp.features.setting.presentation.settings
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +60,19 @@ fun SettingsScreen(
     state: SettingsScreenState,
     onEvent: (SettingsEvent) -> Unit
 ) {
+    // creates launcher of Android dialog for storing files
+    val createFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri: Uri? -> // returns URI of the created file, otherwise null (if user exited the dialog etc.)
+
+        // user selected some path in his filesystem = URI is not null and we can actually store the file
+        if (uri != null) {
+            onEvent(SettingsEvent.ExportLocalMaterialsAsCsv(uri))
+        } else {
+            onEvent(SettingsEvent.SetExportStatusAsNotStarted)
+        }
+    }
+
     val settingScreenItems = listOf(
         SettingsItemData(
             text = "Store data on the server\n" +
@@ -66,6 +82,37 @@ fun SettingsScreen(
                     checked = state.isStoreDataOnServerSwitchChecked,
                     onCheckedChange = { newSwitchValue ->
                         onEvent(SettingsEvent.SwitchStoreDataOnServerSwitch(newSwitchValue = newSwitchValue)) })
+            }),
+
+        SettingsItemData(
+            text = "Export local materials\n" +
+                    "as CSV without images",
+            content = {
+                Button(
+                    onClick = {
+                        createFileLauncher.launch(getCurrentMaterialsExportFileName())
+                    },
+                    enabled = state.materialExportStatus != MaterialExportStatus.IN_PROGRESS
+                ) {
+                    Text(
+                        when(state.materialExportStatus) {
+                            MaterialExportStatus.NOT_STARTED -> "Export as CSV"
+                            MaterialExportStatus.IN_PROGRESS -> "Export in progress..."
+                            MaterialExportStatus.FINISHED -> "Export done " + "\u2705" // green tick
+                        }
+                    )
+                }
+            }),
+
+        SettingsItemData(
+            text = "Export local materials\n" +
+                    "as ZIP including images",
+            content = {
+                Button(
+                    onClick = { onEvent(SettingsEvent.ExportLocalMaterialsAsZip) }
+                ) {
+                    Text(text = "Export as ZIP")
+                }
             }),
 
         SettingsItemData(

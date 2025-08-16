@@ -1,6 +1,8 @@
 package cz.cas.utia.materialfingerprintapp.features.setting.di
 
+import cz.cas.utia.materialfingerprintapp.features.setting.data.MaterialExportServiceImpl
 import cz.cas.utia.materialfingerprintapp.features.setting.data.SettingsDataStore
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.MaterialExportService
 import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import dagger.Binds
 import dagger.Module
@@ -10,11 +12,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SettingsRepositoryModule {
+abstract class SettingsBindsModule {
 
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(
         settingsDataStore: SettingsDataStore
     ): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMaterialExportService(
+        materialExportServiceImpl: MaterialExportServiceImpl
+    ): MaterialExportService
 }

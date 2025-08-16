@@ -8,6 +8,10 @@ object AppConfig {
         const val PHOTO_CAPTURING_TEMPLATE_LINK = "https://raw.githubusercontent.com/adamstas/material-fingerprint-app/refs/heads/master/template/capturing_template.svg"
     }
 
+    object MaterialExporting {
+        const val FILE_BASENAME = "exported_materials"
+    }
+
     object ImageStoring {
         const val IMAGE_SUFFIX = ".png"
         const val SLOT1_IMAGE_NAME = "slot1"

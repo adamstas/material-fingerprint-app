@@ -1,5 +1,6 @@
 package cz.cas.utia.materialfingerprintapp.features.setting.di
 
+import android.content.ContentResolver
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.preferencesDataStore
@@ -15,11 +16,17 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SettingsModule {
+object SettingsProvidesModule {
 
     @Singleton
     @Provides
     fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
         return appContext.dataStore
+    }
+
+    @Singleton
+    @Provides
+    fun provideContentResolver(@ApplicationContext context: Context): ContentResolver {
+        return context.contentResolver
     }
 }

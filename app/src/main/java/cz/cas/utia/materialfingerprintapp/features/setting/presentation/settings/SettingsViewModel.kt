@@ -2,6 +2,8 @@ package cz.cas.utia.materialfingerprintapp.features.setting.presentation.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
+import cz.cas.utia.materialfingerprintapp.features.setting.domain.MaterialExportService
 import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,7 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val localMaterialRepository: LocalMaterialRepository,
+    private val materialExportService: MaterialExportService
 ): ViewModel() {
     private val _state = MutableStateFlow(SettingsScreenState())
     val state = _state.asStateFlow()
@@ -47,6 +51,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.SelectDefaultScreen -> selectDefaultScreen(event)
             is SettingsEvent.SwitchStoreDataOnServerSwitch -> switchStoreDataOnServerSwitch(event)
             SettingsEvent.ReplayTutorial -> replayTutorial()
+            is SettingsEvent.ExportLocalMaterialsAsCsv -> exportLocalMaterialsAsCsv(event)
+            SettingsEvent.ExportLocalMaterialsAsZip -> exportLocalMaterialsAsZip()
+            SettingsEvent.SetExportStatusAsNotStarted -> setExportStatusAsNotStarted()
         }
     }
 
@@ -94,5 +101,38 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _navigationEvents.emit(SettingsNavigationEvent.ToTutorialScreen)
         }
+    }
+
+    private fun exportLocalMaterialsAsCsv(event: SettingsEvent.ExportLocalMaterialsAsCsv) {
+        _state.update {
+            it.copy(
+                materialExportStatus = MaterialExportStatus.IN_PROGRESS
+            )
+        }
+
+        viewModelScope.launch {
+            val materials = localMaterialRepository.getAllMaterialsOrderedByName()
+            materialExportService.exportMaterials(
+                uri = event.uri,
+                materials = materials
+            )
+            _state.update {
+                it.copy(
+                    materialExportStatus = MaterialExportStatus.FINISHED
+                )
+            }
+        }
+    }
+
+    private fun setExportStatusAsNotStarted() {
+        _state.update {
+            it.copy(
+                materialExportStatus = MaterialExportStatus.NOT_STARTED
+            )
+        }
+    }
+
+    private fun exportLocalMaterialsAsZip() {
+
     }
 }
