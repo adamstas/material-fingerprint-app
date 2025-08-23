@@ -104,16 +104,16 @@ fun SettingsScreen(
                 }
             }),
 
-        SettingsItemData(
-            text = "Export local materials\n" +
-                    "as ZIP including images",
-            content = {
-                Button(
-                    onClick = { onEvent(SettingsEvent.ExportLocalMaterialsAsZip) }
-                ) {
-                    Text(text = "Export as ZIP")
-                }
-            }),
+//        SettingsItemData(
+//            text = "Export local materials\n" +
+//                    "as ZIP including images",
+//            content = {
+//                Button(
+//                    onClick = { onEvent(SettingsEvent.ExportLocalMaterialsAsZip) }
+//                ) {
+//                    Text(text = "Export as ZIP")
+//                }
+//            }),
 
         SettingsItemData(
             text = "Default screen",
@@ -155,6 +155,7 @@ fun SettingsScreen(
             Modifier
                 .padding(paddingValues)
                 .padding(24.dp)
+                .padding(bottom = paddingValues.calculateBottomPadding())
                 .verticalScroll(scrollState)
         )
         {
@@ -248,7 +249,7 @@ fun AboutSection() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Version: 0.7.0",
+                    text = "Version: 0.8.0",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

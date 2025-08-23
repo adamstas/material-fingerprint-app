@@ -9,6 +9,7 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -164,7 +165,18 @@ public class CustomCameraView extends JavaCameraView implements CameraBridgeView
 
         Imgproc.cvtColor(imageMat, gray, Imgproc.COLOR_BGR2GRAY);
 
-        Imgproc.threshold(gray, blackTh, 50, 255, Imgproc.THRESH_BINARY_INV);
+        // original threshold computation, not working with high amount of light
+        //Imgproc.threshold(gray, blackTh, 50, 255, Imgproc.THRESH_BINARY_INV);
+
+        Mat grayNorm = new Mat();
+        Core.normalize(gray, grayNorm, 0, 255, Core.NORM_MINMAX);
+
+        Imgproc.adaptiveThreshold(
+                grayNorm, blackTh, 255,
+                Imgproc.ADAPTIVE_THRESH_MEAN_C,
+                Imgproc.THRESH_BINARY_INV,
+                51, 10
+        );
 
         List<MatOfPoint> contours = ImageAnalyzer.findRects(blackTh, 500, 0.15);
 
