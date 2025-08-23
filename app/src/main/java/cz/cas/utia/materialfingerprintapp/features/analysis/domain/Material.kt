@@ -87,7 +87,8 @@ data class MaterialCharacteristics(
 data class MaterialSummary(
     val id: Long, // if material is from server then this is remote ID, otherwise it is local ID
     val name: String,
-    val photoThumbnail: MaterialImage,
+    val specularPhotoThumbnail: MaterialImage,
+    val nonSpecularPhotoThumbnail: MaterialImage,
     val category: MaterialCategory,
     val characteristics: MaterialCharacteristics
 )

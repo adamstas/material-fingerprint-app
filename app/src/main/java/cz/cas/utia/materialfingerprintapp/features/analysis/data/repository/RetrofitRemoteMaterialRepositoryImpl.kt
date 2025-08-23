@@ -12,6 +12,7 @@ import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCateg
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCharacteristics
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.MaterialImageType
 import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.photossummary.LightDirection
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -47,7 +48,11 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
     }
 
     private fun createImagePart(filename: String, partName: String): MultipartBody.Part {
-        val file = imageStorageService.loadImageAsFile(filename + IMAGE_SUFFIX)
+        val file = imageStorageService.loadImageAsFile(
+            filename = filename + IMAGE_SUFFIX,
+            type = MaterialImageType.SLOT
+        )
+
         val requestBody = file.asRequestBody("image/png".toMediaTypeOrNull())
 
         return MultipartBody.Part.createFormData(name = partName, filename = filename, body = requestBody)
@@ -121,8 +126,15 @@ class RetrofitRemoteMaterialRepositoryImpl @Inject constructor(
             LightDirection.FROM_LEFT -> SLOT2_IMAGE_NAME to SLOT1_IMAGE_NAME
         }
 
-        val specularImage = createImagePart(filename = specularFilename, partName = "specular_image")
-        val nonSpecularImage = createImagePart(filename = nonSpecularFilename, partName = "non_specular_image")
+        val specularImage = createImagePart(
+            filename = specularFilename,
+            partName = "specular_image"
+        )
+
+        val nonSpecularImage = createImagePart(
+            filename = nonSpecularFilename,
+            partName = "non_specular_image"
+        )
 
         val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
         val categoryBody = category.toString().toRequestBody("text/plain".toMediaTypeOrNull())

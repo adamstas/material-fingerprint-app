@@ -16,7 +16,8 @@ data class MaterialResponse(
         return MaterialSummary(
             id = this.id,
             name = this.name,
-            photoThumbnail = MaterialImage.UrlImage,
+            specularPhotoThumbnail = MaterialImage.UrlImage,
+            nonSpecularPhotoThumbnail = MaterialImage.UrlImage,
             category = this.category,
             characteristics = this.characteristics.toMaterialCharacteristics()
         )

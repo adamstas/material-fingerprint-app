@@ -249,7 +249,7 @@ fun AboutSection() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Version: 0.8.0",
+                    text = "Version: 0.9.0",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

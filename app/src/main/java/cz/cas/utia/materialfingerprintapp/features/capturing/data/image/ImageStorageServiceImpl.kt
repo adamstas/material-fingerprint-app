@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.MaterialImageType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.FileOutputStream
 import java.io.File
@@ -16,8 +17,8 @@ class ImageStorageServiceImpl @Inject constructor(
 ): ImageStorageService {
     private val imagesDirectoryName = "images"
 
-    private fun getImagesDirectory(): File {
-        val imagesDirectory = File(context.filesDir, imagesDirectoryName)
+    private fun getImagesDirectory(type: MaterialImageType): File {
+        val imagesDirectory = File(context.filesDir, "$imagesDirectoryName/${type.folderName}")
 
         if (!imagesDirectory.exists()) {
             imagesDirectory.mkdirs()
@@ -25,8 +26,8 @@ class ImageStorageServiceImpl @Inject constructor(
         return imagesDirectory
     }
 
-    override fun storeImage(image: Bitmap, filename: String) {
-        val imageFile = File(getImagesDirectory(), filename)
+    override fun storeImage(image: Bitmap, filename: String, type: MaterialImageType) {
+        val imageFile = File(getImagesDirectory(type), filename)
 
         try {
             FileOutputStream(imageFile).use { outputStream ->
@@ -38,8 +39,8 @@ class ImageStorageServiceImpl @Inject constructor(
         }
     }
 
-    override fun loadImage(filename: String): Bitmap? {
-        val imagePath = getImagesDirectory().absolutePath + "/" + filename
+    override fun loadImage(filename: String, type: MaterialImageType): Bitmap? {
+        val imagePath = getImagesDirectory(type).absolutePath + "/" + filename
 
         return try {
             BitmapFactory.decodeFile(imagePath)
@@ -49,12 +50,12 @@ class ImageStorageServiceImpl @Inject constructor(
         }
     }
 
-    override fun loadImageAsFile(filename: String): File {
-        return File(getImagesDirectory(), filename)
+    override fun loadImageAsFile(filename: String, type: MaterialImageType): File {
+        return File(getImagesDirectory(type), filename)
     }
 
-    override fun deleteImage(filename: String): Boolean {
-        val imagePath = getImagesDirectory().absolutePath + "/" + filename
+    override fun deleteImage(filename: String, type: MaterialImageType): Boolean {
+        val imagePath = getImagesDirectory(type).absolutePath + "/" + filename
 
         val imageFile = File(imagePath)
         return if (imageFile.exists()) {

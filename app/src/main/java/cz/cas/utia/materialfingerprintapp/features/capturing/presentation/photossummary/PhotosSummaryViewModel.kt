@@ -10,6 +10,7 @@ import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.ex
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.LocalMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.repository.RemoteMaterialRepository
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.MaterialImageType
 import cz.cas.utia.materialfingerprintapp.features.setting.domain.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -145,8 +146,14 @@ class PhotosSummaryViewModel @Inject constructor(
 
     private fun loadImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageSlot1 = imageStorageService.loadImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
-            val imageSlot2 = imageStorageService.loadImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
+            val imageSlot1 = imageStorageService.loadImage(
+                filename = SLOT1_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
+            val imageSlot2 = imageStorageService.loadImage(
+                filename = SLOT2_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
 
             withContext(Dispatchers.Main) {
                 updateSuccessState { it.copy(
@@ -182,12 +189,42 @@ class PhotosSummaryViewModel @Inject constructor(
 
                     val materialId = localMaterialRepository.insertMaterial(material)
 
-                    val imageToStore = if (successState.lightDirectionSlot1 == LightDirection.FROM_ABOVE)
-                        successState.capturedImageSlot1 else successState.capturedImageSlot2
-                    imageStorageService.storeImage(imageToStore!!, "$materialId$IMAGE_SUFFIX")
+                    if (successState.lightDirectionSlot1 == LightDirection.FROM_ABOVE) {
+                        // slot1 = specular, slot2 = non-specular
+                        imageStorageService.storeImage(
+                            image = successState.capturedImageSlot1!!,
+                            filename = "$materialId$IMAGE_SUFFIX",
+                            type = MaterialImageType.SPECULAR
+                        )
+                        imageStorageService.storeImage(
+                            image = successState.capturedImageSlot2!!,
+                            filename = "$materialId$IMAGE_SUFFIX",
+                            type = MaterialImageType.NON_SPECULAR
+                        )
 
-                    imageStorageService.deleteImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
-                    imageStorageService.deleteImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
+                    } else {
+                        // slot1 = non-specular, slot2 = specular
+                        imageStorageService.storeImage(
+                            image = successState.capturedImageSlot1!!,
+                            filename = "$materialId$IMAGE_SUFFIX",
+                            type = MaterialImageType.NON_SPECULAR
+                        )
+                        imageStorageService.storeImage(
+                            image = successState.capturedImageSlot2!!,
+                            filename = "$materialId$IMAGE_SUFFIX",
+                            type = MaterialImageType.SPECULAR
+                        )
+                    }
+
+                    imageStorageService.deleteImage(
+                        filename = SLOT1_IMAGE_NAME_WITH_SUFFIX,
+                        type = MaterialImageType.SLOT
+                    )
+
+                    imageStorageService.deleteImage(
+                        filename = SLOT2_IMAGE_NAME_WITH_SUFFIX,
+                        type = MaterialImageType.SLOT
+                    )
 
                     _state.update { successState.copy(
                         capturedImageSlot1 = null,

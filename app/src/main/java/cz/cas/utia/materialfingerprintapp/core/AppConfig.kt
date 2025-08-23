@@ -14,8 +14,8 @@ object AppConfig {
 
     object ImageStoring {
         const val IMAGE_SUFFIX = ".png"
-        const val SLOT1_IMAGE_NAME = "slot1"
-        const val SLOT2_IMAGE_NAME = "slot2"
+        const val SLOT1_IMAGE_NAME = "1"
+        const val SLOT2_IMAGE_NAME = "2"
 
         const val SLOT1_IMAGE_NAME_WITH_SUFFIX = "$SLOT1_IMAGE_NAME$IMAGE_SUFFIX"
         const val SLOT2_IMAGE_NAME_WITH_SUFFIX = "$SLOT2_IMAGE_NAME$IMAGE_SUFFIX"
@@ -23,8 +23,10 @@ object AppConfig {
 
     object Server {
         const val URL: String = "http://stimuly.utia.cas.cz:8000"
+        //const val URL: String = "http://127.0.0.1:8000"
         const val MATERIALS_URL: String = "$URL/materials/"
-        const val GET_MATERIAL_IMAGE_URL_APPEND: String = "/image/specular"
+        const val GET_MATERIAL_SPECULAR_IMAGE_URL_APPEND: String = "/image/specular"
+        const val GET_MATERIAL_NON_SPECULAR_IMAGE_URL_APPEND: String = "/image/non_specular"
     }
 
     object Colors {

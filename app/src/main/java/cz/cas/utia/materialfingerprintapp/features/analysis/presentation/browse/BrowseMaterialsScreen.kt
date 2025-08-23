@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BackTopBarTitle
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomSpacer
@@ -41,11 +42,12 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.DropdownMenuWithChe
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialCategory
 import coil3.compose.AsyncImage
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_NON_SPECULAR_IMAGE_URL_APPEND
 import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialSummary
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.commoncomponents.FindSimilarMaterialsDialog
 import cz.cas.utia.materialfingerprintapp.features.analysis.presentation.commoncomponents.PolarPlotCanvas
-import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_IMAGE_URL_APPEND
+import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.GET_MATERIAL_SPECULAR_IMAGE_URL_APPEND
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.Server.MATERIALS_URL
 import cz.cas.utia.materialfingerprintapp.core.ui.components.ErrorScreen
 import cz.cas.utia.materialfingerprintapp.features.analysis.domain.MaterialImage
@@ -256,31 +258,45 @@ fun MaterialListRow(
 ) {
     val imageSize = 96.dp
 
-    Text(text = material.name)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = material.name,
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = material.category.toString(),
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        when (material.photoThumbnail) {
-            is MaterialImage.BitmapImage ->
-                Image(
-                    bitmap = material.photoThumbnail.imageBitmap,
-                    contentDescription = "Material specular image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(imageSize)
-                )
 
-            MaterialImage.UrlImage ->
-                AsyncImage(
-                    model = MATERIALS_URL + material.id + GET_MATERIAL_IMAGE_URL_APPEND,
-                    contentDescription = "Material specular image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(imageSize)
-                )
-        }
+        MaterialImageThumbnail(
+            image = material.specularPhotoThumbnail,
+            materialId = material.id,
+            urlAppend = GET_MATERIAL_SPECULAR_IMAGE_URL_APPEND,
+            contentDescription = "Material specular image",
+            imageSize = imageSize
+        )
 
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(12.dp))
+
+        MaterialImageThumbnail(
+            image = material.nonSpecularPhotoThumbnail,
+            materialId = material.id,
+            urlAppend = GET_MATERIAL_NON_SPECULAR_IMAGE_URL_APPEND,
+            contentDescription = "Material non specular image",
+            imageSize = imageSize
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
 
         Box(
             modifier = Modifier.size(imageSize)
@@ -294,11 +310,6 @@ fun MaterialListRow(
         }
 
         Spacer(modifier = Modifier.width(12.dp))
-
-        Text(
-            text = material.category.toString(),
-            style = MaterialTheme.typography.bodySmall
-        )
 
         Checkbox(
             checked = state.isMaterialChecked(material),
@@ -346,5 +357,35 @@ fun CenterBox(
         contentAlignment = Alignment.Center
     ) {
         content()
+    }
+}
+
+@Composable
+fun MaterialImageThumbnail(
+    image: MaterialImage,
+    materialId: Long,
+    urlAppend: String,
+    contentDescription: String,
+    imageSize: Dp,
+    modifier: Modifier = Modifier
+) {
+    when (image) {
+        is MaterialImage.BitmapImage -> {
+            Image(
+                bitmap = image.imageBitmap,
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Crop,
+                modifier = modifier.size(imageSize)
+            )
+        }
+
+        MaterialImage.UrlImage -> {
+            AsyncImage(
+                model = MATERIALS_URL + materialId + urlAppend,
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Crop,
+                modifier = modifier.size(imageSize)
+            )
+        }
     }
 }

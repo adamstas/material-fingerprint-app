@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT1_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.core.AppConfig.ImageStoring.SLOT2_IMAGE_NAME_WITH_SUFFIX
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.MaterialImageType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -50,8 +51,17 @@ class CapturingViewModel @Inject constructor(
 
     private fun storeImage(slot: ImageSlotPosition, image: Bitmap) {
         when (slot) {
-            ImageSlotPosition.FIRST -> imageStorageService.storeImage(image = image, filename = SLOT1_IMAGE_NAME_WITH_SUFFIX)
-            ImageSlotPosition.SECOND -> imageStorageService.storeImage(image = image, filename = SLOT2_IMAGE_NAME_WITH_SUFFIX)
+            ImageSlotPosition.FIRST -> imageStorageService.storeImage(
+                image = image,
+                filename = SLOT1_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
+
+            ImageSlotPosition.SECOND -> imageStorageService.storeImage(
+                image = image,
+                filename = SLOT2_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
         }
     }
 
@@ -126,8 +136,15 @@ class CapturingViewModel @Inject constructor(
 
     private fun loadImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            val imageSlot1 = imageStorageService.loadImage(SLOT1_IMAGE_NAME_WITH_SUFFIX)
-            val imageSlot2 = imageStorageService.loadImage(SLOT2_IMAGE_NAME_WITH_SUFFIX)
+            val imageSlot1 = imageStorageService.loadImage(
+                filename = SLOT1_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
+
+            val imageSlot2 = imageStorageService.loadImage(
+                filename = SLOT2_IMAGE_NAME_WITH_SUFFIX,
+                type = MaterialImageType.SLOT
+            )
 
             withContext(Dispatchers.Main) {
                 _state.update { it.copy(
