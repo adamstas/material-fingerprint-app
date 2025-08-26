@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BasicDropdownMenu
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
+import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.photossummary.PhotosSummaryEvent
 
 @Composable
 fun SettingsScreenRoot(
@@ -82,6 +84,42 @@ fun SettingsScreen(
                     checked = state.isStoreDataOnServerSwitchChecked,
                     onCheckedChange = { newSwitchValue ->
                         onEvent(SettingsEvent.SwitchStoreDataOnServerSwitch(newSwitchValue = newSwitchValue)) })
+            }),
+
+        SettingsItemData(
+            text = "Server URL\n",
+            content = {
+                
+                Column(modifier = Modifier.fillMaxWidth(0.95f)) {
+
+                    TextField(
+                        value = state.serverUrl,
+                        onValueChange = { url: String ->
+                            onEvent(SettingsEvent.SetServerUrl(url))
+                        },
+                        placeholder = { Text(text = "e.g. https://myserver.com:8000") },
+                        singleLine = true,
+                        isError = !state.isServerUrlValid,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.padding(top = 4.dp))
+
+                    if (!state.isServerUrlValid) {
+                        Text(
+                            text = "Invalid URL format",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+
+                    } else {
+                        Text(
+                            text = "Change this only if you run your own server.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }),
 
         SettingsItemData(
@@ -249,7 +287,7 @@ fun AboutSection() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Version: 0.9.0",
+                    text = "Version: 1.0",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

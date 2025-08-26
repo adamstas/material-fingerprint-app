@@ -6,6 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.MaterialApiService
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.helper.NetworkConnectionChecker
+import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.interceptor.DynamicBaseUrlInterceptor
 import cz.cas.utia.materialfingerprintapp.features.analysis.data.material.api.interceptor.NetworkConnectionInterceptor
 import dagger.Module
 import dagger.Provides
@@ -21,7 +22,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-    private const val BASE_URL = AppConfig.Server.URL
+    private const val BASE_URL = AppConfig.Server.DEFAULT_URL
 
     @Singleton
     @Provides
@@ -44,12 +45,14 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(
-        networkConnectionInterceptor: NetworkConnectionInterceptor
+        networkConnectionInterceptor: NetworkConnectionInterceptor,
+        dynamicBaseUrlInterceptor: DynamicBaseUrlInterceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             // sometimes it takes some time to analyse the image at the server
             .readTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(networkConnectionInterceptor)
+            .addInterceptor(dynamicBaseUrlInterceptor)
             .build()
     }
 

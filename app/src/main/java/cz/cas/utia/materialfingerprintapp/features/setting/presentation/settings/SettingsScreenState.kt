@@ -11,7 +11,9 @@ data class SettingsScreenState(
 
     val isDefaultScreenDropdownMenuExpanded: Boolean = false,
 
-    val materialExportStatus: MaterialExportStatus = MaterialExportStatus.NOT_STARTED
+    val materialExportStatus: MaterialExportStatus = MaterialExportStatus.NOT_STARTED,
+    val serverUrl: String = AppConfig.Server.DEFAULT_URL,
+    val isServerUrlValid: Boolean = true
 )
 
 enum class MaterialExportStatus {

@@ -9,6 +9,12 @@ interface SettingsRepository {
     suspend fun saveDefaultScreen(screen: DefaultScreen)
     suspend fun getDefaultScreen(): DefaultScreen
 
+    suspend fun saveServerUrl(url: String)
+    suspend fun getServerUrl(): String
+
+    // for getting the URL from state without "suspend" (for DynamicBaseUrlInterceptor)
+    fun getServerUrlSync(): String
+
     suspend fun saveTutorialCompleted(completed: Boolean)
     suspend fun getTutorialCompleted(): Boolean
 }

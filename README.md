@@ -43,7 +43,13 @@ Capture material appearances, analyze key visual attributes, and search your dat
 
 ## Server
 
-For proper functionality, the application requires a running server instance.
+For proper functionality, the application automatically connects to the server hosted at UTIA.
+
+You can also configure your own server and maintain your own online material database.  
+To do this, set the server URL in the app settings.
+
+**Note:** the server must use HTTPS, otherwise the app will not connect.
+
 The server source code and deployment instructions are available in repository 
 [material-fingerprint-app-server](https://github.com/adamstas/material-fingerprint-app-server).
 
@@ -62,7 +68,7 @@ The server source code and deployment instructions are available in repository
 
 ## Acknowledgements
 
-This software was created with the support of the **Faculty of Information Technology, Czech Technical University in Prague (FIT CTU)** – fit.cvut.cz
+This software was created with the support of the **Faculty of Information Technology, Czech Technical University in Prague (FIT CTU)** – www.fit.cvut.cz
 
 ![FIT CTU logo](fit_logo.jpg)
 

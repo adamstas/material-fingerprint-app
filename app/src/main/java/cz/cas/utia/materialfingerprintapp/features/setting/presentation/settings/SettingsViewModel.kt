@@ -30,14 +30,28 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val defaultScreen = settingsRepository.getDefaultScreen()
             val storeDataOnServerChoice = settingsRepository.getStoreDataOnServerChoice()
+            val serverUrl = settingsRepository.getServerUrl()
 
             _state.update {
                 it.copy(
                     selectedDefaultScreen = defaultScreen,
-                    isStoreDataOnServerSwitchChecked = storeDataOnServerChoice
+                    isStoreDataOnServerSwitchChecked = storeDataOnServerChoice,
+                    serverUrl = serverUrl
                 )
             }
         }
+    }
+
+    // validates URL if it is valid IP address or domain
+    private fun isUrlValid(url: String): Boolean {
+        val regex = "^https?://(" +
+                "([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}" + // domains
+                "|" +
+                "((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}" + // IP: first 3 octets
+                "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])" +           // IP: the last octet
+                ")" +
+                "(:[0-9]+)?/?\$"
+        return regex.toRegex().matches(url)
     }
 
     init {
@@ -54,6 +68,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.ExportLocalMaterialsAsCsv -> exportLocalMaterialsAsCsv(event)
             SettingsEvent.ExportLocalMaterialsAsZip -> exportLocalMaterialsAsZip()
             SettingsEvent.SetExportStatusAsNotStarted -> setExportStatusAsNotStarted()
+            is SettingsEvent.SetServerUrl -> setServerUrl(event)
         }
     }
 
@@ -134,5 +149,22 @@ class SettingsViewModel @Inject constructor(
 
     private fun exportLocalMaterialsAsZip() {
 
+    }
+
+    private fun setServerUrl(event: SettingsEvent.SetServerUrl) {
+        val isValid = isUrlValid(event.url)
+
+        _state.update {
+            it.copy(
+                serverUrl = event.url,
+                isServerUrlValid = isValid
+            )
+        }
+
+        if (isValid) {
+            viewModelScope.launch {
+                settingsRepository.saveServerUrl(event.url)
+            }
+        }
     }
 }

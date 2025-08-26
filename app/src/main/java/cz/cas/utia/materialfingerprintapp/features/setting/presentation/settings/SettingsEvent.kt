@@ -15,6 +15,8 @@ sealed interface SettingsEvent {
     data object ExportLocalMaterialsAsZip: SettingsEvent
 
     data object SetExportStatusAsNotStarted: SettingsEvent
+
+    data class SetServerUrl(val url: String): SettingsEvent
 }
 
 sealed interface SettingsNavigationEvent {
