@@ -41,6 +41,12 @@ Capture material appearances, analyze key visual attributes, and search your dat
 - **Visual Fingerprint Filtering (Local)**  
   Search locally stored materials using the same 16-dimensional visual fingerprint, all processed offline.
 
+## Server
+
+For proper functionality, the application requires a running server instance.
+The server source code and deployment instructions are available in repository 
+[material-fingerprint-app-server](https://github.com/adamstas/material-fingerprint-app-server).
+
 ## Technical Requirements
 
 - Android 12 (API level 31) or higher
@@ -56,6 +62,10 @@ Capture material appearances, analyze key visual attributes, and search your dat
 
 ## Acknowledgements
 
-This software was created with the support of the Faculty of Information Technology, Czech Technical University in Prague (FIT CTU) – fit.cvut.cz
+This software was created with the support of the **Faculty of Information Technology, Czech Technical University in Prague (FIT CTU)** – fit.cvut.cz
 
 ![FIT CTU logo](fit_logo.jpg)
+
+It was also developed with the support of the **Institute of Information Theory and Automation of the CAS (UTIA)**, public research institution – www.utia.cas.cz
+
+![UTIA logo](utia_logo.png)
