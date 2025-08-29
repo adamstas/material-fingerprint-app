@@ -66,9 +66,12 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.SwitchStoreDataOnServerSwitch -> switchStoreDataOnServerSwitch(event)
             SettingsEvent.ReplayTutorial -> replayTutorial()
             is SettingsEvent.ExportLocalMaterialsAsCsv -> exportLocalMaterialsAsCsv(event)
-            SettingsEvent.ExportLocalMaterialsAsZip -> exportLocalMaterialsAsZip()
-            SettingsEvent.SetExportStatusAsNotStarted -> setExportStatusAsNotStarted()
+            is SettingsEvent.ExportLocalMaterialImagesAsZip -> exportLocalMaterialImagesAsZip(event)
+            SettingsEvent.SetCsvExportStatusAsNotStarted -> setCsvExportStatusAsNotStarted()
             is SettingsEvent.SetServerUrl -> setServerUrl(event)
+            SettingsEvent.SetZipExportStatusAsNotStarted -> setZipExportStatusAsNotStarted()
+            SettingsEvent.CheckIfAnyImagesToExport -> checkIfAnyImagesToExport()
+            SettingsEvent.CheckIfAnyMaterialsToExport -> checkIfAnyMaterialsToExport()
         }
     }
 
@@ -118,37 +121,102 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun exportLocalMaterialsAsCsv(event: SettingsEvent.ExportLocalMaterialsAsCsv) {
-        _state.update {
-            it.copy(
-                materialExportStatus = MaterialExportStatus.IN_PROGRESS
-            )
-        }
+    private fun checkIfAnyImagesToExport() {
+        val hasImages = materialExportService.checkIfAnyImagesToExport()
 
-        viewModelScope.launch {
-            val materials = localMaterialRepository.getAllMaterialsOrderedByName()
-            materialExportService.exportMaterials(
-                uri = event.uri,
-                materials = materials
-            )
-            _state.update {
+        _state.update {
+            if (hasImages) {
                 it.copy(
-                    materialExportStatus = MaterialExportStatus.FINISHED
+                    exportImagesReady = true,
+                    materialZipExportStatus = MaterialExportStatus.IN_PROGRESS
+                )
+            } else {
+                it.copy(
+                    exportImagesReady = false,
+                    materialZipExportStatus = MaterialExportStatus.NOTHING_TO_EXPORT
                 )
             }
         }
     }
 
-    private fun setExportStatusAsNotStarted() {
+    private fun checkIfAnyMaterialsToExport() {
+        viewModelScope.launch {
+            val materials = localMaterialRepository.getAllMaterialsOrderedByName()
+
+            _state.update {
+                if (materials.isNotEmpty()) {
+                    it.copy(
+                        exportMaterialsReady = true,
+                        materialCsvExportStatus = MaterialExportStatus.IN_PROGRESS
+                    )
+                } else {
+                    it.copy(
+                        exportMaterialsReady = false,
+                        materialCsvExportStatus = MaterialExportStatus.NOTHING_TO_EXPORT
+                    )
+                }
+            }
+        }
+    }
+
+    private fun exportLocalMaterialsAsCsv(event: SettingsEvent.ExportLocalMaterialsAsCsv) {
         _state.update {
             it.copy(
-                materialExportStatus = MaterialExportStatus.NOT_STARTED
+                materialCsvExportStatus = MaterialExportStatus.IN_PROGRESS
+            )
+        }
+
+        viewModelScope.launch {
+            val materials = localMaterialRepository.getAllMaterialsOrderedByName()
+
+            materialExportService.exportMaterialsAsCsv(
+                uri = event.uri,
+                materials = materials
+            )
+            _state.update {
+                it.copy(
+                    materialCsvExportStatus = MaterialExportStatus.FINISHED,
+                    exportMaterialsReady = false
+                )
+            }
+        }
+    }
+
+    private fun setCsvExportStatusAsNotStarted() {
+        _state.update {
+            it.copy(
+                materialCsvExportStatus = MaterialExportStatus.NOT_STARTED,
+                exportMaterialsReady = false
             )
         }
     }
 
-    private fun exportLocalMaterialsAsZip() {
+    private fun setZipExportStatusAsNotStarted() {
+        _state.update {
+            it.copy(
+                materialZipExportStatus = MaterialExportStatus.NOT_STARTED,
+                exportImagesReady = false
+            )
+        }
+    }
 
+    private fun exportLocalMaterialImagesAsZip(event: SettingsEvent.ExportLocalMaterialImagesAsZip) {
+        _state.update {
+            it.copy(
+                materialZipExportStatus = MaterialExportStatus.IN_PROGRESS
+            )
+        }
+
+        viewModelScope.launch {
+            materialExportService.exportAllLocalMaterialImagesAsZip(uri = event.uri)
+
+            _state.update {
+               it.copy(
+                   materialZipExportStatus = MaterialExportStatus.FINISHED,
+                   exportImagesReady = false
+               )
+            }
+        }
     }
 
     private fun setServerUrl(event: SettingsEvent.SetServerUrl) {

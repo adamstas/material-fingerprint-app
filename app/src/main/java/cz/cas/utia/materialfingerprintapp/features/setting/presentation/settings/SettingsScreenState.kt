@@ -11,7 +11,12 @@ data class SettingsScreenState(
 
     val isDefaultScreenDropdownMenuExpanded: Boolean = false,
 
-    val materialExportStatus: MaterialExportStatus = MaterialExportStatus.NOT_STARTED,
+    val materialCsvExportStatus: MaterialExportStatus = MaterialExportStatus.NOT_STARTED,
+    val materialZipExportStatus: MaterialExportStatus = MaterialExportStatus.NOT_STARTED,
+
+    val exportImagesReady: Boolean = false,
+    val exportMaterialsReady: Boolean = false,
+
     val serverUrl: String = AppConfig.Server.DEFAULT_URL,
     val isServerUrlValid: Boolean = true
 )
@@ -19,7 +24,8 @@ data class SettingsScreenState(
 enum class MaterialExportStatus {
     NOT_STARTED,
     IN_PROGRESS,
-    FINISHED
+    FINISHED,
+    NOTHING_TO_EXPORT
 }
 
 enum class DefaultScreen {
@@ -38,7 +44,12 @@ fun getCurrentDateAndTime(): String {
     return LocalDateTime.now().format(formatter)
 }
 
-fun getCurrentMaterialsExportFileName(): String {
+fun getCurrentMaterialsCsvExportFileName(): String {
     val timestamp = getCurrentDateAndTime()
-    return "${AppConfig.MaterialExporting.FILE_BASENAME}_$timestamp.csv"
+    return "${AppConfig.MaterialExporting.FILE_BASENAME_CSV}_$timestamp.csv"
+}
+
+fun getCurrentMaterialsZipExportFileName(): String {
+    val timestamp = getCurrentDateAndTime()
+    return "${AppConfig.MaterialExporting.FILE_BASENAME_ZIP}_$timestamp.zip"
 }

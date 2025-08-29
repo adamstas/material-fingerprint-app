@@ -11,10 +11,14 @@ sealed interface SettingsEvent {
 
     data object ReplayTutorial: SettingsEvent
 
-    data class ExportLocalMaterialsAsCsv(val uri: Uri): SettingsEvent
-    data object ExportLocalMaterialsAsZip: SettingsEvent
+    data object CheckIfAnyImagesToExport: SettingsEvent
+    data object CheckIfAnyMaterialsToExport: SettingsEvent
 
-    data object SetExportStatusAsNotStarted: SettingsEvent
+    data class ExportLocalMaterialsAsCsv(val uri: Uri): SettingsEvent
+    data class ExportLocalMaterialImagesAsZip(val uri: Uri): SettingsEvent
+
+    data object SetCsvExportStatusAsNotStarted: SettingsEvent
+    data object SetZipExportStatusAsNotStarted: SettingsEvent
 
     data class SetServerUrl(val url: String): SettingsEvent
 }

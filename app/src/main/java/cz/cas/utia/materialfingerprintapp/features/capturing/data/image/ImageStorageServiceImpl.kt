@@ -3,8 +3,10 @@ package cz.cas.utia.materialfingerprintapp.features.capturing.data.image
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import cz.cas.utia.materialfingerprintapp.core.AppConfig
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.ImageStorageService
 import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.MaterialImageType
+import cz.cas.utia.materialfingerprintapp.features.capturing.domain.image.materialImageTypeToFolderName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.FileOutputStream
 import java.io.File
@@ -15,10 +17,10 @@ import javax.inject.Inject
 class ImageStorageServiceImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ): ImageStorageService {
-    private val imagesDirectoryName = "images"
+    private val imagesDirectoryName = AppConfig.ImageStoring.IMAGES_PATH
 
     private fun getImagesDirectory(type: MaterialImageType): File {
-        val imagesDirectory = File(context.filesDir, "$imagesDirectoryName/${type.folderName}")
+        val imagesDirectory = File(context.filesDir, "$imagesDirectoryName/${materialImageTypeToFolderName(type)}")
 
         if (!imagesDirectory.exists()) {
             imagesDirectory.mkdirs()

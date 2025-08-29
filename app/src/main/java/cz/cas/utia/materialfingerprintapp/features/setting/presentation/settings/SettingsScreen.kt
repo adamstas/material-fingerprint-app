@@ -22,6 +22,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,7 +34,6 @@ import cz.cas.utia.materialfingerprintapp.core.ui.components.NavigationHandler
 import cz.cas.utia.materialfingerprintapp.core.ui.components.BasicDropdownMenu
 import cz.cas.utia.materialfingerprintapp.core.ui.components.CustomHorizontalDivider
 import cz.cas.utia.materialfingerprintapp.core.ui.components.TopBarTitle
-import cz.cas.utia.materialfingerprintapp.features.capturing.presentation.photossummary.PhotosSummaryEvent
 
 @Composable
 fun SettingsScreenRoot(
@@ -63,7 +63,7 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit
 ) {
     // creates launcher of Android dialog for storing files
-    val createFileLauncher = rememberLauncherForActivityResult(
+    val createCsvFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("text/csv")
     ) { uri: Uri? -> // returns URI of the created file, otherwise null (if user exited the dialog etc.)
 
@@ -71,8 +71,29 @@ fun SettingsScreen(
         if (uri != null) {
             onEvent(SettingsEvent.ExportLocalMaterialsAsCsv(uri))
         } else {
-            onEvent(SettingsEvent.SetExportStatusAsNotStarted)
+            onEvent(SettingsEvent.SetCsvExportStatusAsNotStarted)
         }
+    }
+
+    val createZipFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/zip")
+    ) { uri: Uri? ->
+
+        if (uri != null) {
+            onEvent(SettingsEvent.ExportLocalMaterialImagesAsZip(uri))
+        } else {
+            onEvent(SettingsEvent.SetZipExportStatusAsNotStarted)
+        }
+    }
+
+    LaunchedEffect(state.exportMaterialsReady) {
+        if (state.exportMaterialsReady)
+            createCsvFileLauncher.launch(getCurrentMaterialsCsvExportFileName())
+    }
+
+    LaunchedEffect(state.exportImagesReady) {
+        if (state.exportImagesReady)
+            createZipFileLauncher.launch(getCurrentMaterialsZipExportFileName())
     }
 
     val settingScreenItems = listOf(
@@ -127,31 +148,38 @@ fun SettingsScreen(
                     "as CSV without images",
             content = {
                 Button(
-                    onClick = {
-                        createFileLauncher.launch(getCurrentMaterialsExportFileName())
-                    },
-                    enabled = state.materialExportStatus != MaterialExportStatus.IN_PROGRESS
+                    onClick = { onEvent(SettingsEvent.CheckIfAnyMaterialsToExport) },
+                    enabled = state.materialCsvExportStatus != MaterialExportStatus.IN_PROGRESS
                 ) {
                     Text(
-                        when(state.materialExportStatus) {
+                        when(state.materialCsvExportStatus) {
                             MaterialExportStatus.NOT_STARTED -> "Export as CSV"
                             MaterialExportStatus.IN_PROGRESS -> "Export in progress..."
                             MaterialExportStatus.FINISHED -> "Export done " + "\u2705" // green tick
+                            MaterialExportStatus.NOTHING_TO_EXPORT -> "Nothing to export!"
                         }
                     )
                 }
             }),
 
-//        SettingsItemData(
-//            text = "Export local materials\n" +
-//                    "as ZIP including images",
-//            content = {
-//                Button(
-//                    onClick = { onEvent(SettingsEvent.ExportLocalMaterialsAsZip) }
-//                ) {
-//                    Text(text = "Export as ZIP")
-//                }
-//            }),
+        SettingsItemData(
+            text = "Export local material\n" +
+                    "images as ZIP",
+            content = {
+                Button(
+                    onClick = { onEvent(SettingsEvent.CheckIfAnyImagesToExport) },
+                    enabled = state.materialZipExportStatus != MaterialExportStatus.IN_PROGRESS
+                ) {
+                    Text(
+                        when(state.materialZipExportStatus) {
+                            MaterialExportStatus.NOT_STARTED -> "Export images as ZIP"
+                            MaterialExportStatus.IN_PROGRESS -> "Export in progress..."
+                            MaterialExportStatus.FINISHED -> "Export done " + "\u2705" // green tick
+                            MaterialExportStatus.NOTHING_TO_EXPORT -> "Nothing to export!"
+                        }
+                    )
+                }
+            }),
 
         SettingsItemData(
             text = "Default screen",
@@ -265,11 +293,6 @@ fun AboutSection() {
                 )
 
                 Text(
-                    text = "Created in 2025",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Text(
                     text = "Developed by Adam Stas in cooperation with Veronika Vilimovska and Daniel Pilar",
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -284,10 +307,16 @@ fun AboutSection() {
                     style = MaterialTheme.typography.bodyMedium
                 )
 
+                Text(
+                    text = "Copyright (c) 2025 Adam Stas.\n" +
+                            "This software is licensed under the MIT License.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Version: 1.0",
+                    text = "Version: 1.1",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

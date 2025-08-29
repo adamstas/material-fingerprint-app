@@ -9,7 +9,8 @@ object AppConfig {
     }
 
     object MaterialExporting {
-        const val FILE_BASENAME = "exported_materials"
+        const val FILE_BASENAME_CSV = "exported_materials"
+        const val FILE_BASENAME_ZIP = "exported_material_images"
     }
 
     object ImageStoring {
@@ -19,6 +20,11 @@ object AppConfig {
 
         const val SLOT1_IMAGE_NAME_WITH_SUFFIX = "$SLOT1_IMAGE_NAME$IMAGE_SUFFIX"
         const val SLOT2_IMAGE_NAME_WITH_SUFFIX = "$SLOT2_IMAGE_NAME$IMAGE_SUFFIX"
+
+        const val IMAGES_PATH = "images"
+        const val SPECULAR_IMAGES_PATH = "/specular"
+        const val NON_SPECULAR_IMAGES_PATH = "/nonspecular"
+        const val SLOT_IMAGES_PATH = "/slot"
     }
 
     object Server {
